@@ -24,13 +24,12 @@ export const Navbar = () => {
 					RetroVinyl
 				</a>
 				{
-					localStorage.getItem("token") ?
+					!localStorage.getItem("token") ?
 						<div className="d-flex dropdown">
 							<div class="search input-group mb-3">
 								<input type="text"
-									className="form-control btn btn-outline-danger"
+									className="form-control"
 									placeholder="Escribe para buscar"
-									aria-label="Escribe para buscar"
 									aria-describedby="basic-addon2"
 									value={searchTerm}
 									onChange={(e) => setSearchTerm(e.target.value)} // Actualizamos el estado cuando hay cambios
