@@ -1,0 +1,71 @@
+.cont-favs{
+    height: auto;
+}
+.titulo-favs{
+    text-align: center;
+    padding-top: 1rem;
+    margin-bottom: 1rem;
+    color: white;
+    font-family: fantasy;
+    color: black;
+}
+.card-cont-fav{
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 2rem; 
+    margin-left: 1rem;
+}
+.carta-favs{
+    font-family: fantasy;
+    display: flex;
+    height: 180px;
+    width: 500px;
+    margin-bottom: 1rem;
+    border-radius: 15px;
+    color: white; 
+    align-items: center;
+    background: rgba(0, 0, 0, 0.671);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    border: 1.5px solid rgba(209, 213, 219, 0.3)
+}
+.img-favs-cont{
+    width: 33%;
+}
+.img-favs{
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-left: 1rem;
+    border: 1px solid white;
+    border-radius: 10px;
+}
+.cuerpo-favs{
+    margin-left: 1rem;
+    width: 47%;
+}
+.genero-favs{
+    background-color: red;
+    color: black;
+}
+.botones-cont1{
+    display: flex;
+    justify-content: space-around;
+    width: 20%;  
+}
+
+.fav-favs{
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1.5px solid #daab03;
+    background-color: #c7c7c7;
+}
+.compra-favs{
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1.5px solid #248cdb;
+    background-color: #c7c7c7;
+}

@@ -5,6 +5,7 @@ import { BackendURL } from "./component/backendURL";
 
 import { InfoAlbum } from "./views/InfoAlbum";
 import { Demo } from "./pages/demo";
+import { Favoritos } from "./pages/favoritos";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 
@@ -30,6 +31,7 @@ const Layout = () => {
                         <Route element={<InfoAlbum />} path="/infoAlbum" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
+                        <Route element={<Favoritos />} path="/favoritos" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
