@@ -1,0 +1,25 @@
+.card-info{
+    height: auto;
+    border-radius: 15px;
+    color: white;
+    background: rgb(0, 0, 0, 0.671);
+}
+
+.img-card{
+    border-radius: 15px;
+    margin-top: 15px;
+    height: 350px;
+    object-fit: contain;
+}
+
+.card-coment{
+    border-radius: 15px;
+    color: white;
+    background: rgba(143, 142, 142, 0.671);
+}
+
+.list-comments{
+    height: 650px;
+    border-radius: 15px;
+    overflow: scroll;
+}
