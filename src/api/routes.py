@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify, url_for, Blueprint 
 from api.models import db, User, Doctor, Administrator, Appointment, Availability, Post
 from api.utils import generate_sitemap, APIException
@@ -10,16 +11,18 @@ from datetime import timedelta
 
 app=Flask(__name__)
 api = Blueprint('api', __name__) 
-jwt = JWTManager(app)  
 
 CORS(api) 
 
 
-#Encriptacion JWT--- 
-app.config["JWT_SECRET_KEY"]="tu_clave_secreta"  
+#Encriptacion JWT---- 
+app.config["JWT_SECRET_KEY"]=os.getenv('JWT_SECRET_KEY_OWN')  
 app.config["JWT_TOKEN_LOCATION"] = ["headers"]  
 
-bcrypt = Bcrypt(app) 
+
+bcrypt = Bcrypt(app)  
+jwt = JWTManager(app)  
+
 # db = SQLAlchemy(app)
 
 # Ruta de ejemplo
@@ -83,11 +86,12 @@ def create_user():
 @api.route('/token',methods=['POST']) 
 def get_token_usuario(): 
     try:  
+        name=request.json.get('name')
         email = request.json.get('email') 
         password = request.json.get('password')
      
-        if not email or not password: 
-            return jsonify({'error': 'Email and password are required'}), 400 
+        if not email or not password or  not name: 
+            return jsonify({'error': 'Email,name, password are required'}), 400 
 
         login_user = User.query.filter_by(email=email).first() 
 
@@ -188,7 +192,7 @@ def create_doctor():
         password_hash=bcrypt.generate_password_hash(new_doctor.password).decode('utf-8')  
 
         #Ensamblamos usuario nuevo 
-        new_created_doctor= Doctor(email=new_doctor.email, password=new_doctor.password_hash, name=new_doctor.name,specialty=new_doctor.specialty)  
+        new_created_doctor= Doctor(email=new_doctor.email, password=password_hash, name=new_doctor.name,specialty=new_doctor.specialty)  
         
        
         db.session.add(new_created_doctor)
@@ -405,7 +409,7 @@ def create_administrator():
         password_hash=bcrypt.generate_password_hash(new_admin.password).decode('utf-8')  
 
         #Ensamblamos usuario nuevo 
-        new_created_admin= Administrator(email=new_admin.email, password=new_admin.password_hash, name=new_admin.name)  
+        new_created_admin= Administrator(email=new_admin.email, password=password_hash, name=new_admin.name)  
         
        
         db.session.add(new_created_admin)
@@ -426,7 +430,8 @@ def create_administrator():
     #Generador de Token ADMIN
 @api.route('/token/admin',methods=['POST']) 
 def get_token_admin(): 
-    try:  
+    try: 
+     
      email=request.json.get('email') 
      password=request.json.get('password')
      
