@@ -1,53 +1,40 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			message: "",
+			user: null,
+			token: null,
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-
-			getMessage: async () => {
-				try{
-					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
-					const data = await resp.json()
-					setStore({ message: data.message })
-					// don't forget to return something, that is how the async resolves
-					return data;
-				}catch(error){
-					console.log("Error loading message from backend", error)
+			logIn: async (name, email, password) => {
+				try {
+					const response = await fetch('https://studious-acorn-v6qgwv9qg5vr269x-3001.app.github.dev/api/logIn', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ name, email, password }),
+					});
+			
+					if (!response.ok) {
+						const errorData = await response.json();
+						throw new Error(errorData.error || 'Error en el inicio de sesión');
+					}
+			
+					const data = await response.json();
+					setStore({ user: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
+					localStorage.setItem('token', data.access_token);
+				} catch (error) {
+					console.error('Error al iniciar sesión:', error);
+					setStore({ message: error.message }); // Actualizar el mensaje de error en el store
 				}
 			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
-			}
-		}
+			logOut: () => {
+				setStore({ user: null, message: 'Has cerrado sesión' });
+				localStorage.removeItem('token'); // Eliminar el token del almacenamiento
+			},
+		},
 	};
 };
 
