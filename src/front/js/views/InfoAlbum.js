@@ -36,11 +36,11 @@ export const InfoAlbum = () => {
                                         <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body">
+                                    <div class="modal-body text-black">
                                         ...
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary">Confirmar comprar</button>
+                                        <button type="button" class="btn btn-primary">Confirmar compra</button>
                                     </div>
                                 </div>
                             </div>
@@ -62,7 +62,7 @@ export const InfoAlbum = () => {
                         ))}
                     </div>
                     <div className="input-group mb-3">
-                        <input type="text" className="form-control" placeholder="Añadir comentario"
+                        <input type="text" className="form-control bg-light" placeholder="Deja tu comentario"
                             onChange={(e) => setNewComment(e.target.value)}
                             value={newComment} />
                         <button className="btn btn-danger" type="button" onClick={() => { setCommentList(() => [...commentList, newComment]); setNewComment(''); }}>Añadir</button>
