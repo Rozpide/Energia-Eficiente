@@ -81,9 +81,10 @@ def create_user():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400 
+    
 
 #Generador de Token Usuario  
-@api.route('/token',methods=['POST']) 
+@api.route('/logIn',methods=['POST']) 
 def get_token_usuario(): 
     try:  
         name=request.json.get('name')
@@ -110,40 +111,10 @@ def get_token_usuario():
             return jsonify({"Error": "Contraseña incorrecta"}), 404
 
     except Exception as e: 
-        return jsonify({'Error': 'El email proporcionado no corresponde a ninguno registrado: ' + str(e)}), 500 
-# @api.route('/token/user',methods=['POST']) 
-# def get_token_usuario(): 
-#     try: 
-#      name=request.json.get('name')  
-#      email=request.json.get('email') 
-#      password=request.json.get('password')
-     
-#      if not email or not password or not name: 
-#          return jsonify({'error':'Email, name, password are required'}),400 
-
-#      login_user=User.query.filter_by(email=email,name=name).first() 
-
-#      if not login_user: 
-#          return jsonify({'error':'Invalid email.'}),404   
-#      password_from_db=login_user.password 
-#      true_o_false=bcrypt.check_password_hash(password_from_db, password)  
-
-#      if true_o_false: 
-#          expires=timedelta(days=7) 
-
-#          user_id=login_user.user_id 
-#          access_token=create_access_token(identity=user_id,expires_delta=expires) 
-#          return jsonify({'access_token':access_token}),200 
-#      else: 
-#          return{"Error":"Contraseña incorrecta"},404
-
-
-
-#     except Exception as e: 
-#         return ({'Error':'El email proporcionado no corresponde a ninguno registrado:'+ str(e)}),500   
+        return jsonify({'Error': 'El email proporcionado no corresponde a ninguno registrado: ' + str(e)}), 500   
 
 #Ruta restringida por Token Usuario 
-@api.route('/users2') 
+@app.route('/users2') 
 @jwt_required() 
 def show_users(): 
     current_user_id= get_jwt_identity() 
@@ -214,7 +185,7 @@ def create_doctor():
         return jsonify({"error": str(e)}), 400 
     
     #Generador de Token DOCTOR 
-@api.route('/token/doctor',methods=['POST']) 
+@api.route('/logIn/doctor',methods=['POST']) 
 def get_token_doctor(): 
     try:  
      email= request.json.get('email') 
@@ -243,7 +214,7 @@ def get_token_doctor():
         return ({'Error':'El email proporcionado no corresponde a ninguno registrado:'+ str(e)}),500  
    
     #Ruta restringida por Token DOCTOR
-@api.route('/doctors2') 
+@app.route('/doctors2') 
 @jwt_required() 
 def show_doctors(): 
     current_doctor_id= get_jwt_identity() 
@@ -259,33 +230,7 @@ def show_doctors():
         return jsonify(doctor_list),200 
     else: 
         return{"Error":"Token invalido"},401 
-# @api.route('/token/doctor',methods=['POST'])
-# def get_token_doctor():
-#     try:
-#         email = request.json.get('email')
-#         password = request.json.get('password')
 
-#         if not email or not password:
-#             return jsonify({'error':'Email and password are required'}), 400
-
-#         login_doctor = Doctor.query.filter_by(email=email).one()
-
-#         if not login_doctor:
-#             return jsonify({'error':'Invalid email.'}), 404
-
-#         password_from_db = login_doctor.password
-#         true_o_false = bcrypt.check_password_hash(password_from_db, password)
-
-#         if true_o_false:
-#             expires = timedelta(days=7)
-#             doctor_id = login_doctor.doctor_id
-#             access_token = create_access_token(identity=doctor_id, expires_delta=expires)
-#             return jsonify({'access_token':access_token}), 200
-#         else:
-#             return jsonify({'Error':'Contraseña incorrecta'}), 404
-
-#     except Exception as e:
-#         return jsonify({'Error':'El email proporcionado no corresponde a ninguno registrado: ' + str(e)}), 500
 
 # Endpoints para el modelo Post
 @api.route('/posts', methods=['GET'])
@@ -428,7 +373,7 @@ def create_administrator():
         db.session.rollback()
         return jsonify({"error": str(e)}), 400 
     #Generador de Token ADMIN
-@api.route('/token/admin',methods=['POST']) 
+@api.route('/logIn/admin',methods=['POST']) 
 def get_token_admin(): 
     try: 
      
@@ -458,7 +403,7 @@ def get_token_admin():
         return ({'Error':'El email proporcionado no corresponde a ninguno registrado:'+ str(e)}),500  
    
 #     #Ruta restringida por Token Admin
-@api.route('/administrators2') 
+@app.route('/administrators2') 
 @jwt_required() 
 def show_administrador(): 
     current_admin_id= get_jwt_identity() 
