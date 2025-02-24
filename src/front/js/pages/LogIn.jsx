@@ -11,6 +11,7 @@ const LogIn = () => {
         e.preventDefault();
         await actions.logIn(name, email, password); // Llamar a la acción logIn
     };
+    
 
     return (
         <div>
@@ -38,6 +39,7 @@ const LogIn = () => {
                     required
                 />
                 <button type="submit">Iniciar Sesión</button>
+                {store.message && <p>{store.message}</p>}
             </form>
         </div>
     );
