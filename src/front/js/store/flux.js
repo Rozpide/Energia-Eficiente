@@ -14,7 +14,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			genres: [],
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -44,26 +43,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (i === index) elm.background = color;
 					return elm;
 				});
-
 				//reset the global store
 				setStore({ demo: demo });
 			},
-				// Get Genres for lists
-			// loadGenres: async () => {
-			// 	try {
-			// 		const options = { method: 'GET', headers: {} };
-			// 		const response = await fetch("https://api.deezer.com/genre", options)
-			// 		if (!response.ok) {
-			// 			console.error("Fetch error loadGenres")
-			// 		}
-			// 		const data = await response.json()
-			// 		setStore({ genres: data["name", "picture"] })
-			// 	}
-			// 	catch (error) {
-			// 		console.error("Failed to load genres")
-			// 	}
-			// },
-
 		}
 	};
 };
