@@ -6,6 +6,7 @@ export const Login = () => {
   // Estados para controlar qué formulario se muestra
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [showForgoten, setShowForgoten] = useState(false);
 
   return (
     <div
@@ -36,7 +37,7 @@ export const Login = () => {
             >
               Iniciar sesión
             </button>
-            
+
             <button
               className="btn btn-secondary w-100"
               onClick={() => {
@@ -50,7 +51,7 @@ export const Login = () => {
         )}
 
         {/* Formulario de inicio de sesión */}
-        {showLogin && (
+        {showLogin && !showForgoten && (
           <form>
             <h2 className="text-center mb-4">Iniciar sesión</h2>
             <div className="mb-3">
@@ -73,15 +74,21 @@ export const Login = () => {
               Ingresar
             </button>
             <div className="text-center mt-2">
-              <a href="#" className="text-decoration-none">He olvidado mi contraseña</a>
+              <a href="#" className="text-decoration-none" onClick={() =>
+                setShowForgoten(true)
+              }>¿He olvidado mi contraseña?</a>
+              <button
+                type="button"
+                className="btn btn-link w-100 mt-2"
+                onClick={() => {
+                  setShowForgoten(false);
+                  setShowLogin(false);
+                  setShowRegister(false)
+                }}
+              >
+                Volver
+              </button>
             </div>
-            <button
-              type="button"
-              className="btn btn-link w-100 mt-2"
-              onClick={() => setShowLogin(false)}
-            >
-              Volver
-            </button>
           </form>
         )}
 
@@ -153,7 +160,41 @@ export const Login = () => {
             </button>
           </form>
         )}
+        {/* Formulario de recuperar contraseña*/}
+        {showForgoten && (
+          <form>
+            <h2 className="text-center mb-4">¿He olvidado mi contraseña?</h2>
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control form-control-lg"
+                placeholder="Nomber de usuario"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="password"
+                className="form-control form-control-lg"
+                placeholder="Nueva contraseña"
+                required
+              />
+            </div>
+            <button
+              type="button"
+              className="btn btn-link w-100 mt-2"
+              onClick={() => {
+                setShowLogin(true);
+                setShowRegister(false);
+                setShowForgoten(false)
+              }}
+            >
+              Volver
+            </button>
+          </form>)}
+
+
       </div>
-    </div>
+    </div >
   );
 };
