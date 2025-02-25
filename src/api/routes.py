@@ -187,26 +187,29 @@ def create_doctor():
     #Generador de Token DOCTOR 
 @api.route('/logIn/doctor',methods=['POST']) 
 def get_token_doctor(): 
-    try:  
+    try: 
+     name=request.json.get('name') 
      email= request.json.get('email') 
      password= request.json.get('password')
      
-     if not email or not password: 
-         return jsonify({'error':'Email and password are required'}),400 
+     if not email or not password or not name: 
+         return jsonify({'error':'Email, Name and password are required'}),400 
 
-     login_doctor=Doctor.query.filter_by(email=request.json['email']).one() 
+     login_doctor = Doctor.query.filter_by(email=email).first()
+     if not login_doctor:
+        print(f"No se encontró el doctor con el email: {email}")
 
      if not login_doctor: 
-         return jsonify({'error':'Invalid email.'}),404   
-     password_from_db=login_doctor.password 
-     true_o_false=bcrypt.check_password_hash(password_from_db, password)  
+         return jsonify({'error':'Invalid email.'}),404 
+       
+     password_from_db = login_doctor.password 
+     true_o_false = bcrypt.check_password_hash(password_from_db, password)  
 
      if true_o_false: 
-         expires=timedelta(days=7) 
-
+         expires=timedelta(days=1) 
          doctor_id=login_doctor.doctor_id 
-         access_token=create_access_token(identity=doctor_id,expires_delta=expires) 
-         return jsonify({'access_token':access_token}),200 
+         access_token=create_access_token(identity=doctor_id, expires_delta=expires) 
+         return jsonify({'access_token': access_token}),200 
      else: 
          return{"Error":"Contraseña incorrecta"},404
 
