@@ -45,7 +45,7 @@ const LogInDoc = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 /> <br />
-                <button className='btn btn-primary' type="submit">Iniciar Sesión</button>
+                <button className='btn btn-primary mt-3' type="submit">Iniciar Sesión</button>
                 {store.message && <p>{store.message}</p>}
             </form>
         </div>

@@ -28,22 +28,22 @@ const LogIn = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                />
+                /> <br />
                 <input
                     type="email"
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                />
+                /> <br />
                 <input
                     type="password"
                     placeholder="Contraseña"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                />
-                <button className='btn btn-primary' type="submit">Iniciar Sesión</button>
+                /> <br />
+                <button className='btn btn-primary mt-3' type="submit">Iniciar Sesión</button>
                 {store.message && <p>{store.message}</p>}
             </form>
         </div>
