@@ -20,14 +20,14 @@ export const Genre = () => {
     ]
 
     const artist = [
-        { name: 'Artist 1', genre: 'Rock', image: 'https://placehold.co/50' },
-        { name: 'Artist 2', genre: 'Rock', image: 'https://placehold.co/50' },
+        { name: 'Artista 1', genre: 'Rock', image: 'https://placehold.co/50' },
+        { name: 'Artista 2', genre: 'Rock', image: 'https://placehold.co/50' },
 
-        { name: 'Artist 3', genre: 'Pop', image: 'https://placehold.co/50' },
-        { name: 'Artist 4', genre: 'Pop', image: 'https://placehold.co/50' },
+        { name: 'Artista 3', genre: 'Pop', image: 'https://placehold.co/50' },
+        { name: 'Artista 4', genre: 'Pop', image: 'https://placehold.co/50' },
 
-        { name: 'Artist 5', genre: 'Jazz', image: 'https://placehold.co/50' },
-        { name: 'Artist 6', genre: 'Jazz', image: 'https://placehold.co/50' },
+        { name: 'Artista 5', genre: 'Jazz', image: 'https://placehold.co/50' },
+        { name: 'Artista 6', genre: 'Jazz', image: 'https://placehold.co/50' },
         // More artists...
     ]
 
@@ -53,7 +53,7 @@ export const Genre = () => {
                                             <div className="d-flex justify-content-center mb-3">
                                                 <button type="button" className="followbtn btn-outline-purple">
                                                     {/* onClick={() => newArtistFollowed(artist.name)} */}
-                                                    Follow artist
+                                                    Seguir artista
                                                 </button>
                                             </div>
                                         </div>
