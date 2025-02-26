@@ -20,8 +20,8 @@ app.config["JWT_SECRET_KEY"]=os.getenv('JWT_SECRET_KEY_OWN')
 app.config["JWT_TOKEN_LOCATION"] = ["headers"]  
 
 
-bcrypt = Bcrypt(app)  
-jwt = JWTManager(app)  
+bcrypt = Bcrypt()  
+jwt = JWTManager()  
 
 # db = SQLAlchemy(app)
 
@@ -98,10 +98,11 @@ def get_token_usuario():
 
         if not login_user: 
             return jsonify({'error': 'Invalid email.'}), 404   
-        
+        print("llegue hasta aca")
         password_from_db = login_user.password 
+        print(f'el valor de password fron db es: {password_from_db}')
         true_o_false = bcrypt.check_password_hash(password_from_db, password)  
-
+        print(f'este es bcrypt {true_o_false}')
         if true_o_false: 
             expires = timedelta(days=1) 
             user_id = login_user.user_id 
@@ -235,6 +236,101 @@ def show_doctors():
         return{"Error":"Token invalido"},401 
 
 
+@api.route('/administrators', methods=['POST'])
+def get_administrators():
+    try:
+        administrators = Administrator.query.all()
+        return jsonify([admin.serialize() for admin in administrators]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@api.route('/admin', methods=['POST'])
+def create_admin():
+    data = request.get_json()
+    try:
+        new_admin = Administrator(
+            name=data.get('name'),
+            email=data.get('email'),
+            password=data.get('password')
+        ) 
+        if not new_admin.email or not new_admin.name: 
+            return jsonify({'error':'Email,password and Name are requeired.'}),400 
+        
+        existing_admin=Administrator.query.filter_by(email=new_admin.email).first() 
+        if existing_admin: 
+            return jsonify({'error':'Email.already exists.'}),409
+        
+        password_hash=bcrypt.generate_password_hash(new_admin.password).decode('utf-8')  
+
+        #Ensamblamos usuario nuevo 
+        new_created_admin= Administrator(email=new_admin.email, password=password_hash, name=new_admin.name)  
+        
+       
+        db.session.add(new_created_admin)
+        db.session.commit() 
+        
+        ok_to_share={  
+           "name": new_created_admin.name, 
+           "email":new_created_admin.email,
+           "id":new_created_admin.admin_id
+
+          }
+         
+        return jsonify({"Administrator User Created":ok_to_share}), 201
+      
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400 
+    
+
+    #Generador de Token ADMIN
+@api.route('/logIn/admin',methods=['POST']) 
+def get_token_admin(): 
+    try: 
+     
+     email=request.json.get('email') 
+     password=request.json.get('password')
+     
+     if not email or not password: 
+         return jsonify({'error':'Email and password are required'}),400 
+
+     login_admin=Administrator.query.filter_by(email=request.json['email']).one() 
+
+     if not login_admin: 
+         return jsonify({'error':'Invalid email.'}),404   
+     password_from_db=login_admin.password 
+     true_o_false=bcrypt.check_password_hash(password_from_db, password)  
+
+     if true_o_false: 
+         expires=timedelta(days=1) 
+
+         admin_id=login_admin.admin_id 
+         access_token=create_access_token(identity=admin_id,expires_delta=expires) 
+         return jsonify({'access_token':access_token}),200 
+     else: 
+         return{"Error":"Contraseña incorrecta"},404
+
+    except Exception as e: 
+        return ({'Error':'El email proporcionado no corresponde a ninguno registrado:'+ str(e)}),500  
+   
+#     #Ruta restringida por Token Admin
+@app.route('/administrators2') 
+@jwt_required() 
+def show_administrador(): 
+    current_admin_id= get_jwt_identity() 
+    if current_admin_id: 
+        admins=Administrator.query.all() 
+        admin_list=[] 
+        for admin in admins: 
+            admin_dict={ 
+                'id':admin.admin_id, 
+                'email':admin.email
+            }
+            admin_list.append(admin_dict) 
+        return jsonify(admin_list),200 
+    else: 
+        return{"Error":"Token invalido"},401 
+
 # Endpoints para el modelo Post
 @api.route('/posts', methods=['GET'])
 def get_posts():
@@ -329,99 +425,7 @@ def create_availability():
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
 
-# Endpoints para el modelo Administrator
-@api.route('/administrators', methods=['GET'])
-def get_administrators():
-    try:
-        administrators = Administrator.query.all()
-        return jsonify([admin.serialize() for admin in administrators]), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
-@api.route('/administrators', methods=['POST'])
-def create_administrator():
-    data = request.get_json()
-    try:
-        new_admin = Administrator(
-            name=data.get('name'),
-            email=data.get('email'),
-            password=data.get('password')
-        ) 
-        if not new_admin.email or not new_admin.name: 
-            return jsonify({'error':'Email,password and Name are requeired.'}),400 
-        
-        existing_admin=Administrator.query.filter_by(email=new_admin.email).first() 
-        if existing_admin: 
-            return jsonify({'error':'Email.already exists.'}),409
-        
-        password_hash=bcrypt.generate_password_hash(new_admin.password).decode('utf-8')  
-
-        #Ensamblamos usuario nuevo 
-        new_created_admin= Administrator(email=new_admin.email, password=password_hash, name=new_admin.name)  
-        
-       
-        db.session.add(new_created_admin)
-        db.session.commit() 
-        
-        ok_to_share={  
-           "name": new_created_admin.name, 
-           "email":new_created_admin.email,
-           "id":new_created_admin.admin_id
-
-          }
-         
-        return jsonify({"Administrator User Created":ok_to_share}), 201
-      
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 400 
-    #Generador de Token ADMIN
-@api.route('/logIn/admin',methods=['POST']) 
-def get_token_admin(): 
-    try: 
-     
-     email=request.json.get('email') 
-     password=request.json.get('password')
-     
-     if not email or not password: 
-         return jsonify({'error':'Email and password are required'}),400 
-
-     login_admin=Administrator.query.filter_by(email=request.json['email']).one() 
-
-     if not login_admin: 
-         return jsonify({'error':'Invalid email.'}),404   
-     password_from_db=login_admin.password 
-     true_o_false=bcrypt.check_password_hash(password_from_db, password)  
-
-     if true_o_false: 
-         expires=timedelta(days=1) 
-
-         admin_id=login_admin.admin_id 
-         access_token=create_access_token(identity=admin_id,expires_delta=expires) 
-         return jsonify({'access_token':access_token}),200 
-     else: 
-         return{"Error":"Contraseña incorrecta"},404
-
-    except Exception as e: 
-        return ({'Error':'El email proporcionado no corresponde a ninguno registrado:'+ str(e)}),500  
-   
-#     #Ruta restringida por Token Admin
-@app.route('/administrators2') 
-@jwt_required() 
-def show_administrador(): 
-    current_admin_id= get_jwt_identity() 
-    if current_admin_id: 
-        admins=Administrator.query.all() 
-        admin_list=[] 
-        for admin in admins: 
-            admin_dict={ 
-                'id':admin.admin_id, 
-                'email':admin.email
-            }
-            admin_list.append(admin_dict) 
-        return jsonify(admin_list),200 
-    else: 
-        return{"Error":"Token invalido"},401 
      
 
 if __name__ == '__main__':
