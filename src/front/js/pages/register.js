@@ -3,7 +3,7 @@ import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import Slider from "react-slick";
 
-export const Home = () => {
+export const Register = () => {
   const { store, actions } = useContext(Context);
 
   const settings = {
@@ -51,8 +51,6 @@ export const Home = () => {
 
   return (
     <div className="container py-3">
-      {
-        !localStorage.getItem("user") ?
           <div className="row">
             <div className="col-md-6 col-sm-8">
               <div className="card shadow-sm">
@@ -106,45 +104,8 @@ export const Home = () => {
               </div>
             </div>
           </div>
-          :
-          <div className="row">
-            <div className="col-md-6 col-sm-8">
-              <div className="card shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title2 text-center mt-2 mb-5">Iniciar Sesión</h3>
-                  <form>
-                    <div className="label mb-5">
-                      <label htmlFor="inputEmail3" className="form-label">Email</label>
-                      <input type="email" className="form-control" id="inputEmail3" required />
-                    </div>
-                    <div className="label mb-5">
-                      <label htmlFor="inputPassword3" className="form-label">Contraseña</label>
-                      <input type="password" className="form-control" id="inputPassword3" required />
-                    </div>
-                    <button type="submit" className="btn btn-danger mt-3 mb-5 w-100">
-                      Inciar Sesión
-                    </button>
-                    <h6 className="registrarse text-white text-center"> ¿No tienes una cuenta? Registrate</h6>
-                  </form>
-                </div>
-              </div>
-            </div>
-            <div className="registro col-md-6 col-sm-4">
-              <div className="row">
-                <div className="col-md-4 ">
-                  <Carousel speed={3000} />
-                </div>
-                <div className="col-md-4">
-                  <Carousel speed={4000} />
-                </div>
-                <div className="col-md-4">
-                  <Carousel speed={5000} />
-                </div>
-              </div>
-            </div>
-          </div>}
     </div>
   );
 };
 
-export default Home;
+export default Register;
