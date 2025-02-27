@@ -23,6 +23,8 @@ import Endocrinologia from "./pages/Endocrinologia.jsx";
 
 
 
+import LogInAdmin from "./pages/LogInAdmin.jsx";
+
 const Layout = () => {
     const basename = process.env.BASENAME || "";
 
@@ -35,6 +37,7 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
+
                         <Route element={<LogIn />} path="/login" />
                         <Route element={<LogInDoc />} path="/logInDoc" />
                         <Route element={<SingUp />} path="/singUp" />
@@ -52,6 +55,7 @@ const Layout = () => {
                         <Route element={<Endocrinologia />} path="/endocrinologia" />
 
                         <Route element={<h1>Not found!</h1>} path="*" />
+
                     </Routes>
                 </ScrollToTop>
             </BrowserRouter>
