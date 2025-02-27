@@ -9,7 +9,7 @@ import { Navbar } from "./component/navbar";
 
 import LogInDoc from "./pages/LogInDoc.jsx";
 import SingUp from "./pages/SingUp.jsx";
-
+import LogInAdmin from "./pages/LogInAdmin.jsx";
 
 //create your first component
 const Layout = () => {
@@ -28,6 +28,7 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={ <LogIn />} path="/login" />
                         <Route element={ <LogInDoc />} path="/logInDoc" />
+                        <Route element={ <LogInAdmin />} path="/logInAdmin" />
                         <Route element={ <SingUp />} path="/singUp" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

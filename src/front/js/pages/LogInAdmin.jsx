@@ -1,26 +1,26 @@
 import React, { useState, useContext } from 'react';
-import { Context } from '../store/appContext'; 
+import { Context } from '../store/appContext'; // Asegúrate de importar el contexto de tu store
 import { Link, useNavigate } from "react-router-dom";
 
-const LogIn = () => {
+const LogInAdmin = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { actions, store } = useContext(Context); 
+    const { actions, store } = useContext(Context); // Obtener acciones y store del contexto
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await actions.logIn(name, email, password);
-        if (store.user) {
+        await actions.logInAdmin(name, email, password); // Llamar a la acción logIn
+        if (store.admin) {
             navigate("/");
     };
 };
     
 
     return (
-        <div className='container'>
-            <h1>Iniciar sesion User</h1>
+        <div className="container">
+            <h1>Iniciar sesion ADMINISTRADOR</h1>
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
@@ -36,6 +36,8 @@ const LogIn = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 /> <br />
+
+
                 <input
                     type="password"
                     placeholder="Contraseña"
@@ -50,4 +52,4 @@ const LogIn = () => {
     );
 };
 
-export default LogIn;
+export default LogInAdmin;
