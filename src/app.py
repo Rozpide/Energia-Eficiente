@@ -7,18 +7,22 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db
-from api.routes import api
+from api.routes import api 
+from flask_bcrypt import Bcrypt  
+from flask_jwt_extended import JWTManager
 from api.admin import setup_admin
 from api.commands import setup_commands
 
 # from models import Person
-
+app = Flask(__name__)
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
+bcrypt = Bcrypt(app)
+jwt = JWTManager(app)
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
