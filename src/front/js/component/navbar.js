@@ -26,7 +26,7 @@ export const Navbar = () => {
                             <Link to="/loginDoc" className="nav-link">DOCTOR</Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="/singUp" className="nav-link">Sign Up</Link>
+                            <Link to="/registroPacientes" className="nav-link">Registo Pacientes Nuevos</Link>
                         </li>
                         <li className="nav-item dropdown">
                             <a

@@ -8,7 +8,7 @@ import injectContext from "./store/appContext";
 import { Navbar } from "./component/navbar";
 
 import LogInDoc from "./pages/LogInDoc.jsx";
-import SingUp from "./pages/SingUp.jsx";
+import RegistroPacientes from "./pages/RegistroPacientes.jsx";
 
 import MedicinaGeneral from "./pages/MedicinaGeneral.jsx";
 import Pediatria from "./pages/Pediatria.jsx";
@@ -40,8 +40,7 @@ const Layout = () => {
 
                         <Route element={<LogIn />} path="/login" />
                         <Route element={<LogInDoc />} path="/logInDoc" />
-                        <Route element={<SingUp />} path="/singUp" />
-
+                        <Route element={<RegistroPacientes />} path = "/registroPacientes"/>
                         {/* Rutas para las especialidades médicas */}
                         <Route element={<MedicinaGeneral />} path="/medicina-general" />
                         <Route element={<Pediatria />} path="/pediatria" />

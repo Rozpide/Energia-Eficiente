@@ -1,48 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Context } from '../store/appContext'; // Asegúrate de importar el contexto de tu store
 
 function RegistroPacientes() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { actions, store } = useContext(Context); // Obtener acciones y store del contexto
+  const navigate = useNavigate(); // Hook para la navegación programática
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const paciente = { name, age, email };
-    console.log('Paciente registrado:', paciente);
-    // Añadir la API si es necesario
-    setName('');
-    setEmail('');
-    setPassword('');
+    await actions.RegistroPacientes(name, email, password); 
+    // Si la acción de registro actualiza store.user o alguna otra propiedad que indique éxito,
+    // redirige a la ruta deseada. Por ejemplo, a la página de inicio:
+    if (store.user) {
+      navigate("/");
+    }
   };
 
   return (
-    <div>
+    <div>ww
       <h2>Registro de Pacientes</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Nombre:</label>
           <input
             type="text"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
           />
         </div>
         <div>
-          <label>email:</label>
+          <label>Email:</label>
           <input
-            type="number"
-            value={edad}
-            onChange={(e) => setEdad(e.target.value)}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
         <div>
           <label>Password:</label>
           <input
-            type="text"
-            value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
