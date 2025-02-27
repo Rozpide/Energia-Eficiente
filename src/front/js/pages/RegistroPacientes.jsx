@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 
 function RegistroPacientes() {
-  const [nombre, setNombre] = useState('');
-  const [edad, setEdad] = useState('');
-  const [direccion, setDireccion] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const paciente = { name, age, email };
     console.log('Paciente registrado:', paciente);
     // Añadir la API si es necesario
-    setNombre('');
-    setEdad('');
-    setDireccion('');
+    setName('');
+    setEmail('');
+    setPassword('');
   };
 
   return (
@@ -29,7 +29,7 @@ function RegistroPacientes() {
           />
         </div>
         <div>
-          <label>Edad:</label>
+          <label>email:</label>
           <input
             type="number"
             value={edad}
@@ -38,7 +38,7 @@ function RegistroPacientes() {
           />
         </div>
         <div>
-          <label>Dirección:</label>
+          <label>Password:</label>
           <input
             type="text"
             value={direccion}
