@@ -1,26 +1,50 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
-import rigoImageUrl from "../../img/rigo-baby.jpg";
+import { Card } from "../component/card";
 import "../../styles/home.css";
 
 export const Home = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<div className="text-center mt-5">
-			<h1>Hello Rigo!!</h1>
-			<p>
-				<img src={rigoImageUrl} />
-			</p>
-			<div className="alert alert-info">
-				{store.message || "Loading message from the backend (make sure your python backend is running)..."}
+		
+		<div className="container m-0"> 
+			<div className="text-center"> {/* Centra la imagen */}
+				<img 
+					className="img-fluid" 
+					src="https://animalesde.net/wp-content/uploads/2016/12/los-animales-dom%C3%A9sticos.jpg" 
+					alt="Banner" 
+				/>
 			</div>
-			<p>
-				This boilerplate comes with lots of documentation:{" "}
-				<a href="https://start.4geeksacademy.com/starters/react-flask">
-					Read documentation
-				</a>
-			</p>
+			<div className="sección perros m-5">
+				<h3>Productos top para perros</h3>
+				<div className="row">
+					<Card className="col-md-3" />
+					<Card className="col-md-3" />
+					<Card className="col-md-3" />
+					<Card className="col-md-3" />
+				</div>
+			</div>
+
+			<div className="sección gatos m-5">
+				<h3>Productos top para gatos</h3>
+				<div className="row">
+					<Card className="col-md-3" />
+					<Card className="col-md-3" />
+					<Card className="col-md-3" />
+					<Card className="col-md-3" />
+				</div>
+			</div>
+
+			<div className="sección exóticos m-5">
+				<h3>Productos top para animales exóticos</h3>
+				<div className="row">
+					<Card className="col-md-3" />
+					<Card className="col-md-3" />
+					<Card className="col-md-3" />
+					<Card className="col-md-3" />
+				</div>
+			</div>
 		</div>
 	);
 };
