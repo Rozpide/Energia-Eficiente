@@ -10,10 +10,10 @@ class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(80),nullable=False)
-    first_name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    last_name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    birthdate: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
-    country: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    first_name: Mapped[str] = mapped_column(String(120),nullable=False)
+    last_name: Mapped[str] = mapped_column(String(120),nullable=False)
+    birthdate: Mapped[str] = mapped_column(String(80),nullable=False)
+    country: Mapped[str] = mapped_column(String(120),nullable=False)
     accounts: Mapped[List["Accounts"]] = relationship()
 
     def serialize(self):
@@ -32,9 +32,9 @@ class Accounts(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     name: Mapped[str] = mapped_column(String(80),nullable=False)
-    balance: Mapped[int] = mapped_column(unique=True, nullable=False)
-    coin: Mapped[int] = mapped_column(unique=True, nullable=False)
-    type: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    balance: Mapped[float] = mapped_column(nullable=False)
+    coin: Mapped[str] = mapped_column(nullable=False)
+    type: Mapped[str] = mapped_column(nullable=False)
     accounts: Mapped[List["Account_details"]] = relationship()
 
     def serialize(self):
@@ -52,11 +52,11 @@ class Account_details(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     accounts_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"))
     detail: Mapped[str] = mapped_column(String(80),nullable=False)
-    amount: Mapped[int] = mapped_column(unique=True, nullable=False)
-    coin: Mapped[int] = mapped_column(String(120), unique=True, nullable=False)
-    type: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
-    date: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
-    time: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    amount: Mapped[float] = mapped_column(nullable=False)
+    coin: Mapped[str] = mapped_column(String(120),nullable=False)
+    type: Mapped[str] = mapped_column(String(80),nullable=False)
+    date: Mapped[str] = mapped_column(String(80),nullable=False)
+    time: Mapped[str] = mapped_column(String(80),nullable=False)
     
     def serialize(self):
         return {
