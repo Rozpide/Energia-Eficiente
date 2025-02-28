@@ -77,6 +77,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					setStore({ user: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
 					localStorage.setItem('token', data.access_token);
+					console.log ("iniciosesion", data)
 				} catch (error) {
 					console.error('Error al iniciar sesión:', error);
 					setStore({ message: error.message });
@@ -87,11 +88,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			RegistroPacientes: async (name, email, password) => {
 				try {
 					const token = getStore().token;
-					if (!token) {
-						throw new Error('No hay token disponible');
-					}
+					// if (!token) {
+					// 	throw new Error('No hay token disponible');
+					// }
 
-					const response = await fetch('https://studious-acorn-v6qgwv9qg5vr269x-3001.app.github.dev/api/user', {
+					const response = await fetch('https://bug-free-space-enigma-97jjr6995455fq-3001.app.github.dev/api/user', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -99,7 +100,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify({ name, email, password }),
 					});
-
+					
 					if (!response.ok) {
 						let errorMessage = 'Error desconocido';
 						try {
@@ -107,12 +108,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 							errorMessage = errorData.error || errorData.message || 'Error en la solicitud';
 						} catch (err) {
 							errorMessage = 'Error al procesar la respuesta del servidor';
+							console.log('Datos del paciente:', data);
 						}
 						throw new Error(errorMessage);
 					}
 
 					const data = await response.json();
-					setStore({ message: 'Paciente registrado exitosamente' });
+					setStore({ user: { name, email, password }, token: data.access_token, message: 'Paciente registrado exitosamente' });
+					localStorage.setItem('token', data.access_token);
+					console.log ("usuariocreado", data)
 				} catch (error) {
 					console.error('Error al registrar paciente:', error);
 					setStore({ message: error.message });

@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, jsonify, url_for, Blueprint 
 from api.models import db, User, Doctor, Administrator, Appointment, Availability, Post
 from api.utils import generate_sitemap, APIException
-from flask_cors import CORS # type: ignore
+from flask_cors import CORS 
 from datetime import datetime  
 # from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt  
@@ -12,7 +12,7 @@ from datetime import timedelta
 app=Flask(__name__)
 api = Blueprint('api', __name__) 
 
-CORS(api) 
+CORS(app) 
 
 
 #Encriptacion JWT---- 
@@ -427,6 +427,99 @@ def create_availability():
 
 
      
+#Delete User 
 
+@api.route('delete_user/<int:user_id>', methods=['DELETE']) 
+def delete_user(user_id):
+    user=User.query.get(user_id) 
+    if user:  
+        db.session.delete(user)
+        db.session.commit() 
+        return jsonify('Usuario Borrado'),200 
+    return jsonify('no se encontro Usuario'),404 
+
+#Delete Doctor 
+
+@api.route('delete_doctor/<int:doctor_id>', methods=['DELETE']) 
+def delete_doctor(doctor_id):
+    doctor=Doctor.query.get(doctor_id) 
+    if doctor:  
+        
+        db.session.delete(doctor)
+        db.session.commit() 
+        return jsonify('Doctor Borrado'),200 
+    return jsonify('no se encontro Doctor'),404 
+
+
+#Delete Admin for Admin 
+
+@api.route('delete_admin/<int:admin_id>', methods=['DELETE']) 
+def delete_admin(admin_id):
+    admin=Administrator.query.get(admin_id) 
+    if admin: 
+        
+        db.session.delete(admin)
+        db.session.commit() 
+        return jsonify('Administrador Borrado'),200 
+    return jsonify('no se encontro el Administrador'),404
+   
+#PUT para User por Admin
+@api.route('edit_user/<int:user_id>', methods=['PUT']) 
+def edit_user(user_id): 
+    user=User.query.get(user_id) 
+    if not user: 
+        return jsonify ({'error':'Usuario no encontrado'}),400 
+    
+    data=request.json  
+   
+    if not isinstance(data, dict):  
+        return jsonify({"error": "Los datos deben ser un diccionario"}), 400
+    try:
+        User.query.filter_by(user_id=user_id).update(dict(data))
+        db.session.commit()
+        return jsonify({"message": "El usuario se actualizó correctamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+#PUT para Doctor por Admin
+
+@api.route('edit_doctor/<int:doctor_id>', methods=['PUT']) 
+def edit_doctor(doctor_id): 
+    doctor=Doctor.query.get(doctor_id) 
+    if not doctor: 
+        return jsonify ({'error':'Usuario no encontrado'}),400 
+    
+    data = request.json  
+
+    if not isinstance(data, dict):  
+        return jsonify({"error": "Los datos deben ser un diccionario"}), 400
+    try:
+        Doctor.query.filter_by(doctor_id=doctor_id).update(dict(data))
+        db.session.commit()
+        return jsonify({"message": "El usuario de doctor se actualizó correctamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+#PUT de Admin para Admin 
+@api.route('edit_admin/<int:admin_id>', methods=['PUT']) 
+def edit_admin(admin_id): 
+    admin=Administrator.query.get(admin_id) 
+    if not admin: 
+        return jsonify ({'error':'Usuario no encontrado'}),400 
+    
+    data = request.json  
+    
+    if not isinstance(data, dict):  
+        return jsonify({"error": "Los datos deben ser un diccionario"}), 400
+    try:
+        Administrator.query.filter_by(admin_id=admin_id).update(dict(data))
+        db.session.commit()
+        return jsonify({"message": "El usuario de Admin se actualizó correctamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 if __name__ == '__main__':
     app.run(debug=True)  
