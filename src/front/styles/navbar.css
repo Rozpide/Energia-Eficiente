@@ -6,10 +6,14 @@
     color: white;
     font-family: fantasy;
     font-size: 30px;
+    
 }
-.navbar-brand:hover {
-    color: white
-  }
+.navbar-brand:hover, 
+.navbar-brand:focus, 
+.navbar-brand:active {
+    color: white; 
+    text-decoration: none; 
+}
 
 .circle{
     color: rgb(233, 65, 65);

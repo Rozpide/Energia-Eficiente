@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
-import "../../styles/home.css";
+import "../../styles/registro.css";
 import Slider from "react-slick";
 
 export const Register = () => {
@@ -51,59 +51,59 @@ export const Register = () => {
 
   return (
     <div className="container py-3">
-          <div className="row">
-            <div className="col-md-6 col-sm-8">
-              <div className="card shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title1 text-center mb-4">Registrarse</h3>
-                  <form>
-                    <div className="label mb-4">
-                      <label htmlFor="inputEmail3" className="form-label">Email</label>
-                      <input type="email" className="form-control" id="inputEmail3" required />
-                    </div>
-                    <div className="label mb-4">
-                      <label htmlFor="inputPassword3" className="form-label">Contraseña</label>
-                      <input type="password" className="form-control" id="inputPassword3" required />
-                    </div>
-                    <div className="label mb-4">
-                      <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña</label>
-                      <input type="password" className="form-control" id="confirmPassword" required />
-                    </div>
-                    <div className="label mb-4">
-                      <label className="form-label" >Términos y Condiciones</label>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="acceptTerms"
-                          required
-                        />
-                        <label className="form-check-label" htmlFor="acceptTerms">
-                          Aceptar
-                        </label>
-                      </div>
-                    </div>
-                    <button type="submit" className="btn btn-danger w-100">
-                      Registrarse
-                    </button>
-                  </form>
+      <div className="row">
+        <div className="col-md-6 col-sm-8">
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <h3 className="card-title1 text-center mb-4">Registrarse</h3>
+              <form>
+                <div className="label mb-4">
+                  <label htmlFor="inputEmail3" className="form-label">Email</label>
+                  <input type="email" className="form-control" id="inputEmail3" required />
                 </div>
-              </div>
-            </div>
-            <div className="registro col-md-6 col-sm-4">
-              <div className="row">
-                <div className="col-md-4 ">
-                  <Carousel speed={3000} />
+                <div className="label mb-4">
+                  <label htmlFor="inputPassword3" className="form-label">Contraseña</label>
+                  <input type="password" className="form-control" id="inputPassword3" required />
                 </div>
-                <div className="col-md-4">
-                  <Carousel speed={4000} />
+                <div className="label mb-4">
+                  <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña</label>
+                  <input type="password" className="form-control" id="confirmPassword" required />
                 </div>
-                <div className="col-md-4">
-                  <Carousel speed={5000} />
+                <div className="label mb-4">
+                  <label className="form-label" >Términos y Condiciones</label>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="acceptTerms"
+                      required
+                    />
+                    <label className="form-check-label" htmlFor="acceptTerms">
+                      Aceptar
+                    </label>
+                  </div>
                 </div>
-              </div>
+                <button type="submit" className="btn btn-danger w-100">
+                  Registrarse
+                </button>
+              </form>
             </div>
           </div>
+        </div>
+        <div className="registro col-md-6 col-sm-4">
+          <div className="row">
+            <div className="col-md-4 ">
+              <Carousel speed={3000} />
+            </div>
+            <div className="col-md-4">
+              <Carousel speed={4000} />
+            </div>
+            <div className="col-md-4">
+              <Carousel speed={5000} />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
