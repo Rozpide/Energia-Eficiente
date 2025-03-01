@@ -19,8 +19,11 @@ export const Sidebar = () => {
         };
 
         try {
-            const response = await fetch("https://ubiquitous-parakeet-wqxj59w67w7h9p5j-3001.app.github.dev/api/user/2", requestOptions);
+            const response = await fetch(`${process.env.BACKEND_URL}/api/user/1`, requestOptions);
             const result = await response.json();
+            console.log(result);
+            
+            
             setUserName(result.result.first_name.toUpperCase())
             setLastUserName(result.result.last_name.toUpperCase())
         } catch (error) {
