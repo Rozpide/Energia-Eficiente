@@ -10,9 +10,10 @@ export const LoginForm = () => {
 
     async function handleSubmit(e) {
         e.preventDefault()
-        // actions.login(email, password);
+        actions.login(email, password);
         console.log(email);
         console.log(password);
+        navigate("/principal-page")
     }
 
     return (
