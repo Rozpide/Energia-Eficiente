@@ -2,7 +2,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: "",
-			user: null,
+			user: null, 
+			users:[], 
+			doctors:[],
 			token: localStorage.getItem('token') || null, 
 			doctor: null,
 			admin: null,
@@ -114,14 +116,77 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 					const data = await response.json();
-					setStore({ user: { name, email, password }, token: data.access_token, message: 'Paciente registrado exitosamente' });
+					setStore({ user: { name, email, password },users:[...getStore().users,{name,email,password}], token: data.access_token, message: 'Paciente registrado exitosamente' });
 					localStorage.setItem('token', data.access_token);
 					console.log ("usuariocreado", data)
 				} catch (error) {
 					console.error('Error al registrar paciente:', error);
 					setStore({ message: error.message });
 				}
-			},
+			}, 
+			deleteUser: async(idUser)=>{ 
+				try{  
+					const token= getStore().token
+					const response=await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/user/${idUser}`,{ 
+						method:'DELETE', 
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${token}`, 
+						}, 
+					}) 
+					if(!response.ok){  
+						const errorData=await response.json()
+						throw new Error(errorData.error || "no se elimino el Usuario correctamente")
+					}  
+					console.log("Usuario Eliminado Correctamente")
+					
+					const store= getStore(); 
+					if(Array.isArray(store.users)){ 
+						const updateUser=store.users.filter(user=>user.id !== idUser) 
+						setStore({users:updateUser})
+					} 
+					if(store.user && store.user.id === idUser){ 
+						localStorage.removeItem("token") 
+						setStore({user: null, token:null})
+					}
+				
+
+
+				}catch (error){ 
+					console.error("error al eliminar usuario") 	
+				} 
+
+			}, 
+			deleteDoctor: async(idDoctor)=>{ 
+				try{ 
+					const token= getStore().token  
+					const response = await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/doctors/${idDoctor}`,{ 
+						method:'DELETE', 
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${token}`, 
+						}, 
+					}) 
+					if(!response.ok){  
+						const errorData=await response.json()
+						throw new Error(errorData.error || "no se elimino el Doctor correctamente")
+					}  
+					const store=getStore();
+					console.log(" se Elimino el usuario del Doctor correctamente") 
+					if(Array.isArray(store.doctors)){ 
+						const updateDoctor= store.doctors.filter(doctor=>doctor.id !== idDoctor) 
+						setStore({doctors:updateDoctor})
+					} 
+					if(store.doctor && store.doctor.id === idDoctor ){ 
+						localStorage.removeItem("token") 
+						setStore({doctor:null,token:null})
+					}
+
+				}catch(error){ 
+					console.error("error al eliminar dooctor:", error) 
+
+				}
+			}
 		},
 	};
 };
