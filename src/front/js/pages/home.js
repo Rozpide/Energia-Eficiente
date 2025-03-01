@@ -20,7 +20,8 @@ export const Home = () => {
 			</div>
 			<Link to="/login">
 				<button classNameName="btn btn-primary btn-lg">Log In</button>
-			</Link>
+			</Link> 
+			
 
 
 		</div>

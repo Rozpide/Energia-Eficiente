@@ -127,7 +127,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			deleteUser: async(idUser)=>{ 
 				try{  
 					const token= getStore().token
-					const response=await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/user/${idUser}`,{ 
+					const response=await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/delete_user/${idUser}`,{ 
 						method:'DELETE', 
 						headers: {
 							'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			deleteDoctor: async(idDoctor)=>{ 
 				try{ 
 					const token= getStore().token  
-					const response = await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/doctors/${idDoctor}`,{ 
+					const response = await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/delete_doctor/${idDoctor}`,{ 
 						method:'DELETE', 
 						headers: {
 							'Content-Type': 'application/json',
@@ -186,7 +186,59 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("error al eliminar dooctor:", error) 
 
 				}
-			}
+			}, editUser: async(userBody, userid)=>{ 
+				try{  
+					const actions=getActions();  
+					const token=getStore().token 
+					const response= await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/edit_user/${userid}`,{ 
+						method:"PUT",  
+						body:JSON.stringify(userBody),
+						headers:{ 
+							'Content-Type':'application/json', 
+							'Authorization':`Bearer ${token}`,
+						}
+					})  
+					console.log(response)
+					if(!response.ok){  
+                          const errorData= await request.json() 
+						  throw new Error (errorData.error || "No se pudo editar el usuario")
+						 
+					}
+						console.log("El usuario se edito correctamente") 
+            			actions.logIn();
+						return true
+
+				}catch(error){ 
+					console.log("error al editar el usuario",error)
+				}
+			},
+			editDoctor: async(docBody, docid)=>{ 
+				try{  
+					const actions=getActions();  
+					const token=getStore().token 
+					const response= await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/edit_doctor/${docid}`,{ 
+						method:"PUT",  
+						body:JSON.stringify(docBody),
+						headers:{ 
+							'Content-Type':'application/json', 
+							'Authorization':`Bearer ${token}`,
+						}
+					})  
+					console.log(response)
+					if(!response.ok){  
+						const errorData= await response.json() 
+						throw new Error(errorData.error || "Error al editar usuario del Doctor")
+					}						 
+						console.log("El usuario de Doctor se edito correctamente") 
+
+						actions.logInDoc(); 
+						return true         
+
+				}catch(error){ 
+					console.log("error al editar el usuario de Doctor",error)
+				}
+			},
+
 		},
 	};
 };

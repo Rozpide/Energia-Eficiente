@@ -50,7 +50,9 @@ function RegistroPacientes() {
             required
           />
         </div>
-        <button type="submit">Registrar</button>
+        <button type="submit">Registrar</button>  
+        <button onClick={()=>navigate('/edituser')}></button>
+
       </form>
     </div>
   );

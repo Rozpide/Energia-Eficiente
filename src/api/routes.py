@@ -236,7 +236,7 @@ def show_doctors():
         return{"Error":"Token invalido"},401 
 
 
-@api.route('/administrators', methods=['POST'])
+@api.route('/administrators', methods=['GET'])
 def get_administrators():
     try:
         administrators = Administrator.query.all()

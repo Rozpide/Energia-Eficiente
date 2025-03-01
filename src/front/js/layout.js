@@ -24,6 +24,7 @@ import Endocrinologia from "./pages/Endocrinologia.jsx";
 
 
 import LogInAdmin from "./pages/LogInAdmin.jsx";
+import EditUser from "./pages/EditUser.jsx";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -40,7 +41,8 @@ const Layout = () => {
 
                         <Route element={<LogIn />} path="/login" />
                         <Route element={<LogInDoc />} path="/logInDoc" />
-                        <Route element={<RegistroPacientes />} path = "/registroPacientes"/>
+                        <Route element={<RegistroPacientes />} path = "/registroPacientes"/> 
+                        <Route element={<EditUser/>} path="/edituser"/>
                         {/* Rutas para las especialidades médicas */}
                         <Route element={<MedicinaGeneral />} path="/medicina-general" />
                         <Route element={<Pediatria />} path="/pediatria" />
@@ -52,7 +54,7 @@ const Layout = () => {
                         <Route element={<Oftalmologia />} path="/oftalmologia" />
                         <Route element={<Otorrinolaringologia />} path="/otorrinolaringologia" />
                         <Route element={<Endocrinologia />} path="/endocrinologia" />
-
+                        
                         <Route element={<h1>Not found!</h1>} path="*" />
 
                     </Routes>
