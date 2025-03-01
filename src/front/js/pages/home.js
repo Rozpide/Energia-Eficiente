@@ -1,148 +1,96 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
-import "../../styles/home.css";
+import { Link } from 'react-router-dom';
 import Slider from "react-slick";
+import "../../styles/home.css";
 
 export const Home = () => {
   const { store, actions } = useContext(Context);
 
-  const settings = {
-    dots: false,
+  const SimpleSlider_settings = {
+    dots: true,
     infinite: true,
     slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
-    speed: 3000,      // Aumentado de 1000 a 3000 para suavizar
-    autoplaySpeed: 1000,  // Cambiado de 1000 a 0 para eliminar pausas
+    speed: 2500,
+    autoplaySpeed: 2500,
     cssEase: "linear",
-    vertical: true,
-    verticalSwiping: true,
-    arrows: false,
-    pauseOnHover: false,
-    centerMode: true,   // Añadido para evitar esperas
-    //waitForAnimate: false //me hace un efecto raro de caida* 
+    arrows: false,    
   };
 
-  const Carousel = ({ speed = 3000 }) => (
-    <div className="row slider-container" style={{ overflow: "hidden" }}>
-      <Slider {...{ ...settings, speed }}>
-        <div className="py-2">
-          <img src="https://wallpapers.com/images/hd/retro-sunset-qp7s0kw6e7ckwimn.jpg" alt="image" className="slider-image" />
+  const Carousel2 = () => (
+    <div className="row slider-container2 pt-3" style={{ overflow: "hidden"}}>
+      <Slider className="sliderHome" {...SimpleSlider_settings}>
+        <div>
+          <img src="https://us.123rf.com/450wm/oneinchpunch/oneinchpunch2108/oneinchpunch210801177/173835077-hermosa-mujer-afroamericana-con-peinado-de-coletas-afro-y-ropa-elegante-retrato-de-una-joven-negra.jpg?ver=6" />
         </div>
-        <div className="py-2">
-          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgCEcfJmITBdHQQgMq-m7jMy0JPTNh_3CxcoTXwuH8gknUMfEi0gyNmoYD2-i8uLwvAmjOPJrMKDsBVqq7TGkkAJrvobhXsfV81rPDxLF3QScBdDMlRRYh9-6n2J8F8aaXh3tGn5Jsav0ed3GAOA6kKOzElmAKcrZpmBFy2tO0JkmVHkep131f90keUzw/w1600/4-k-pc-wallpaper-asian-street-retro-futuristic-style.webp" alt="image" className="slider-image" />
+        <div>
+          <img src="https://us.123rf.com/450wm/erstudiostok/erstudiostok2212/erstudiostok221200534/195969314-joven-escuchando-m%C3%BAsica-con-auriculares.jpg" />
         </div>
-        <div className="py-2">
-          <img src="https://img.freepik.com/vector-gratis/fondo-onda-retro-abstracto_36662-1288.jpg" alt="image" className="slider-image" />
+        <div>
+          <img src="https://us.123rf.com/450wm/melnyk58/melnyk582101/melnyk58210100984/162500029-baile-retrato-de-mujer-cauc%C3%A1sica-aislado-sobre-fondo-de-estudio-rosa-en-luz-de-ne%C3%B3n-mixta.jpg?ver=6" />
         </div>
-        <div className="py-2">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAiX16qbLMm4keLLrT_an-X_L-R5T8te9JRCZvO3BWiC-JQicKSbvs6ow0wcDnB7qt9GM&usqp=CAU" alt="image" className="slider-image" />
+        <div>
+          <img src="https://us.123rf.com/450wm/melnyk58/melnyk582303/melnyk58230301626/200642710-retrato-de-un-joven-con-camisa-blanca-escuchando-m%C3%BAsica-con-auriculares-y-tocando-la-guitarra.jpg?ver=6" />
         </div>
-        <div className="py-2">
-          <img src="https://c.stocksy.com/a/iMUL00/z9/5121616.jpg" alt="image" className="slider-image" />
+        <div>
+          <img src="https://us.123rf.com/450wm/melnyk58/melnyk581902/melnyk58190202563/117525980-mujer-bonita-feliz-con-auriculares-escuchando-m%C3%BAsica-sobre-fondo-de-ne%C3%B3n-rojo-en-el-estudio.jpg?ver=6" />
         </div>
-        <div className="py-2">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlMXZDO70saA0aHT6rAjrtA4AvDf8jKsyVkA&s" alt="image" className="slider-image" />
+        <div>
+          <img src="https://us.123rf.com/450wm/melnyk58/melnyk582106/melnyk58210602010/170983229-retrato-de-un-joven-cauc%C3%A1sico-con-auriculares-aislados-en-un-estudio-rojo-oscuro-con-luz-rosa-ne%C3%B3n.jpg?ver=6" />
         </div>
       </Slider>
     </div>
   );
 
-
   return (
     <div className="container py-3">
-      {
-        !localStorage.getItem("user") ?
-          <div className="row">
-            <div className="col-md-6 col-sm-8">
-              <div className="card shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title1 text-center mb-4">Registrarse</h3>
-                  <form>
-                    <div className="label mb-4">
-                      <label htmlFor="inputEmail3" className="form-label">Email</label>
-                      <input type="email" className="form-control" id="inputEmail3" required />
-                    </div>
-                    <div className="label mb-4">
-                      <label htmlFor="inputPassword3" className="form-label">Contraseña</label>
-                      <input type="password" className="form-control" id="inputPassword3" required />
-                    </div>
-                    <div className="label mb-4">
-                      <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña</label>
-                      <input type="password" className="form-control" id="confirmPassword" required />
-                    </div>
-                    <div className="label mb-4">
-                      <label className="form-label" >Términos y Condiciones</label>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="acceptTerms"
-                          required
-                        />
-                        <label className="form-check-label" htmlFor="acceptTerms">
-                          Aceptar
-                        </label>
-                      </div>
-                    </div>
-                    <button type="submit" className="btn btn-danger w-100">
-                      Registrarse
-                    </button>
-                  </form>
+      <div className="row box">
+        <div className="col-12 pb-3">
+          <Carousel2 />
+        </div>
+        <div className="grid-container">
+          {/* Introcard: ocupa 6 columnas a la izquierda */}
+          <div className="Introcard d-flex align-items-center justify-content-center col-6 col-md-6 col-sm-12 card-body bg-transparent p-4 border-0 text-center" style={{ height: "29rem" }}>
+            <p className="introWeb pt-2">¡BIENVENIDO A VINILOS NOSTÁLGICOS, EL PORTAL DONDE LA MAGIA DEL PASADO SE ENCUENTRA CON LA MÚSICA QUE NUNCA MUERE!</p>
+          </div>
+          <div className="col-12 col-md-6"> {/* Introcard: ocupa 6 columnas a la derecha */}
+            <div className="row">              
+              <div className="col-6 col-md-6 col-sm-12">                
+              <Link to="/infoAlbum" style={{ textDecoration: 'none' }}>
+                <div className="sesenta card-body d-flex align-items-center justify-content-center" style={{ height: "14rem", width: "17rem" }}>
+                <p>60's</p>
                 </div>
+                </Link>
               </div>
-            </div>
-            <div className="registro col-md-6 col-sm-4">
+              <div className="col-6 col-md-6 col-sm-12">                
+              <Link to="/infoAlbum" style={{ textDecoration: 'none' }}>
+                <div className="setenta card-body d-flex align-items-center justify-content-center" style={{ height: "14rem", width: "17rem" }}>
+                <p>70's</p>
+                </div>
+                </Link>
+              </div>
+              </div>
               <div className="row">
-                <div className="col-md-4 ">
-                  <Carousel speed={3000} />
+              <div className="col-6 col-md-6 col-sm-12">
+              <Link to="/infoAlbum" style={{ textDecoration: 'none' }}>
+                <div className="ochenta card-body d-flex align-items-center justify-content-center" style={{ height: "14rem", width: "17rem" }}>
+                 <p>80's</p>
                 </div>
-                <div className="col-md-4">
-                  <Carousel speed={4000} />
+                </Link>
+              </div>             
+              <div className="col-6 col-md-6 col-sm-12">
+              <Link to="/infoAlbum" style={{ textDecoration: 'none' }}>
+                <div className="noventa card-body d-flex align-items-center justify-content-center" style={{ height: "14rem", width: "17rem" }}>
+                <p>90's</p>
                 </div>
-                <div className="col-md-4">
-                  <Carousel speed={5000} />
-                </div>
+                </Link>
               </div>
             </div>
           </div>
-          :
-          <div className="row">
-            <div className="col-md-6 col-sm-8">
-              <div className="card shadow-sm">
-                <div className="card-body">
-                  <h3 className="card-title2 text-center mt-2 mb-5">Iniciar Sesión</h3>
-                  <form>
-                    <div className="label mb-5">
-                      <label htmlFor="inputEmail3" className="form-label">Email</label>
-                      <input type="email" className="form-control" id="inputEmail3" required />
-                    </div>
-                    <div className="label mb-5">
-                      <label htmlFor="inputPassword3" className="form-label">Contraseña</label>
-                      <input type="password" className="form-control" id="inputPassword3" required />
-                    </div>
-                    <button type="submit" className="btn btn-danger mt-3 mb-5 w-100">
-                      Inciar Sesión
-                    </button>
-                    <h6 className="registrarse text-white text-center"> ¿No tienes una cuenta? Registrate</h6>
-                  </form>
-                </div>
-              </div>
-            </div>
-            <div className="registro col-md-6 col-sm-4">
-              <div className="row">
-                <div className="col-md-4 ">
-                  <Carousel speed={3000} />
-                </div>
-                <div className="col-md-4">
-                  <Carousel speed={4000} />
-                </div>
-                <div className="col-md-4">
-                  <Carousel speed={5000} />
-                </div>
-              </div>
-            </div>
-          </div>}
+        </div>
+      </div>
     </div>
   );
 };

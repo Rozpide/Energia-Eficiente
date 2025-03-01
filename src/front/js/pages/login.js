@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
-import "../../styles/home.css";
+import "../../styles/registro.css";
 import Slider from "react-slick";
 
 export const Login = () => {
