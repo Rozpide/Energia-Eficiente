@@ -4,10 +4,6 @@ from flask_admin import Admin
 from .models import db, User, Notes, Habits, Goals, Projects
 from flask_admin.contrib.sqla import ModelView
 
-# class FavsPlanetsView(ModelView):
-#     column_list = ('users_id', 'planets_id')
-#     form_columns = ('users_id', 'planets_id')
-
 def setup_admin(app):
     app.secret_key = os.environ.get('FLASK_APP_KEY', 'sample key')
     app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
