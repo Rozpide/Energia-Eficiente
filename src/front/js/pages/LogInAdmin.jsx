@@ -1,17 +1,17 @@
 import React, { useState, useContext } from 'react';
-import { Context } from '../store/appContext'; // Asegúrate de importar el contexto de tu store
+import { Context } from '../store/appContext'; 
 import { Link, useNavigate } from "react-router-dom";
 
 const LogInAdmin = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { actions, store } = useContext(Context); // Obtener acciones y store del contexto
+    const { actions, store } = useContext(Context); 
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await actions.logInAdmin(name, email, password); // Llamar a la acción logIn
+        await actions.logInAdmin(name, email, password); 
         if (store.admin) {
             navigate("/");
     };
