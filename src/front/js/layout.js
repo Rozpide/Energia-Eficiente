@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
+import { Decada } from "./views/Decada";
 import { InfoAlbum } from "./views/InfoAlbum";
 import { Demo } from "./pages/demo";
 import { Login } from "./pages/login";
@@ -29,6 +30,7 @@ const Layout = () => {
                 <ScrollToTop>
                     <Navbar />
                     <Routes>
+                        <Route element={<Decada />} path="/decadas" />
                         <Route element={<Home />} path="/" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Register />} path="/register" />
