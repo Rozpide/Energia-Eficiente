@@ -10,8 +10,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 			// login de admin funcionando!
 			logInAdmin: async (name, email, password) => {
+				const baseURL = process.env.REACT_APP_BASE_URL;
 				try {
-					const response = await fetch('https://psychic-garbanzo-5gx45qjx45wj24wg-3001.app.github.dev/api/logIn/admin', {
+					const response = await fetch(`${baseURL}/logIn/admin`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -36,15 +37,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			// login de doctores funcionando
 			logInDoc: async (name, email, password) => {
+				const baseURL = process.env.REACT_APP_BASE_URL;
 				try {
-					const response = await fetch('https://psychic-garbanzo-5gx45qjx45wj24wg-3001.app.github.dev/api/logIn/doctor', {
+					const response = await fetch(`${baseURL}/logIn/doctor`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
 						},
 						body: JSON.stringify({ name, email, password }),
+						
 					});
-			
 					if (!response.ok) {
 						const errorData = await response.json();
 						throw new Error(errorData.error || 'Error en el inicio de sesión');
@@ -61,8 +63,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			// login de usuario
 			logIn: async (name, email, password) => {
+				const baseURL = process.env.REACT_APP_BASE_URL;
+				console.log("ESTA ES LA BASE URL", baseURL)
 				try {
-					const response = await fetch('https://psychic-garbanzo-5gx45qjx45wj24wg-3001.app.github.dev/api/logIn', {
+					const response = await fetch(`${baseURL}/logIn`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -88,10 +92,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// revisar el password
 			// Registro de pacientes
 			RegistroPacientes: async (name, email, password) => {
+				const baseURL = process.env.REACT_APP_BASE_URL;
 				try {
 					const token = getStore().token;
 
-					const response = await fetch('https://psychic-garbanzo-5gx45qjx45wj24wg-3001.app.github.dev/api/user', {
+					const response = await fetch(`${baseURL}/user`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -121,12 +126,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: error.message });
 				}
 			},
-
+			// agregar doctores esta funcionando
 			AddDoctor: async (name, email, specialty, password) => {
+				const baseURL = process.env.REACT_APP_BASE_URL;
 				try {
 					const token = getStore().token;
 
-					const response = await fetch('https://psychic-garbanzo-5gx45qjx45wj24wg-3001.app.github.dev/api/doctors', {
+					const response = await fetch(`${baseURL}/doctors`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
