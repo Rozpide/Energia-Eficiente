@@ -14,7 +14,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			logged: false
+			logged: false,
+			user:""
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -83,6 +84,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				};
 			},
+			// getPrivate: async () => {
+			// 	let token = localStorage.getItem("token")
+			// 	try {
+			// 		const response = await fetch("https://stunning-memory-pvgpw5wpvq6244-3001.app.github.dev/api/private", {
+			// 			method: "GET",
+			// 			headers: {
+			// 				"Authorization": `Bearer ${token}`
+			// 			},
+			// 		});
+			// 		const result = await response.json();
+			// 		setStore({ user: result.logged_in_as })
+
+			// 	} catch (error) {
+			// 		console.error(error);
+			// 	};
+			// },
+			// verifyToken: async () => {
+			// 	let token = localStorage.getItem("token")
+			// 	try {
+			// 		const response = await fetch("https://stunning-memory-pvgpw5wpvq6244-3001.app.github.dev/api/verify-token", {
+			// 			method: "GET",
+			// 			headers: {
+			// 				"Authorization": `Bearer ${token}`
+			// 			},
+			// 		});
+			// 		const result = await response.json();
+			// 		setStore({ auth: result.valid })
+			// 	} catch (error) {
+			// 		console.error(error);
+			// 	};
+			// },
 		}
 	};
 };
