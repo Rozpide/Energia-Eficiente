@@ -6,6 +6,8 @@ from api.models import db, User, Accounts
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required,verify_jwt_in_request
+from flask_jwt_extended.exceptions import NoAuthorizationError
+
 
 api = Blueprint('api', __name__)
 CORS(api)
@@ -27,11 +29,10 @@ def get_users():
     
     if result == []:
         return jsonify({"msg":"Usuario no encontrado"}), 404
-
+    
     response_body = {
         "results": result
     }
-
     return jsonify(response_body), 200
 
 @api.route('/user/<int:user_id>', methods=['GET'])
@@ -51,20 +52,18 @@ def login():
         user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
         if password != user.password:
             return jsonify({"msg": "Bad email or password"}), 401
-        # access_token = create_access_token(identity=email)
-        return jsonify({"msg": "Succesfull access"})
+        access_token = create_access_token(identity=email)
+        return jsonify(access_token=access_token)
     except:
         return jsonify({"msg": "this user does not exist"}), 404
     
-
-#endponts sidebar
-# @api.route('/user/<int:user_id>/account', methods=['POST'])
-# def post_account(user_id):
-#         request_body = request.json
-#         print(request_body)
-#         post_account = user_id.add_acount(request_body)
-#         return jsonify(request_body), 200
-
+@api.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
+    
 @api.route('/<int:user_id>/new-account', methods=['POST'])
 def post_account(user_id):
     try:
@@ -86,20 +85,6 @@ def post_account(user_id):
         return jsonify({"msg":"Error", "error": str(e)}), 500
         
 
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
 @api.route('/accounts', methods=['GET'])
 def get_accounts():
 
@@ -115,37 +100,11 @@ def get_accounts():
 
     return jsonify(response_body), 200
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#espacio de laura ->
+@api.route("/verify-token", methods=["GET"])
+def verify_token():
+    try:
+        verify_jwt_in_request()  # Verifica la validez del token
+        identity = get_jwt_identity()  # Obtiene el usuario del token
+        return jsonify({"valid": True, "user": identity}), 200
+    except NoAuthorizationError:
+        return jsonify({"valid": False, "message": "Token inválido o no proporcionado"}), 401
