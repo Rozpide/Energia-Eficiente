@@ -12,10 +12,10 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(80))
     is_active: Mapped[bool]
-    note: Mapped["Notes"] = relationship(back_populates="user")
-    habit: Mapped["Habits"] = relationship(back_populates="user")
-    goal: Mapped["Goals"] = relationship(back_populates="user")
-    project: Mapped["Projects"] = relationship(back_populates="user")
+    notes: Mapped["Notes"] = relationship(back_populates="user")
+    habits: Mapped["Habits"] = relationship(back_populates="user")
+    goals: Mapped["Goals"] = relationship(back_populates="user")
+    projects: Mapped["Projects"] = relationship(back_populates="user")
 
     def serialize(self):
         
@@ -34,7 +34,8 @@ class Notes(db.Model):
     description: Mapped[str] = mapped_column(String(2000), nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="notes")
-    project: Mapped["Projects"] = relationship(back_populates="notes")
+    projects_id: Mapped[int] = mapped_column(ForeignKey("projects.id"))
+    projects: Mapped["Projects"] = relationship(back_populates="notes")
 
     def serialize(self):
         
@@ -53,8 +54,8 @@ class Habits(db.Model):
     ready: Mapped[bool]
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="habits")
-    goal: Mapped["Goals"] = relationship(back_populates="habits")
-    project: Mapped["Projects"] = relationship(back_populates="habits")
+    goals_id: Mapped[int] = mapped_column(ForeignKey("goals.id"))
+    goals: Mapped["Goals"] = relationship(back_populates="habits")
 
     def serialize(self):
         
@@ -70,18 +71,20 @@ class Goals(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     target: Mapped[str] = mapped_column(String(500), nullable=False)
+    description: Mapped[str] = mapped_column(String(1000), nullable=False)
     ready: Mapped[bool]
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="goals")
-    habits_id: Mapped[int] = mapped_column(ForeignKey("habits.id"))
+    projects_id: Mapped[int] = mapped_column(ForeignKey("projects.id"))
+    projects: Mapped["Projects"] = relationship(back_populates="goals")
     habits: Mapped["Habits"] = relationship(back_populates="goals")
-    project: Mapped["Projects"] = relationship(back_populates="goals")
-
     def serialize(self):
         
         return {
             "id": self.id,
-            "target": self.target
+            "target": self.target,
+            "description": self.description,
+            "ready": self.ready
         }
 
 class Projects(db.Model):
@@ -92,11 +95,7 @@ class Projects(db.Model):
     description: Mapped[str] = mapped_column(String(1500), nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="projects")
-    notes_id: Mapped[int] = mapped_column(ForeignKey("notes.id"))
     notes: Mapped["Notes"] = relationship(back_populates="projects")
-    habits_id: Mapped[int] = mapped_column(ForeignKey("habits.id"))
-    habits: Mapped["Habits"] = relationship(back_populates="projects")
-    goals_id: Mapped[int] = mapped_column(ForeignKey("goals.id"))
     goals: Mapped["Goals"] = relationship(back_populates="projects")
 
     def serialize(self):
