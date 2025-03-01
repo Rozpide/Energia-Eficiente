@@ -1,0 +1,11 @@
+.bg-genre{
+    height: 180px;
+    border-radius: 15px;
+    color: white;
+    background: rgb(0, 0, 0, 0.671);
+    align-items: center;
+}
+
+.img-genre{
+    padding-top: 7px;
+}
