@@ -13,7 +13,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			logged: false,
+			user:""
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -46,7 +48,73 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
-			}
+			},
+			login: async (email, password) => {
+				const myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+
+				const raw = JSON.stringify({
+					"email": email,
+					"password": password
+				});
+
+				const requestOptions = {
+					method: "POST",
+					headers: myHeaders,
+					body: raw,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch("https://musical-space-disco-9vqj5g5jpv92p7xp-3001.app.github.dev/api/login", requestOptions);
+					const result = await response.json();
+					if (response.status === 200) {
+						// localStorage.setItem("token", result.access_token)
+						// getActions().verifyToken()
+						// getActions().getPrivate()
+						setStore({ logged: true })
+						console.log("hola mundo");
+						
+					} else if (response.status === 404 || response.status === 401) {
+						setStore({ logged: false })
+						console.log("adios mundo");
+					}
+				} catch (error) {
+					console.error(error);
+					return false;
+				};
+			},
+			// getPrivate: async () => {
+			// 	let token = localStorage.getItem("token")
+			// 	try {
+			// 		const response = await fetch("https://stunning-memory-pvgpw5wpvq6244-3001.app.github.dev/api/private", {
+			// 			method: "GET",
+			// 			headers: {
+			// 				"Authorization": `Bearer ${token}`
+			// 			},
+			// 		});
+			// 		const result = await response.json();
+			// 		setStore({ user: result.logged_in_as })
+
+			// 	} catch (error) {
+			// 		console.error(error);
+			// 	};
+			// },
+			// verifyToken: async () => {
+			// 	let token = localStorage.getItem("token")
+			// 	try {
+			// 		const response = await fetch("https://stunning-memory-pvgpw5wpvq6244-3001.app.github.dev/api/verify-token", {
+			// 			method: "GET",
+			// 			headers: {
+			// 				"Authorization": `Bearer ${token}`
+			// 			},
+			// 		});
+			// 		const result = await response.json();
+			// 		setStore({ auth: result.valid })
+			// 	} catch (error) {
+			// 		console.error(error);
+			// 	};
+			// },
 		}
 	};
 };

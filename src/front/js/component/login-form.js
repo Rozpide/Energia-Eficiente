@@ -10,10 +10,15 @@ export const LoginForm = () => {
 
     async function handleSubmit(e) {
         e.preventDefault()
-        // actions.login(email, password);
-        console.log(email);
-        console.log(password);
+        actions.login(email, password);
     }
+    useEffect(() => {
+        if (!store.logged) {
+            navigate("/")
+        } else {
+            navigate("/cuentas")
+        }
+    }, [store.logged])
 
     return (
         <form onSubmit={handleSubmit} className="mx-auto w-50">
