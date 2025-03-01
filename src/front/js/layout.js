@@ -2,14 +2,20 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
-import LogIn from "./pages/LogIn.jsx";
+
+// pages
+
 import { Home } from "./pages/home";
 import injectContext from "./store/appContext";
 import { Navbar } from "./component/navbar";
-
+import LogInAdmin from "./pages/LogInAdmin.jsx";
+import LogIn from "./pages/LogIn.jsx";
 import LogInDoc from "./pages/LogInDoc.jsx";
-import RegistroPacientes from "./pages/RegistroPacientes.jsx";
+import AddDoctor from "./pages/AddDoctor.jsx";
+import RegistroPacientes from "./pages/RegistroPacientes.jsx"
 
+
+// vistas de especialidades
 import MedicinaGeneral from "./pages/MedicinaGeneral.jsx";
 import Pediatria from "./pages/Pediatria.jsx";
 import Ginecologia from "./pages/Ginecologia.jsx";
@@ -23,7 +29,7 @@ import Endocrinologia from "./pages/Endocrinologia.jsx";
 
 
 
-import LogInAdmin from "./pages/LogInAdmin.jsx";
+
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -39,8 +45,12 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
 
                         <Route element={<LogIn />} path="/login" />
+                        <Route element={<AddDoctor />} path="/addDoctor" />
                         <Route element={<LogInDoc />} path="/logInDoc" />
                         <Route element={<RegistroPacientes />} path = "/registroPacientes"/>
+                        <Route element={<LogInAdmin />} path="/logInAdmin" />
+
+
                         {/* Rutas para las especialidades médicas */}
                         <Route element={<MedicinaGeneral />} path="/medicina-general" />
                         <Route element={<Pediatria />} path="/pediatria" />

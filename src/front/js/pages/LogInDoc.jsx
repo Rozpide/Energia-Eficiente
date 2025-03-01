@@ -14,9 +14,9 @@ const LogInDoc = () => {
         await actions.logInDoc(name, email, password); // Llamar a la acción logIn
         if (store.doctor) {
             navigate("/");
+        };
     };
-};
-    
+
 
     return (
         <div className="container">
@@ -46,7 +46,7 @@ const LogInDoc = () => {
                     required
                 /> <br />
                 <button className='btn btn-primary mt-3' type="submit">Iniciar Sesión</button>
-                {store.message && <p>{store.message}</p>}
+                {/* {store.message && <p>{store.message}</p>} */}
             </form>
         </div>
     );
