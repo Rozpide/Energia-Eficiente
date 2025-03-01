@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import { Context } from "../store/appContext.js";
 import { Carousel } from "../component/carousel.js";
 import '../../styles/Sixty.css'
+import '../../styles/carousel.css'
 
 export const Decada = () => {
     const { store, actions } = useContext(Context)
