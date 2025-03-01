@@ -53,7 +53,7 @@ export function Carousel() {
     };
     // relacionado para qu carge la imagen corrspondiente con el useParams <store.{decada}.rock.cover> o realizarun map de un img y ponerle un rango al map de 0-10(length) y asi crearia 10 divs de img
     return (
-      <div className="slider-container">
+      <div className="slider-container-decadas">
         <Slider {...settings} className="bg-genre d-flex">
           <div className="img-genre">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Disco_de_Vinilo.jpg" className="img-thumbnail rounded-3 p-1" style={{ height: '150px', width: '150px' }} alt="..."/>

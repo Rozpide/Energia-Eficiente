@@ -58,14 +58,14 @@ export const Home = () => {
           <div className="col-12 col-md-6"> {/* Introcard: ocupa 6 columnas a la derecha */}
             <div className="row">              
               <div className="col-6 col-md-6 col-sm-12">                
-              <Link to="/infoAlbum" style={{ textDecoration: 'none' }}>
+              <Link to="/decadas" style={{ textDecoration: 'none' }}>
                 <div className="sesenta card-body d-flex align-items-center justify-content-center" style={{ height: "14rem", width: "17rem" }}>
                 <p>60's</p>
                 </div>
                 </Link>
               </div>
               <div className="col-6 col-md-6 col-sm-12">                
-              <Link to="/infoAlbum" style={{ textDecoration: 'none' }}>
+              <Link to="/decadas" style={{ textDecoration: 'none' }}>
                 <div className="setenta card-body d-flex align-items-center justify-content-center" style={{ height: "14rem", width: "17rem" }}>
                 <p>70's</p>
                 </div>
@@ -74,14 +74,14 @@ export const Home = () => {
               </div>
               <div className="row">
               <div className="col-6 col-md-6 col-sm-12">
-              <Link to="/infoAlbum" style={{ textDecoration: 'none' }}>
+              <Link to="/decadas" style={{ textDecoration: 'none' }}>
                 <div className="ochenta card-body d-flex align-items-center justify-content-center" style={{ height: "14rem", width: "17rem" }}>
                  <p>80's</p>
                 </div>
                 </Link>
               </div>             
               <div className="col-6 col-md-6 col-sm-12">
-              <Link to="/infoAlbum" style={{ textDecoration: 'none' }}>
+              <Link to="/decadas" style={{ textDecoration: 'none' }}>
                 <div className="noventa card-body d-flex align-items-center justify-content-center" style={{ height: "14rem", width: "17rem" }}>
                 <p>90's</p>
                 </div>
