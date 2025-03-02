@@ -14,6 +14,7 @@ class User(db.Model):
     confirm_password = db.Column(db.String(50), unique=False, nullable=False)
     username = db.Column(db.String(50), unique=True, nullable=False)
     birthday_date = db.Column(db.String(15), unique=True, nullable=False)
+    address = db.Column(db.String(50), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
     is_admin = db.Column(db.Boolean(), unique=False, nullable=False)
     cart = db.relationship('Cart', backref= 'user')
