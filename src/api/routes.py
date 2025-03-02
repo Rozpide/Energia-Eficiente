@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from models import Smartphones
+from .models import Smartphones
 import json
 
 api = Blueprint('api', __name__)
@@ -21,7 +21,7 @@ def post_phones():
         return jsonify({"msg": "This phone already exist in your list"}), 400
     
     colores_str = json.dumps(data.get('colores', []))
-   
+    
     images_str = json.dumps(data.get('imagenes', {}))
 
     new_phone = Smartphones(
@@ -41,4 +41,3 @@ def post_phones():
     db.session.add(new_phone)
     db.session.commit()
     return jsonify({"msg": "Phone added"}), 200
-
