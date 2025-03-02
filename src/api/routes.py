@@ -20,9 +20,9 @@ def post_phones():
     if exist:
         return jsonify({"msg": "This phone already exist in your list"}), 400
     
-    colores_str = json.dumps(data.get('colores', []))
+    colores_str = data.get('colores', [])
     
-    images_str = json.dumps(data.get('imagenes', {}))
+    images_str = data.get('imagenes', {})
 
     new_phone = Smartphones(
         modelo = data['nombre'],
