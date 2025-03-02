@@ -46,5 +46,4 @@ def post_phones():
 @api.route('/phones', methods=['GET'])
 def get_phones():
     phones = Smartphones.query.all()
-
     return jsonify([smartphones.serialize() for smartphones in phones]), 200
