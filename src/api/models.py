@@ -76,7 +76,7 @@ class Smartphones(db.Model):
     conectividad = db.Column(db.String(150), unique=False, nullable=False)
     colores = db.Column(db.String(75), unique=False, nullable=False)
     descripcion = db.Column(db.String(300), unique=False, nullable=False)
-    #imagen = db.Column(db.String(500), unique=False, nullable=False)
+    imagen = db.Column(db.JSON, unique=False,)
     
 
     def __repr__(self):
@@ -96,7 +96,7 @@ class Smartphones(db.Model):
             "conectividad" : self.conectividad,
             "colores" : self.colores,
             "descripcion" : self.descripcion,
-            #"imagen" : self.imagen,
+            "imagen" : self.imagen,
         }
 
 class TVs(db.Model):
