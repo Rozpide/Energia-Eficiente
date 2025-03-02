@@ -1,3 +1,44 @@
 /* 
     General Styles used on every website (Don't Repeat Yourself)
 */
+
+
+.backnavbar{
+    background-color: #EEEEEE;
+}
+
+.backbutton{
+    background-color: #78A0AF;
+    opacity: 1;
+}
+
+.textcolors{
+    color: #78A0AF;
+}
+
+.bordernav{
+    color: blue;
+    opacity: 1;
+}
+
+.margintop{
+    margin-top: -4px;
+}
+
+.marginloginright{
+    margin-right: 255px;
+}
+
+.marginlogintop{
+    
+    margin-top: 115px;
+}
+
+.bordercolor
+    {
+        border-color: #78A0AF;
+    }
+
+.marginresetleft{
+    margin-left: 85px;
+}
