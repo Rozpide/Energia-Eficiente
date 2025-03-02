@@ -28,33 +28,41 @@ export const Login = () => {
     <div className="row slider-container" style={{ overflow: "hidden" }}>
       <Slider {...{ ...settings, speed }}>
         <div className="py-2">
-          <img src="https://wallpapers.com/images/hd/retro-sunset-qp7s0kw6e7ckwimn.jpg" alt="image" className="slider-image" />
+          <img src="https://revistafervordebahiablanca.wordpress.com/wp-content/uploads/2015/09/the-dark-side-of-the-moon.jpg" alt="image" className="slider-image" />
         </div>
         <div className="py-2">
-          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgCEcfJmITBdHQQgMq-m7jMy0JPTNh_3CxcoTXwuH8gknUMfEi0gyNmoYD2-i8uLwvAmjOPJrMKDsBVqq7TGkkAJrvobhXsfV81rPDxLF3QScBdDMlRRYh9-6n2J8F8aaXh3tGn5Jsav0ed3GAOA6kKOzElmAKcrZpmBFy2tO0JkmVHkep131f90keUzw/w1600/4-k-pc-wallpaper-asian-street-retro-futuristic-style.webp" alt="image" className="slider-image" />
+          <img src="https://www.efeeme.com/wp-content/uploads/2016/08/velvet-underground-03-08-16-k.jpg" alt="image" className="slider-image" />
         </div>
         <div className="py-2">
-          <img src="https://img.freepik.com/vector-gratis/fondo-onda-retro-abstracto_36662-1288.jpg" alt="image" className="slider-image" />
+          <img src="https://revistafervordebahiablanca.wordpress.com/wp-content/uploads/2015/09/animals-pink-floyd.jpg" alt="image" className="slider-image" />
         </div>
         <div className="py-2">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAiX16qbLMm4keLLrT_an-X_L-R5T8te9JRCZvO3BWiC-JQicKSbvs6ow0wcDnB7qt9GM&usqp=CAU" alt="image" className="slider-image" />
+          <img src="https://revistafervordebahiablanca.wordpress.com/wp-content/uploads/2015/09/led-zeppelin-led-zeppelin.jpg" alt="image" className="slider-image" />
         </div>
         <div className="py-2">
-          <img src="https://c.stocksy.com/a/iMUL00/z9/5121616.jpg" alt="image" className="slider-image" />
+          <img src="https://revistafervordebahiablanca.wordpress.com/wp-content/uploads/2015/09/abbey-road-the-beatles.jpg" alt="image" className="slider-image" />
+        </div>        
+        <div className="py-2">
+          <img src="https://revistafervordebahiablanca.wordpress.com/wp-content/uploads/2015/09/aladin-sane-david-bowie.jpg" alt="image" className="slider-image" />
         </div>
         <div className="py-2">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlMXZDO70saA0aHT6rAjrtA4AvDf8jKsyVkA&s" alt="image" className="slider-image" />
+          <img src="https://revistafervordebahiablanca.wordpress.com/wp-content/uploads/2015/09/atom-heart-mother-pink-floyd.jpg" alt="image" className="slider-image" />
+        </div>
+        <div className="py-2">
+          <img src="https://revistafervordebahiablanca.wordpress.com/wp-content/uploads/2015/09/nevermind-nirvana.jpg" alt="image" className="slider-image" />
+        </div>
+        <div className="py-2">
+          <img src="https://revistafervordebahiablanca.wordpress.com/wp-content/uploads/2015/09/ziggy-stardust-david-bowie.jpg" alt="image" className="slider-image" />
         </div>
       </Slider>
     </div>
   );
 
-
   return (
     <div className="container py-3">
           <div className="row">
             <div className="col-md-6 col-sm-8">
-              <div className="card shadow-sm">
+              <div className="cardshadow card">
                 <div className="card-body">
                   <h3 className="card-title2 text-center mt-2 mb-5">Iniciar Sesión</h3>
                   <form>
