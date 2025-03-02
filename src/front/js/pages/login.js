@@ -29,7 +29,7 @@ export const Login = () => {
           <div>
             <h2 className="text-center mb-4">Bienvenido</h2>
             <button
-              className="btn btn-primary w-100 mb-3"
+              className="btn btn-danger boton w-100 mb-3"
               onClick={() => {
                 setShowLogin(true);
                 setShowRegister(false);
