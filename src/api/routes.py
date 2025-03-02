@@ -20,8 +20,9 @@ def post_phones():
     if exist:
         return jsonify({"msg": "This phone already exist in your list"}), 400
     
-    colores = data.get('colores', [])    
-    images = data.get('imagenes', {})
+    colores_str = json.dumps(data.get('colores', []))
+    
+    images_str = json.dumps(data.get('imagenes', {}))
 
     new_phone = Smartphones(
         modelo = data['nombre'],
@@ -33,9 +34,9 @@ def post_phones():
         bateria = data['bateria'],
         precio = data['precio'],
         conectividad = data['conectividad'],
-        colores = colores,
+        colores = colores_str,
         descripcion = data['descripcion'],
-        imagen = images
+        imagen = images_str
     )
     db.session.add(new_phone)
     db.session.commit()
