@@ -84,7 +84,7 @@ class Smartphones(db.Model):
 
     def serialize(self):
         return {
-            "smartphone_id": self.smarpthone_id,
+            "smartphone_id": self.smartphone_id,
             "modelo": self.modelo,
             "pantalla" : self.pantalla,
             "procesador" : self.procesador,
