@@ -44,6 +44,7 @@ class Cart(db.Model):
     model = db.Column(db.String(150), unique=False, nullable=False)
     price = db.Column(db.String(25), unique=False, nullable=False)
     smartphones = db.relationship('Smartphones', backref= 'cart')
+    smartphones_id = db.Column(db.Integer, db.ForeignKey('smartphones.smartphone_id'))
     tvs = db.relationship('TVs', backref= 'cart')
     laptops = db.relationship('Laptops', backref= 'cart')
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
@@ -75,8 +76,8 @@ class Smartphones(db.Model):
     conectividad = db.Column(db.String(150), unique=False, nullable=False)
     colores = db.Column(db.String(75), unique=False, nullable=False)
     descripcion = db.Column(db.String(300), unique=False, nullable=False)
-    imagen = db.Column(db.String(500), unique=False, nullable=False)
-    cart_id = db.Column(db.Integer, db.ForeignKey('cart.cart_id'))
+    #imagen = db.Column(db.String(500), unique=False, nullable=False)
+    
 
     def __repr__(self):
         return f'<Smartphones {self.modelo, self.precio}>'
@@ -95,7 +96,7 @@ class Smartphones(db.Model):
             "conectividad" : self.conectividad,
             "colores" : self.colores,
             "descripcion" : self.descripcion,
-            "imagen" : self.imagen,
+            #"imagen" : self.imagen,
         }
 
 class TVs(db.Model):
