@@ -1,4 +1,4 @@
-  import os
+import os
 from flask_admin import Admin
 from .models import db, User, Smartphones
 from flask_admin.contrib.sqla import ModelView

@@ -6,6 +6,7 @@ from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from models import Smartphones, TVs, Laptops
+import json
 
 api = Blueprint('api', __name__)
 
