@@ -11,7 +11,6 @@ export const LoginForm = () => {
 
     async function handleSubmit(e) {
         e.preventDefault()
-        actions.login(email, password);
         await actions.login(email, password)
         if (!store.logged) {
             setInvalidAccount(true)
