@@ -41,3 +41,10 @@ def post_phones():
     db.session.add(new_phone)
     db.session.commit()
     return jsonify({"msg": "Phone added"}), 200
+
+
+@api.route('/phones', methods=['GET'])
+def get_phones():
+    phones = Smartphones.query.all()
+
+    return jsonify([smartphones.serialize() for smartphones in phones]), 200
