@@ -15,32 +15,12 @@ CORS(api)
 @api.route('/phones', methods=['POST'])
 def post_phones():
     data = request.get_json()
-    exist = Smartphones.query.filter_by(modelo=data['modelo']).first()
+    exist = Smartphones.query.filter_by(modelo=data['nombre']).first()
     if exist:
         return jsonify({"msg": "This phone already exist in your list"}), 400
-    new_phone = Smartphones(
-        modelo = data['nombre'],
-        pantalla = data['pantalla'],
-        procesador = data['procesador'],
-        memoria_ram = data['memoria_ram'],
-        almacenamiento = data['almacenamiento'],
-        camara = data['camara'],
-        bateria = data['bateria'],
-        precio = data['precio'],
-        conectividad = data['conectividad'],
-        colores = data['colores'],
-        descripcion = data['descripcion'],
-    )
-    db.session.add(new_phone)
-    db.session.commit()
-    return jsonify({"msg": "Phone added"}), 200
+    
+    colores_str = json.dumps(data.get('colores', []))
 
-@api.route('/tv', methods=['POST'])
-def post_phones():
-    data = request.get_json()
-    exist = TVs.query.filter_by(modelo=data['modelo']).first()
-    if exist:
-        return jsonify({"msg": "This phone already exist in your list"}), 400
     new_phone = Smartphones(
         modelo = data['nombre'],
         pantalla = data['pantalla'],
@@ -51,30 +31,7 @@ def post_phones():
         bateria = data['bateria'],
         precio = data['precio'],
         conectividad = data['conectividad'],
-        colores = data['colores'],
-        descripcion = data['descripcion'],
-    )
-    db.session.add(new_phone)
-    db.session.commit()
-    return jsonify({"msg": "Phone added"}), 200
-
-@api.route('/laptops', methods=['POST'])
-def post_phones():
-    data = request.get_json()
-    exist = Smartphones.query.filter_by(modelo=data['modelo']).first()
-    if exist:
-        return jsonify({"msg": "This phone already exist in your list"}), 400
-    new_phone = Smartphones(
-        modelo = data['nombre'],
-        pantalla = data['pantalla'],
-        procesador = data['procesador'],
-        memoria_ram = data['memoria_ram'],
-        almacenamiento = data['almacenamiento'],
-        camara = data['camara'],
-        bateria = data['bateria'],
-        precio = data['precio'],
-        conectividad = data['conectividad'],
-        colores = data['colores'],
+        colores = colores_str,
         descripcion = data['descripcion'],
     )
     db.session.add(new_phone)
