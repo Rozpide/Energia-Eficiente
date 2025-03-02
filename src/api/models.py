@@ -11,7 +11,6 @@ class User(db.Model):
     lastname = db.Column(db.String(75), unique=False, nullable=False)
     email = db.Column(db.String(75), unique=True, nullable=False)
     password = db.Column(db.String(50), unique=False, nullable=False)
-    confirm_password = db.Column(db.String(50), unique=False, nullable=False)
     username = db.Column(db.String(50), unique=True, nullable=False)
     birthday_date = db.Column(db.String(15), unique=True, nullable=False)
     address = db.Column(db.String(50), unique=False, nullable=False)
@@ -29,7 +28,6 @@ class User(db.Model):
             "lastname": self.lastname,
             "email": self.email,
             "password": self.password,
-            "confirm_password": self.confirm_password,
             "username": self.username,
             "birthday_date": self.birthday_date,
             "is_active": self.is_active,
