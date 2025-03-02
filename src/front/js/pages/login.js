@@ -54,7 +54,7 @@ export const Login = () => {
     <div className="container py-3">
           <div className="row">
             <div className="col-md-6 col-sm-8">
-              <div className="card shadow-sm login">
+              <div className="card shadow-sm">
                 <div className="card-body">
                   <h3 className="card-title2 text-center mt-2 mb-5">Iniciar Sesión</h3>
                   <form>
