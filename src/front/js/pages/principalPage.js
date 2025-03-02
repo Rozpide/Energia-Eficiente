@@ -15,7 +15,7 @@ export const PrincipalPage = () => {
                         <Card />
                         <Card />
                         <Card />
-                    </div>
+                    </div>  
                 </div>
             </div>
         </div>

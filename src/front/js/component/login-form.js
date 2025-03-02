@@ -3,6 +3,7 @@ import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 
 export const LoginForm = () => {
+    const [invalidAccount, setInvalidAccount] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const { store, actions } = useContext(Context)
@@ -11,12 +12,19 @@ export const LoginForm = () => {
     async function handleSubmit(e) {
         e.preventDefault()
         actions.login(email, password);
+        await actions.login(email, password)
+        if (!store.logged) {
+            setInvalidAccount(true)
+        } else {
+            setInvalidAccount(false)
+        }
     }
     useEffect(() => {
-        if (!store.logged) {
-            navigate("/")
-        } else {
-            navigate("/cuentas")
+        if (store.logged) {
+            navigate("/cuentas");
+        }
+        if (invalidAccount) {
+            setInvalidAccount(false)
         }
     }, [store.logged])
 
@@ -25,7 +33,8 @@ export const LoginForm = () => {
             <div className="mb-3">
                 <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
                 <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={(e) => setEmail(e.target.value)} value={email} />
-                <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
+                {!invalidAccount ? <div id="emailHelp" className="form-text">Nunca compartiremos su correo electrónico con nadie más.</div>
+                    : <div id="emailHelp" className="form-text invalidAccount">Correo o Contraseña errada</div>}
             </div>
             <div className="mb-3">
                 <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
