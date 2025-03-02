@@ -124,6 +124,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: error.message });
 				}
 			}, 
+			
 			deleteUser: async(idUser)=>{ 
 				try{  
 					const token= getStore().token
@@ -157,6 +158,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} 
 
 			}, 
+			
 			deleteDoctor: async(idDoctor)=>{ 
 				try{ 
 					const token= getStore().token  
@@ -186,7 +188,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("error al eliminar dooctor:", error) 
 
 				}
-			}, editUser: async(userBody, userid)=>{ 
+			},  
+			
+			editUser: async(userBody, userid)=>{ 
 				try{  
 					const actions=getActions();  
 					const token=getStore().token 
@@ -212,6 +216,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("error al editar el usuario",error)
 				}
 			},
+			
 			editDoctor: async(docBody, docid)=>{ 
 				try{  
 					const actions=getActions();  
