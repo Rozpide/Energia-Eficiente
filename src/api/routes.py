@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from .models import Smartphones, TVs
+from .models import Smartphones, TVs ,Laptops
 import json
 
 api = Blueprint('api', __name__)
@@ -20,8 +20,9 @@ def post_phones():
     if exist:
         return jsonify({"msg": "This phone already exist in your list"}), 400
     
-    colores = data.get('colores', [])    
-    images = data.get('imagenes', {})
+    colores_str = json.dumps(data.get('colores', []))
+    
+    images_str = json.dumps(data.get('imagenes', {}))
 
     new_phone = Smartphones(
         modelo = data['nombre'],
@@ -33,9 +34,9 @@ def post_phones():
         bateria = data['bateria'],
         precio = data['precio'],
         conectividad = data['conectividad'],
-        colores = colores,
+        colores = colores_str,
         descripcion = data['descripcion'],
-        imagen = images
+        imagen = images_str
     )
     db.session.add(new_phone)
     db.session.commit()
@@ -83,3 +84,39 @@ def get_tvs():
     tvs = TVs.query.all()
 
     return jsonify([TVs.serialize() for TVs in tvs]), 200
+
+@api.route('/laptops', methods=['POST'])
+def post_laptops():
+    data = request.get_json()
+    exist = Laptops.query.filter_by(modelo=data['modelo']).first()
+    if exist:
+        return jsonify({"msg": "This laptop already exist in your list"}), 400
+    
+    colores_str = json.dumps(data.get('colores', []))
+    
+    images_str = json.dumps(data.get('imagenes', {}))
+
+    new_laptop = Laptops(
+        marca = data['marca'],
+        modelo = data['modelo'],
+        pantalla = data['pantalla'],
+        procesador = data['procesador'],
+        modelo_cpu = data['modelo_cpu'],
+        sistema_operativo = data['sistema_operativo'],
+        memoria_ram = data['memoria_ram'],
+        almacenamiento = data['almacenamiento'],
+        camara = data['camara'],
+        bateria = data['bateria'],
+        precio = data['precio'],
+        colores = colores_str,
+        imagen = images_str
+    )
+    db.session.add(new_laptop)
+    db.session.commit()
+    return jsonify({"msg": "TV added"}), 200
+
+@api.route('/laptops', methods=['GET'])
+def get_laptop():
+    laptops = Laptops.query.all()
+
+    return jsonify([Laptops.serialize() for Laptops in laptops]), 200
