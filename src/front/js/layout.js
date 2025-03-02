@@ -13,7 +13,7 @@ import LogIn from "./pages/LogIn.jsx";
 import LogInDoc from "./pages/LogInDoc.jsx";
 import AddDoctor from "./pages/AddDoctor.jsx";
 import RegistroPacientes from "./pages/RegistroPacientes.jsx"
-
+import EditUser from "./pages/EditUser.jsx";
 
 // vistas de especialidades
 import MedicinaGeneral from "./pages/MedicinaGeneral.jsx";
@@ -26,7 +26,6 @@ import Neurologia from "./pages/Neurologia.jsx";
 import Oftalmologia from "./pages/Oftalmologia.jsx";
 import Otorrinolaringologia from "./pages/Otorrinolaringologia.jsx";
 import Endocrinologia from "./pages/Endocrinologia.jsx";
-
 
 
 
@@ -47,8 +46,13 @@ const Layout = () => {
                         <Route element={<LogIn />} path="/login" />
                         <Route element={<AddDoctor />} path="/addDoctor" />
                         <Route element={<LogInDoc />} path="/logInDoc" />
-                        <Route element={<RegistroPacientes />} path = "/registroPacientes"/>
                         <Route element={<LogInAdmin />} path="/logInAdmin" />
+                        <Route element={<RegistroPacientes />} path = "/registroPacientes"/> 
+                        <Route element={<EditUser/>} path="/edituser"/>
+
+                        
+                        
+
 
 
                         {/* Rutas para las especialidades médicas */}
@@ -62,7 +66,7 @@ const Layout = () => {
                         <Route element={<Oftalmologia />} path="/oftalmologia" />
                         <Route element={<Otorrinolaringologia />} path="/otorrinolaringologia" />
                         <Route element={<Endocrinologia />} path="/endocrinologia" />
-
+                        
                         <Route element={<h1>Not found!</h1>} path="*" />
 
                     </Routes>

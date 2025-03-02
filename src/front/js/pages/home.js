@@ -24,6 +24,7 @@ export const Home = () => {
 				<button className="btn btn-primary btn-lg">Log In</button>
 			</Link>
 
+
 		<p> <LogInAdmin /> </p>
 
 		<p> < AddDoctor /> </p>
