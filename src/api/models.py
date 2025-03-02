@@ -73,7 +73,7 @@ class Smartphones(db.Model):
     bateria = db.Column(db.String(150), unique=False, nullable=False)
     precio = db.Column(db.String(50), unique=False, nullable=False)
     conectividad = db.Column(db.String(150), unique=False, nullable=False)
-    colores = db.Column(db.String(75), unique=False, nullable=False)
+    colores = db.Column(db.JSON, unique=False, nullable=False)
     descripcion = db.Column(db.String(300), unique=False, nullable=False)
     imagen = db.Column(db.JSON, unique=False,)
     
@@ -114,7 +114,7 @@ class TVs(db.Model):
     pantalla = db.Column(db.String(150), unique=False, nullable=False)
     conectividad = db.Column(db.String(150), unique=False, nullable=False)
     medidas = db.Column(db.String(50), unique=False, nullable=False)
-    imagen = db.Column(db.String(500), unique=False, nullable=False)
+    imagen = db.Column(db.JSON, unique=False, nullable=False)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.cart_id'))
 
     def __repr__(self):
@@ -154,9 +154,9 @@ class Laptops(db.Model):
     bateria = db.Column(db.String(150), unique=False, nullable=False)
     precio = db.Column(db.String(50), unique=False, nullable=False)
     tecnologia = db.Column(db.String(150), unique=False, nullable=False)
-    colores = db.Column(db.String(50), unique=False, nullable=False)
+    colores = db.Column(db.JSON, unique=False, nullable=False)
     descripcion = db.Column(db.String(300), unique=False, nullable=False)
-    imagen = db.Column(db.String(500), unique=False, nullable=False)
+    imagen = db.Column(db.JSON, unique=False, nullable=False)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.cart_id'))
 
     def __repr__(self):
