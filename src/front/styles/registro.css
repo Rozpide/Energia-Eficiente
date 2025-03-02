@@ -13,8 +13,9 @@
     color: white;
 }
 
-.card{
+.cardshadow{
     background-color: black;
+    box-shadow: rgba(64, 64, 192, 0.2) 0px 7px 29px 0px;
 }
 
 .slider-container {
@@ -29,5 +30,3 @@
     object-fit: cover;  /* Ajusta las imágenes sin distorsionarlas */
   }
 
-
-  

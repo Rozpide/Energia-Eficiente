@@ -2,6 +2,7 @@
     background: rgb(0, 0, 0, 0.671);
     padding: 5px;        
     overflow: hidden;
+    box-shadow: rgba(64, 64, 192, 0.2) 0px 7px 29px 0px;
 }
 
 .slick-slide {
@@ -26,6 +27,7 @@
     font-size: medium;
     font-size: 2rem;    
     overflow: hidden;
+    
 }
   
 .sesenta{    
@@ -36,6 +38,7 @@
     margin-left: -5px;
     font-family: fantasy;
     font-size: 4rem;    
+    box-shadow: rgba(56, 70, 190, 0.15) 0px 5px 15px 0px;
 }
 
 .sesenta:hover {
@@ -52,6 +55,7 @@
     margin-left: -9px;
     font-family: fantasy;
     font-size: 4rem;
+    box-shadow: rgba(56, 70, 190, 0.15) 0px 5px 15px 0px;
 }
 
 .setenta:hover {
@@ -69,7 +73,8 @@
     margin-left: -5px;
     font-family: fantasy;
     font-size: 4rem; 
-    transition: background-color 0.3s ease;   
+    transition: background-color 0.3s ease;  
+    box-shadow: rgba(56, 70, 190, 0.15) 0px 5px 15px 0px; 
 }
 .ochenta:hover {
     background-color: #0a6885; 
@@ -84,6 +89,7 @@
     font-family: fantasy;
     font-size: 4rem;
     margin-left: -9px;
+    box-shadow: rgba(56, 70, 190, 0.15) 0px 5px 15px 0px;
 }
 
 .noventa:hover {
