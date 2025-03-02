@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/registro.css";
 import Slider from "react-slick";
+import { Link } from "react-router-dom";
 
 export const Login = () => {
   const { store, actions } = useContext(Context);
@@ -65,10 +66,12 @@ export const Login = () => {
                       <label htmlFor="inputPassword3" className="form-label">Contraseña</label>
                       <input type="password" className="form-control" id="inputPassword3" required />
                     </div>
-                    <button type="submit" className="btn btn-danger mt-5 mb-5 w-100">
+                    <button type="submit" className="btn btn-danger mt-3 mb-5 w-100">
                       Inciar Sesión
                     </button>
+                    <Link to="/register" style={{ textDecoration: 'none' }}>
                     <h6 className="registrarse text-white text-center"> ¿No tienes una cuenta? Registrate</h6>
+                    </Link>
                   </form>
                 </div>
               </div>
