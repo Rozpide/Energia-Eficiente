@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/registro.css";
 import Slider from "react-slick";
+import { Link } from "react-router-dom";
 
 export const Login = () => {
   const { store, actions } = useContext(Context);
@@ -53,7 +54,7 @@ export const Login = () => {
     <div className="container py-3">
           <div className="row">
             <div className="col-md-6 col-sm-8">
-              <div className="card shadow-sm">
+              <div className="card shadow-sm login">
                 <div className="card-body">
                   <h3 className="card-title2 text-center mt-2 mb-5">Iniciar Sesión</h3>
                   <form>
@@ -65,10 +66,12 @@ export const Login = () => {
                       <label htmlFor="inputPassword3" className="form-label">Contraseña</label>
                       <input type="password" className="form-control" id="inputPassword3" required />
                     </div>
-                    <button type="submit" className="btn btn-danger mt-5 mb-5 w-100">
+                    <button type="submit" className="btn btn-danger mt-3 mb-5 w-100">
                       Inciar Sesión
                     </button>
+                    <Link to="/register" style={{ textDecoration: 'none' }}>
                     <h6 className="registrarse text-white text-center"> ¿No tienes una cuenta? Registrate</h6>
+                    </Link>
                   </form>
                 </div>
               </div>
