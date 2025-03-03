@@ -24,7 +24,7 @@ export const Sidebar = () => {
         };
 
         try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/user/1`, requestOptions);
+            const response = await fetch(`${process.env.BACKEND_URL}/api/user/2`, requestOptions);
             const result = await response.json();
             setUserName(result.result.first_name.toUpperCase())
             setLastUserName(result.result.last_name.toUpperCase())
