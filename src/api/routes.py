@@ -56,7 +56,7 @@ def post_tvs():
     if exist:
         return jsonify({"msg": "This TV already exist in your list"}), 400
         
-    images = data.get('imagenes', {})
+    images = data.get('imagenes', [])
 
     new_tv = TVs(
         marca = data['marca'],
