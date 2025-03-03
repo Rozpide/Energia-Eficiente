@@ -55,10 +55,8 @@ def post_tvs():
     exist = TVs.query.filter_by(modelo=data['modelo']).first()
     if exist:
         return jsonify({"msg": "This TV already exist in your list"}), 400
-    
-    colores_str = json.dumps(data.get('colores', []))
-    
-    images_str = json.dumps(data.get('imagenes', {}))
+        
+    images = data.get('imagenes', {})
 
     new_tv = TVs(
         marca = data['marca'],
@@ -72,8 +70,7 @@ def post_tvs():
         pantalla = data['pantalla'],
         conectividad = data['conectividad'],
         medidas = data['medidas'],
-        colores = colores_str,
-        imagen = images_str
+        imagen = images
     )
     db.session.add(new_tv)
     db.session.commit()
