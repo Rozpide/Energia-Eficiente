@@ -1,4 +1,4 @@
-import React, { useEffect, useContext,useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import "/src/front/styles/sidebar.css";
@@ -8,10 +8,10 @@ export const Sidebar = () => {
     const [userName, setUserName] = useState("")
     const [userLastName, setLastUserName] = useState("")
     const { store, actions } = useContext(Context)
-    
-	const handleClick = () => {
-		actions.logout()
-	}
+
+    const handleClick = () => {
+        actions.logout()
+    }
 
     async function getUser() {
         const myHeaders = new Headers();
@@ -26,9 +26,6 @@ export const Sidebar = () => {
         try {
             const response = await fetch(`${process.env.BACKEND_URL}/api/user/1`, requestOptions);
             const result = await response.json();
-            console.log(result);
-            
-            
             setUserName(result.result.first_name.toUpperCase())
             setLastUserName(result.result.last_name.toUpperCase())
         } catch (error) {
