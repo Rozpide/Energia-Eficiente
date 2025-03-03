@@ -45,6 +45,7 @@ class Cart(db.Model):
     cart_id = db.Column(db.Integer, primary_key=True)
     model = db.Column(db.String(150), unique=False, nullable=False)
     price = db.Column(db.String(25), unique=False, nullable=False)
+    monto = db.Column(db.String(35), unique=False, nullable=False)
     smartphones = db.relationship('Smartphones', backref= 'cart')
     smartphones_id = db.Column(db.Integer, db.ForeignKey('smartphones.smartphone_id'))
     tvs = db.relationship('TVs', backref= 'cart')
