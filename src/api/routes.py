@@ -107,3 +107,17 @@ def get_one_account_to_one_user(user_id):
         
     except Exception as e:
         return jsonify({"msg":"Error", "error": str(e)}), 500
+    
+# endpoints
+# registro usuario
+@api.route("/signup", methods=["POST"])
+def signup():
+    body = request.json
+    # para manejo de errores poner exactamente el nombre del front igual en los campos entre parentesis (esperar a que se haga el front)
+    if not body or not body.get("email") or not body.get("password") or not body.get("lastname")or not body.get("firstname")or not body.get("birthday")or not body.get("country"):
+        return jsonify({"msg": "missing fields"}), 400
+    # encajar con los nombres del front estos (solo los que estan entre comillas)
+    new_user = User(email = body["email"],password= body["password"],last_name= body["lastname"],first_name= body["firstname"],birthday= body["birthday"],country= body["country"])
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({"msg": "user created"}), 201
