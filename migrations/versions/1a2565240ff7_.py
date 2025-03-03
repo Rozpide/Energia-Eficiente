@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 07bb2fc0392c
+Revision ID: 1a2565240ff7
 Revises: 
-Create Date: 2025-03-02 11:42:40.864126
+Create Date: 2025-03-03 08:59:52.362596
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '07bb2fc0392c'
+revision = '1a2565240ff7'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -54,6 +54,7 @@ def upgrade():
     sa.Column('cart_id', sa.Integer(), nullable=False),
     sa.Column('model', sa.String(length=150), nullable=False),
     sa.Column('price', sa.String(length=25), nullable=False),
+    sa.Column('monto', sa.String(length=35), nullable=False),
     sa.Column('smartphones_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['smartphones_id'], ['smartphones.smartphone_id'], ),
@@ -74,9 +75,9 @@ def upgrade():
     sa.Column('bateria', sa.String(length=150), nullable=False),
     sa.Column('precio', sa.String(length=50), nullable=False),
     sa.Column('tecnologia', sa.String(length=150), nullable=False),
-    sa.Column('colores', sa.String(length=50), nullable=False),
+    sa.Column('colores', sa.JSON(), nullable=False),
     sa.Column('descripcion', sa.String(length=300), nullable=False),
-    sa.Column('imagen', sa.String(length=500), nullable=False),
+    sa.Column('imagen', sa.JSON(), nullable=False),
     sa.Column('cart_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['cart_id'], ['cart.cart_id'], ),
     sa.PrimaryKeyConstraint('laptop_id')
@@ -94,7 +95,7 @@ def upgrade():
     sa.Column('pantalla', sa.String(length=150), nullable=False),
     sa.Column('conectividad', sa.String(length=150), nullable=False),
     sa.Column('medidas', sa.String(length=50), nullable=False),
-    sa.Column('imagen', sa.String(length=500), nullable=False),
+    sa.Column('imagen', sa.JSON(), nullable=False),
     sa.Column('cart_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['cart_id'], ['cart.cart_id'], ),
     sa.PrimaryKeyConstraint('tv_id')

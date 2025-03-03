@@ -13,7 +13,7 @@ class User(db.Model):
     lastname = db.Column(db.String(75), unique=False, nullable=False)
     email = db.Column(db.String(75), unique=True, nullable=False)
     password = db.Column(db.String(50), unique=False, nullable=False)
-    confirm_password = db.Column(db.String(50), unique=False, nullable=False)
+    address = db.Column(db.String(50), unique=False, nullable=False)
     username = db.Column(db.String(50), unique=True, nullable=False)
     birthday_date = db.Column(db.String(15), unique=True, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
