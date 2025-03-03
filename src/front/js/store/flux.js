@@ -2,7 +2,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: "",
-
+            users:[], 
+			doctors:[],
 			user: null, 
 			token: localStorage.getItem('token') || null, 
 			doctor: null,
@@ -13,7 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			logInAdmin: async (name, email, password) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
 				try {
-					const response = await fetch(`${baseURL}/logIn/admin`, {
+					const response = await fetch(`${baseURL}api/logIn/admin`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -40,7 +41,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			logInDoc: async (name, email, password) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
 				try {
-					const response = await fetch(`${baseURL}/logIn/doctor`, {
+					const response = await fetch(`${baseURL}api/logIn/doctor`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -67,7 +68,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
 				console.log("ESTA ES LA BASE URL", baseURL)
 				try {
-					const response = await fetch(`${baseURL}/logIn`, {
+					const response = await fetch(`${baseURL}api/logIn`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const token = getStore().token;
 
-					const response = await fetch(`${baseURL}/user`, {
+					const response = await fetch(`${baseURL}api/user`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -129,9 +130,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			}, 
 			
 			deleteUser: async(idUser)=>{ 
+				const baseURL = process.env.REACT_APP_BASE_URL;
+
 				try{  
 					const token= getStore().token
-					const response=await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/delete_user/${idUser}`,{ 
+					const response=await fetch(`${baseURL}api/${idUser}`,{ 
 						method:'DELETE', 
 						headers: {
 							'Content-Type': 'application/json',
@@ -146,8 +149,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					
 					const store= getStore(); 
 					if(Array.isArray(store.users)){ 
-						const updateUser=store.user.filter(user=>user.id !== idUser) 
-						setStore({user:updateUser})
+					
+						setStore({user:[...store.users.filter(user =>user.id !==idUser)]})
 					} 
 					if(store.user && store.user.id === idUser){ 
 						localStorage.removeItem("token") 
@@ -163,9 +166,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			}, 
 			
 			deleteDoctor: async(idDoctor)=>{ 
+				const baseURL = process.env.REACT_APP_BASE_URL;
+
 				try{ 
 					const token= getStore().token  
-					const response = await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/delete_doctor/${idDoctor}`,{ 
+					const response = await fetch(`${baseURL}api/${idDoctor}`,{ 
 						method:'DELETE', 
 						headers: {
 							'Content-Type': 'application/json',
@@ -179,10 +184,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const store=getStore();
 					console.log(" se Elimino el usuario del Doctor correctamente") 
 					if(Array.isArray(store.doctors)){ 
-						const updateDoctor= store.doctor.filter(doctor=>doctor.id !== idDoctor) 
-						setStore({doctor:updateDoctor})
+						
+						setStore({doctors:[...store.doctors.filter(doctor=> doctor.id !== idDoctor)]})
 					} 
-					if(store.doctor && store.doctor.id === idDoctor ){ 
+					if(store.doctor && store.doctors.id === idDoctor ){ 
 						localStorage.removeItem("token") 
 						setStore({doctor:null,token:null})
 					}
@@ -194,10 +199,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},  
 			
 			editUser: async(userBody, userid)=>{ 
+				const baseURL = process.env.REACT_APP_BASE_URL;
+
 				try{  
 					const actions=getActions();  
 					const token=getStore().token 
-					const response= await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/edit_user/${userid}`,{ 
+					const response= await fetch(`${baseURL}api/${userid}`,{ 
 						method:"PUT",  
 						body:JSON.stringify(userBody),
 						headers:{ 
@@ -222,10 +229,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			
 			editDoctor: async(docBody, docid)=>{ 
+				const baseURL = process.env.REACT_APP_BASE_URL;
+
 				try{  
 					const actions=getActions();  
 					const token=getStore().token 
-					const response= await fetch(`https://psychic-xylophone-6949wqj5prjpcr7g4-3001.app.github.dev/api/edit_doctor/${docid}`,{ 
+					const response= await fetch(`${baseURL}api/${docid}`,{ 
 						method:"PUT",  
 						body:JSON.stringify(docBody),
 						headers:{ 
@@ -255,7 +264,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const token = getStore().token;
 
-					const response = await fetch(`${baseURL}/doctors`, {
+					const response = await fetch(`${baseURL}api/doctors`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',

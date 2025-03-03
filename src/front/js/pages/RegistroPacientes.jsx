@@ -20,7 +20,7 @@ function RegistroPacientes() {
   };
 
   return (
-    <div>ww
+    <div>
       <h2>Registro de Pacientes</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -51,7 +51,6 @@ function RegistroPacientes() {
           />
         </div>
         <button type="submit">Registrar</button>  
-        <button onClick={()=>navigate('/edituser')}></button>
 
       </form>
     </div>

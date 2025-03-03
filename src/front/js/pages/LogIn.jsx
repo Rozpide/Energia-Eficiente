@@ -15,13 +15,18 @@ const LogIn = () => {
         if (store.user) {
             navigate("/");
     };
-};
+}; 
+
+
+    const userProfile=()=>{ 
+        navigate('/edituser')
+    }
     
 
     return (
         <div className='container'>
             <h1>Iniciar sesion User</h1>
-            <form onSubmit={handleSubmit}>
+            {/* <form onSubmit={handleSubmit}> */}
                 <input
                     type="text"
                     placeholder="Nombre"
@@ -43,9 +48,9 @@ const LogIn = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 /> <br />
-                <button className='btn btn-primary mt-3' type="submit">Iniciar Sesión</button>
-                {store.message && <p>{store.message}</p>}
-            </form>
+                <button onClick={userProfile} className='btn btn-primary mt-3' type="submit">Iniciar Sesión</button>
+                {/* {store.message && <p>{store.message}</p>} */}
+            {/* </form> */}
         </div>
     );
 };
