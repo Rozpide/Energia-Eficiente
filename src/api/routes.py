@@ -7,8 +7,11 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required,verify_jwt_in_request
 from flask_jwt_extended.exceptions import NoAuthorizationError
+from flask_bcrypt import Bcrypt
 
 api = Blueprint('api', __name__)
+bcrypt = Bcrypt()
+
 CORS(api)
 # @api.route('/hello', methods=['POST', 'GET'])
 # def handle_hello():
@@ -114,10 +117,11 @@ def get_one_account_to_one_user(user_id):
 def signup():
     body = request.json
     # para manejo de errores poner exactamente el nombre del front igual en los campos entre parentesis (esperar a que se haga el front)
-    if not body or not body.get("email") or not body.get("password") or not body.get("lastname")or not body.get("firstname")or not body.get("birthday")or not body.get("country"):
+    if not body or not body.get("email") or not body.get("password") or not body.get("last_name")or not body.get("first_name")or not body.get("birthdate")or not body.get("country"):
         return jsonify({"msg": "missing fields"}), 400
+    hashe_password = bcrypt.generate_password_hash(body["password"])
     # encajar con los nombres del front estos (solo los que estan entre comillas)
-    new_user = User(email = body["email"],password= body["password"],last_name= body["lastname"],first_name= body["firstname"],birthday= body["birthday"],country= body["country"])
+    new_user = User(email = body["email"],password=hashe_password, last_name= body["last_name"],first_name= body["first_name"],birthdate= body["birthdate"],country= body["country"])
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"msg": "user created"}), 201
