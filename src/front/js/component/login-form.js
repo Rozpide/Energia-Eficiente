@@ -8,24 +8,26 @@ export const LoginForm = () => {
     const [password, setPassword] = useState("")
     const { store, actions } = useContext(Context)
     let navigate = useNavigate();
-
+    
     async function handleSubmit(e) {
         e.preventDefault()
         await actions.login(email, password)
-        if (!store.logged) {
+        if (!store.auth) {
             setInvalidAccount(true)
         } else {
             setInvalidAccount(false)
         }
     }
     useEffect(() => {
-        if (store.logged) {
+        if (store.auth) {
             navigate("/cuentas");
+        } else {
+            navigate("/");
         }
         if (invalidAccount) {
             setInvalidAccount(false)
         }
-    }, [store.logged])
+    }, [store.auth])
 
     return (
         <form onSubmit={handleSubmit} className="mx-auto w-50">
@@ -41,9 +43,9 @@ export const LoginForm = () => {
             </div>
             <div className="buttons">
                 <button type="submit" className="btn btn-primary login-user">INICIAR SESION</button>
-                <hr className="hr-login"/>
+                <hr className="hr-login" />
                 <p>¿Aun no estás registrado?</p>
-                <button type="submit" className="btn btn-success create-user">Crear usuario</button>
+                <button type="submit" className="btn btn-secondary create-user">Crear usuario</button>
             </div>
         </form>
     );

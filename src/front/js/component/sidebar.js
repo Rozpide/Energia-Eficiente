@@ -3,7 +3,6 @@ import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import "/src/front/styles/sidebar.css";
 
-
 export const Sidebar = () => {
     const [userName, setUserName] = useState("")
     const [userLastName, setLastUserName] = useState("")
