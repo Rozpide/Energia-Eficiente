@@ -12,12 +12,13 @@ export const PrincipalPage = () => {
 
     useEffect(() => {
         actions.verifyToken();
+        actions.initializeStore()
         if (!store.auth) {
             navigate("/");
         }
     }, []);
 
-    if (!store.auth) return null; // Evita que se renderice la UI antes de la redirección
+    if (!store.auth) return null;
 
     return (
         <div className="d-flex">
