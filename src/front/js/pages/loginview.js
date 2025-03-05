@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link } from "react-router-dom";
+import logo from "../store/logo-sin-fondo.jpg"
 
 export const Loginview = () => {
   // const { store, actions } = useContext(Context);
@@ -11,7 +12,7 @@ export const Loginview = () => {
 
     <div className="container-fluid mx-auto d-flex marginlogintop justify-content-center">
       <div className="card border border-0 marginloginright" style={{ width: "18rem" }}>
-        <img src="https://i.postimg.cc/pd5s9QTf/Sin-t-tulo.jpg" alt="..." />
+      <img src={ logo } alt="Logo sin fondo"/>
 
 
       </div>
