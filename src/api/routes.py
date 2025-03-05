@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Accounts
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required,verify_jwt_in_request
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required,verify_jwt_in_request, decode_token
 from flask_jwt_extended.exceptions import NoAuthorizationError
 from flask_bcrypt import Bcrypt
 
@@ -47,7 +47,7 @@ def login():
     password = request.json.get("password", None)
     try:
         user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
-        if bcrypt.checkpw(password.encode("utf-8"), user.password):
+        if not bcrypt.check_password_hash(user.password, password):
             return jsonify({"msg": "Bad email or password"}), 401
         access_token = create_access_token(identity=email)
         return jsonify(access_token=access_token)
