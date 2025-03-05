@@ -32,7 +32,10 @@ def sitemap():
 @api.route('/foods', methods=['GET'])
 def get_foods():
     foods = Food.query.all()
-    return jsonify([food.serialize() for food in foods])
+    if not foods:
+        return "food not found", 404
+    else: 
+        return jsonify([food.serialize() for food in foods]), 200
 
 
 # Obtener un alimento por ID
@@ -41,13 +44,15 @@ def get_food(food_id):
     food = Food.query.get(food_id)
     if not food:
         return jsonify({"error": "Food not found"}), 404
-    return jsonify(food.serialize())
+    return jsonify(food.serialize()), 200
 
 
 @api.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
-    return jsonify([user.serialize() for user in users])
+    if not users:
+        return "not users found", 404
+    return jsonify([user.serialize() for user in users]), 200
 
 
 # Obtener un usuario por ID
@@ -56,13 +61,15 @@ def get_user(user_id):
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "user not found"}), 404
-    return jsonify(user.serialize())
+    return jsonify(user.serialize()), 200
 
 
 @api.route('/pets', methods=['GET'])
 def get_pets():
     pets = Pet.query.all()
-    return jsonify([pet.serialize() for pet in pets])
+    if not pets: 
+        return "no pets found", 404
+    return jsonify([pet.serialize() for pet in pets]), 200
 
 
 # Obtener una mascota por ID
@@ -71,7 +78,7 @@ def get_pet(pet_id):
     pet = Pet.query.get(pet_id)
     if not pet:
         return jsonify({"error": "pet not found"}), 404
-    return jsonify(pet.serialize())
+    return jsonify(pet.serialize()), 200
 
 #obtener sugerencias de comida según mascota
 @api.route('/foods/suggestions/<int:pet_id>', methods=['GET'])
@@ -90,14 +97,17 @@ def get_pet_suggestions(pet_id):
         food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet["animal_type"]),
                                                              Food.age==pet["age"],
                                                              Food.pathologies==pet["pathologies"]).all()
-    print(food_suggestions)    
-    return [food[0].serialize() for food in food_suggestions]
+    if not food_suggestions :
+        return "no suggestions found", 404  
+    return [food[0].serialize() for food in food_suggestions], 200
 
 # Obtener todos los accesorios
 @api.route('/accessories', methods=['GET'])
 def get_accessories():
     accessories = Accessories.query.all()
-    return jsonify([accessory.serialize() for accessory in accessories])
+    if not accessories:
+        return "no accessories found", 404 
+    return jsonify([accessory.serialize() for accessory in accessories]), 200
 
 
 # Obtener una accesotio por ID
