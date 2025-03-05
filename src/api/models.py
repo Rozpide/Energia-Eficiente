@@ -23,6 +23,7 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            # do not serialize the password, its a security breach
             "saved_artist": [saved.serialize() for saved in self.saved_artist],
             "saved_music": [saved.serialize() for saved in self.saved_music],
         }
@@ -52,6 +53,7 @@ class Artist(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            # do not serialize the password, its a security breach
         }
     
                 # USER & ARTIST PROFILE PHOTO MODEL
