@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Thememode } from "./Thememode"
 import logo from "../store/logo-sin-fondo.jpg"
 
 export const Navbar = () => {
@@ -19,6 +20,7 @@ export const Navbar = () => {
 					</Link>
 				</div>
 			</div>
+			<Thememode/>
 		</nav>
 	);
 };
