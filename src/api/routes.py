@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Accounts
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required,verify_jwt_in_request
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required,verify_jwt_in_request, decode_token
 from flask_jwt_extended.exceptions import NoAuthorizationError
 from flask_bcrypt import Bcrypt
 
@@ -47,7 +47,7 @@ def login():
     password = request.json.get("password", None)
     try:
         user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
-        if password != user.password:
+        if not bcrypt.check_password_hash(user.password, password):
             return jsonify({"msg": "Bad email or password"}), 401
         access_token = create_access_token(identity=email)
         return jsonify(access_token=access_token)
@@ -130,7 +130,7 @@ def signup():
     # para manejo de errores poner exactamente el nombre del front igual en los campos entre parentesis (esperar a que se haga el front)
     if not body or not body.get("email") or not body.get("password") or not body.get("last_name")or not body.get("first_name")or not body.get("birthdate")or not body.get("country"):
         return jsonify({"msg": "missing fields"}), 400
-    hashe_password = bcrypt.generate_password_hash(body["password"])
+    hashe_password = bcrypt.generate_password_hash(body["password"]).decode("utf-8")
     # encajar con los nombres del front estos (solo los que estan entre comillas)
     new_user = User(email = body["email"],password=hashe_password, last_name= body["last_name"],first_name= body["first_name"],birthdate= body["birthdate"],country= body["country"])
     db.session.add(new_user)
