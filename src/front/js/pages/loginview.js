@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link, useNavigate } from "react-router-dom";
+// import logo from "../store/logo-sin-fondo.jpg"
 
 export const Loginview = () => {
   const [email, setEmail] = useState("")
@@ -18,11 +19,12 @@ export const Loginview = () => {
       navigate("/profile")
     }
   }
-//cambiar HTMLFOR en login y register error de console
+
+  // const { store, actions } = useContext(Context);
   return (
     <div className="container-fluid mx-auto d-flex marginlogintop justify-content-center">
       <div className="card border border-0 marginloginright" style={{ width: "18rem" }}>
-        <img src="https://i.postimg.cc/pd5s9QTf/Sin-t-tulo.jpg" alt="..." />
+      {/* <img src={ logo } alt="Logo sin fondo"/> */}
       </div>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
