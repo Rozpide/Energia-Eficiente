@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 
 export const Card = () => {
     const [userNameAccounts, setUserNameAccounts] = useState("")
+    const [userCoinAccounts, setUserCoinAccounts] = useState("")
+    const [userBalanceAccounts, setUserBalanceAccounts] = useState("")
+    const [userTypeAccounts, setUserTypeAccounts] = useState("")
 
 
     async function getAccountsUser() {
@@ -17,14 +20,16 @@ export const Card = () => {
         try {
             const response = await fetch(`${process.env.BACKEND_URL}/api/user/1/accounts`, requestOptions);
             const result = await response.json();
-            console.log(result)
+            console.log(result.result)
+            
         } catch (error) {
             console.error(error);
         };
-        useEffect(() => {
-            getAccountsUser()
-        }, [])
+       
     }
+    useEffect(() => {
+        getAccountsUser()
+    }, [])
     return (
         <div className="card mb-3 row">
             <div className="card-body d-flex justify-content-around col-8 align-items-center ">
