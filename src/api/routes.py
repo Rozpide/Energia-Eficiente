@@ -2,11 +2,11 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
+from api.models import db, User, Genre
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 import os
-
+import requests
 # Import the Cloudinary libraries
 # ==============================
 import cloudinary
@@ -41,3 +41,23 @@ def upload_image():
     img_url = cloudinary.uploader.upload(img)
     print(img_url)
     return jsonify({"img": img_url["url"]}),200
+
+
+# ROUTE TO LOAD GENRES
+@api.route('/getGenresapi', methods=["GET"])
+def getGenresApi():
+    url = "https://api.deezer.com/genre"
+    headers = {"accept": "application/json"}
+    response = requests.get(url, headers = headers)
+    data = response.json()
+    for genre in data.get("data", []):
+        if not Genre.query.filter_by(id = genre.get("id")).first():
+            new_genre = Genre(id = genre.get("id"), name = genre.get("name"))
+            db.session.add(new_genre)
+        db.session.commit()
+    return jsonify(data)
+
+@api.route('/getGenres', methods=["GET"])
+def getGenres():
+    genres = Genre.query.filter(Genre.id != 0).all()
+    return jsonify({"genres": [genre.serialize() for genre in genres]}), 200
