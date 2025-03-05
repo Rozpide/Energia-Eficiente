@@ -24,7 +24,9 @@ export const Loginview = () => {
   return (
     <div className="container-fluid mx-auto d-flex marginlogintop justify-content-center">
       <div className="card border border-0 marginloginright" style={{ width: "18rem" }}>
-      {/* <img src={ logo } alt="Logo sin fondo"/> */}
+      <img src={ logo } alt="Logo sin fondo"/>
+
+
       </div>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">

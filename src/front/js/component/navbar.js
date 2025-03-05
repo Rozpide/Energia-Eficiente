@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Thememode } from "./Thememode"
+import logo from "../store/logo-sin-fondo.jpg"
 
 export const Navbar = () => {
 	return (
@@ -7,7 +9,7 @@ export const Navbar = () => {
 			<div className="container-fluid margintop">
 			<Link to="/">
                     <img
-                        src="https://i.postimg.cc/76MM7Ky2/Sin-t-tulo2.jpg"
+                        src={logo}
                         className="navbar-brand backnavbar	"
                         style={{ width: "3rem" }}
                     />
@@ -18,6 +20,7 @@ export const Navbar = () => {
 					</Link>
 				</div>
 			</div>
+			<Thememode/>
 		</nav>
 	);
 };
