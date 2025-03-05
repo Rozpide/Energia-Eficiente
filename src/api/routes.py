@@ -7,6 +7,8 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 import os
 
+from flask_jwt_extended import create_access_token, current_user, jwt_required
+
 # Import the Cloudinary libraries
 # ==============================
 import cloudinary
@@ -41,3 +43,51 @@ def upload_image():
     img_url = cloudinary.uploader.upload(img)
     print(img_url)
     return jsonify({"img": img_url["url"]}),200
+
+
+# Creacion de usuario 
+@api.route('/register', methods=['POST'])
+def register():
+    fullName = request.json.get('fullName', None)
+    username = request.json.get('username', None)
+    address = request.json.get('address', None)
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+
+    if not fullName or not username or not email or not password:
+        return jsonify({"msg": "Missing required fields"}), 400
+
+    existing_user = User.query.filter_by(email=email).first()
+    if existing_user:
+        return jsonify({"msg": "Email already exists"}), 400
+
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return jsonify({"msg": "Username already exists"}), 400
+
+    user = User(fullName=fullName, username=username, address=address, email=email, is_artist=True, is_active=True)
+    user.set_password(password)
+
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify({"msg": "User has been created"}), 201
+
+@api.route('/login', methods=['POST'])
+def generate_token():
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+
+    user = User.query.filter_by(username=username).one_or_none()
+
+    if not user or not user.check_password(password):
+        return jsonify("Wrong username or password"), 401
+    
+    access_token = create_access_token(identity=user)  # Se pasa user.id
+    return jsonify(access_token=access_token)
+
+
+@api.route('/profile', methods=['GET'])
+@jwt_required()
+def get_current_user():
+    return jsonify(current_user.serialize()), 200
