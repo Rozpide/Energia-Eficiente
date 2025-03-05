@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useContext } from 'react';
 import { Context } from "../store/appContext";
 import "../../styles/genre.css"
@@ -12,12 +12,10 @@ export const Genre = () => {
     // } ----- This would be with store/actions 
 
 
-    const genre = [
-        { name: 'Rock' },
-        { name: 'Pop' },
-        { name: 'Jazz' },
+    useEffect(() => {
+        actions.loadGenres(); // Fetch genres when component mounts
+    }, []);
 
-    ]
 
     const artist = [
         { name: 'Artista 1', genre: 'Rock', image: 'https://placehold.co/50' },
@@ -35,7 +33,7 @@ export const Genre = () => {
     return (
         <div className="container">
 
-            {genre?.map((g, index) => {
+            {store.genres?.map((g, index) => {
                 return (
                     <div key={index}>
                         <h1 className="genretitle mt-3">{g.name}</h1><br />
