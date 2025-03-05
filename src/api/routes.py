@@ -80,10 +80,18 @@ def get_pet_suggestions(pet_id):
     # Problema: Un animal puede tener varias patologias en su campo, habría que coger este campo y tratarlo, 
     # separar las patologias en una lista y hacer la query para cada patologia. 
     # Solucion simple: limitar a 1 patologia cada animal por ahora
-    food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet["animal_type"]),
+    #if para pet# anymal_type == perro, animal size    #si no no hace falta size
+    if pet["animal_type"] == "perro":   
+        food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet["animal_type"]),
                                                              Food.size==pet["size"],
-                                                             Food.pathologies==pet["pathologies"]).first()
-    return [food.serialize() for food in food_suggestions]
+                                                             Food.age==pet["age"],
+                                                             Food.pathologies==pet["pathologies"]).all()
+    else:
+        food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet["animal_type"]),
+                                                             Food.age==pet["age"],
+                                                             Food.pathologies==pet["pathologies"]).all()
+    print(food_suggestions)    
+    return [food[0].serialize() for food in food_suggestions]
 
 # Obtener todos los accesorios
 @api.route('/accessories', methods=['GET'])

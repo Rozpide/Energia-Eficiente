@@ -39,8 +39,9 @@ class Food(db.Model):
     ingredients = db.Column(db.Text, nullable=False)
     weight = db.Column(db.Float, nullable=False)
     price = db.Column(db.Float, nullable=False)
+    age = db.Column(db.String, nullable=False)
     animal_type = db.Column(db.String(50), nullable=False)
-    size = db.Column(db.String(30), nullable=False)
+    size = db.Column(db.String(30), nullable=True)
     pathologies = db.Column(db.Text, nullable=True)
     # is_hypoallergenic = db.Column(db.Boolean, default=False)
     # is_gluten_free = db.Column(db.Boolean, default=False)
@@ -150,7 +151,7 @@ class Pet(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    size = db.Column(db.String(100), nullable=False) # cambiar raza por tamaño 
+    size = db.Column(db.String(100), nullable=True) # cambiar raza por tamaño 
     breed = db.Column(db.String(100), nullable=True) # cambiar raza por tamaño 
     age = db.Column(db.String, nullable=False)
     animal_type= db.Column(db.String, nullable=False)

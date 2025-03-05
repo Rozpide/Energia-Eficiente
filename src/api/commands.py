@@ -42,7 +42,7 @@ def setup_commands(app):
         catfood.weight = 1.
         catfood.price = 1.
         catfood.animal_type = "asd"
-        catfood.size = "asd"
+        catfood.age = "sd"
         catfood.pathologies = "asd"
         db.session.add(catfood)
         db.session.commit()
@@ -58,11 +58,25 @@ def setup_commands(app):
         dogfood.description = "asd"
         dogfood.ingredients = "ads"
         dogfood.price = 1.
-        dogfood.pathologies = "hepatic,renal"
+        dogfood.pathologies = "renal"
         dogfood.animal_type = "perro"
+        dogfood.age = "senior"
         dogfood.size = "medium"
         dogfood.weight = 1.
+        db.session.add(dogfood)
+        db.session.commit()
 
+        dogfood = Food()
+        dogfood.name = "CARE DIGESTIVE (DOG)"
+        dogfood.brand="ownat"
+        dogfood.description = "asd"
+        dogfood.ingredients = "ads"
+        dogfood.price = 1.
+        dogfood.pathologies = "renal"
+        dogfood.animal_type = "perro"
+        dogfood.age = "senior"
+        dogfood.size = "medium"
+        dogfood.weight = 1.
         db.session.add(dogfood)
         db.session.commit()
       
@@ -78,7 +92,7 @@ def setup_commands(app):
         exoticfood.price = 1.
         exoticfood.pathologies = "asd"
         exoticfood.animal_type = "asd"
-        exoticfood.size = "asd"
+        exoticfood.age = "asd"
         exoticfood.weight = 1.
         db.session.add(exoticfood)
         db.session.commit()

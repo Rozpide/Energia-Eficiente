@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1cb718f7e6f9
+Revision ID: a08fba8a0180
 Revises: 
-Create Date: 2025-03-05 09:56:55.551182
+Create Date: 2025-03-05 14:44:28.016416
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1cb718f7e6f9'
+revision = 'a08fba8a0180'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -37,8 +37,9 @@ def upgrade():
     sa.Column('ingredients', sa.Text(), nullable=False),
     sa.Column('weight', sa.Float(), nullable=False),
     sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('age', sa.String(), nullable=False),
     sa.Column('animal_type', sa.String(length=50), nullable=False),
-    sa.Column('size', sa.String(length=30), nullable=False),
+    sa.Column('size', sa.String(length=30), nullable=True),
     sa.Column('pathologies', sa.Text(), nullable=True),
     sa.Column('url', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id')
@@ -55,7 +56,7 @@ def upgrade():
     op.create_table('pet',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
-    sa.Column('size', sa.String(length=100), nullable=False),
+    sa.Column('size', sa.String(length=100), nullable=True),
     sa.Column('breed', sa.String(length=100), nullable=True),
     sa.Column('age', sa.String(), nullable=False),
     sa.Column('animal_type', sa.String(), nullable=False),
