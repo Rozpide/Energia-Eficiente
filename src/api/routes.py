@@ -60,7 +60,17 @@ def protected():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
+
+@api.route("/verify-token", methods=["GET"])
+def verify_token():
+    try:
+        verify_jwt_in_request()  # Verifica la validez del token
+        identity = get_jwt_identity()  # Obtiene el usuario del token
+        return jsonify({"valid": True, "user": identity}), 200
+    except NoAuthorizationError:
+        return jsonify({"valid": False, "message": "Token inválido o no proporcionado"}), 401
         #este endpoint crea una cuenta con el  id del usuario
+        
 @api.route('/<int:user_id>/new-account', methods=['POST'])
 def post_account(user_id):
     try:
@@ -110,6 +120,7 @@ def get_one_account_to_one_user(user_id):
         
     except Exception as e:
         return jsonify({"msg":"Error", "error": str(e)}), 500
+
     
 # endpoints
 # registro usuario

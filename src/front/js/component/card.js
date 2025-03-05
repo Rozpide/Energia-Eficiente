@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { Context } from "../store/appContext";
 
 export const Card = () => {
+    const { store, actions } = useContext(Context)
     const [userNameAccounts, setUserNameAccounts] = useState("")
     const [userCoinAccounts, setUserCoinAccounts] = useState("")
     const [userBalanceAccounts, setUserBalanceAccounts] = useState("")
