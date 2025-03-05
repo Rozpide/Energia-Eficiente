@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext} from "react";
 import { Context } from "../store/appContext";
 
 export const Card = () => {
     const { store, actions } = useContext(Context)
-    const [userNameAccounts, setUserNameAccounts] = useState("")
-    const [userCoinAccounts, setUserCoinAccounts] = useState("")
-    const [userBalanceAccounts, setUserBalanceAccounts] = useState("")
-    const [userTypeAccounts, setUserTypeAccounts] = useState("")
+    const [userAccounst,setUserAccounts]=useState([])
+    // const [userNameAccounts, setUserNameAccounts] = useState("")
+    // const [userCoinAccounts, setUserCoinAccounts] = useState("")
+    // const [userBalanceAccounts, setUserBalanceAccounts] = useState("")
+    // const [userTypeAccounts, setUserTypeAccounts] = useState("")
 
 
     async function getAccountsUser() {
@@ -22,7 +23,9 @@ export const Card = () => {
         try {
             const response = await fetch(`${process.env.BACKEND_URL}/api/user/1/accounts`, requestOptions);
             const result = await response.json();
-            console.log(result.result)
+            setUserAccounts(result.result)
+            console.log(userAccounst);
+            
             
         } catch (error) {
             console.error(error);
