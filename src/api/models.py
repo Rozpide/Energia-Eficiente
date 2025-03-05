@@ -3,13 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class User(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
-    profile_photo_id = db.Column(db.Integer, db.ForeignKey('Profile_Photo.id'))
-    profile_photo = db.relationship('Profile_Photo', backref='user', uselist=False)
+    profile_photo_id = db.Column(db.Integer, db.ForeignKey('profile_photo.id'), unique=True)
+    profile_photo = db.relationship('Profile_Photo', uselist=False, foreign_keys=[profile_photo_id])
 
     saved_artist = db.relationship('Saved_Artist', backref='user')
     saved_music = db.relationship('Saved_Music', backref='user')
@@ -29,15 +30,16 @@ class User(db.Model):
         }
     
 class Artist(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
-    profile_photo_id = db.Column(db.Integer, db.ForeignKey('Profile_Photo.id'))
-    profile_photo = db.relationship('Profile_Photo', backref='artist', uselist=False)
+    profile_photo_id = db.Column(db.Integer, db.ForeignKey('profile_photo.id'), unique=True)
+    profile_photo = db.relationship('Profile_Photo', uselist=False, foreign_keys=[profile_photo_id])
 
-    artist_bio = db.relationship("Photo", backref="artist")
+    artist_bio = db.relationship("Bio", backref="artist")
     artist_photos = db.relationship("Photo", backref="artist")
     artist_videos = db.relationship("Video", backref="artist")
     artist_music = db.relationship("Music", backref="artist")
@@ -61,21 +63,18 @@ class Profile_Photo(db.Model):
     __tablename__ = "profile_photo"
     
     id = db.Column(db.Integer, primary_key=True)
+
+    media_url = db.Column(db.String(255), nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), unique=True, nullable=True)
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"), unique=True, nullable=True)
-
     def __repr__(self):
-        return f"<ProfilePhoto id={self.id}, user_id={self.user_id}, artist_id={self.artist_id}, profile_photo={self.profile_photo}>"
+        return f"<Profile_Photo {self.id}>"
 
     def serialize(self):
         return {
             "id": self.id,
+            "media_url": self.media_url,
             "is_active": self.is_active,
-            "profile_photo": self.profile_photo,
-            "user_id": self.user_id,
-            "artist_id": self.artist_id
         }
 
                 # ARTIST BIO MODEL
