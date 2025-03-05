@@ -69,8 +69,8 @@ def verify_token():
         return jsonify({"valid": True, "user": identity}), 200
     except NoAuthorizationError:
         return jsonify({"valid": False, "message": "Token inválido o no proporcionado"}), 401
-        #este endpoint crea una cuenta con el  id del usuario
         
+        #este endpoint crea una cuenta con el  id del usuario  
 @api.route('/<int:user_id>/new-account', methods=['POST'])
 def post_account(user_id):
     try:

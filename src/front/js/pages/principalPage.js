@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { Sidebar } from "../component/sidebar";
 import { Card } from "../component/card";
+import { GeneralBalance } from "../component/balanceGeneral";
 import "../../styles/container.css";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -26,6 +27,7 @@ export const PrincipalPage = () => {
             <div className="container">
                 <div className="row d-flex justify-content-center">
                     <h2>Balance general</h2>
+                    <GeneralBalance/>
                     <div className="scrollmenu">
                         <Card />
                         <Card />
