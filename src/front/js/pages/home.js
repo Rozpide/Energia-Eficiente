@@ -2,8 +2,7 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/home.css";
-import LogInAdmin from "./LogInAdmin.jsx";
-import AddDoctor from "./AddDoctor.jsx";
+
 
 export const Home = () => {
 	const { store, actions } = useContext(Context);
@@ -25,9 +24,9 @@ export const Home = () => {
 			</Link>
 
 
-		<p> <LogInAdmin /> </p>
+		
 
-		<p> < AddDoctor /> </p>
+		
 
 		</div>
 	);

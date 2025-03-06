@@ -13,7 +13,7 @@ const LogInAdmin = () => {
         e.preventDefault();
         await actions.logInAdmin(name, email, password); 
         if (store.admin) {
-            navigate("/");
+            navigate("/panelAdmin");
     };
 };
     
