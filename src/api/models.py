@@ -12,6 +12,7 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(80))
     is_active: Mapped[bool]
+    role: Mapped[int] = mapped_column(Integer, nullable=False)
     notes: Mapped["Notes"] = relationship(back_populates="user")
     habits: Mapped["Habits"] = relationship(back_populates="user")
     goals: Mapped["Goals"] = relationship(back_populates="user")
@@ -23,7 +24,8 @@ class User(db.Model):
             "id": self.id,
             "name": self.name,
             "email": self.email,
-            "is_active": self.is_active
+            "is_active": self.is_active,
+            "role": self.role
         }
 
 class Notes(db.Model):
@@ -34,7 +36,7 @@ class Notes(db.Model):
     description: Mapped[str] = mapped_column(String(2000), nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="notes")
-    projects_id: Mapped[int] = mapped_column(ForeignKey("projects.id"))
+    projects_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=True)
     projects: Mapped["Projects"] = relationship(back_populates="notes")
 
     def serialize(self):

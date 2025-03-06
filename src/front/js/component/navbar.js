@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Thememode } from "./Thememode";
-import logo from "../store/logo-sin-fondo.jpg";
+import { Thememode } from "./Thememode"
+import logo from "../../img/logo-sin-fondo.jpg"
 
 export const Navbar = () => {
 	return (
