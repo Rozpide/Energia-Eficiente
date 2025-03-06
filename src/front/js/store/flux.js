@@ -18,42 +18,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			]
 		},
 		actions: {
-			assword
-				});
-
-				const requestOptions = {
-					method: "POST",
-					headers: myHeaders,
-					body: raw
-				};
-
-				try {
-					const response = await fetch("https://crispy-memory-q7gwp7ggrjx34pjp-3001.app.github.dev/api/login", requestOptions);
-					const result = awalogin: async (email, password) => {
-
-				//console.log(email, password);
-				const myHeaders = new Headers();
-				myHeaders.append("Content-Type", "application/json");
-
-				const raw = JSON.stringify({
-					"email": email,
-					"password": pit response.json();
-					console.log(response);
-					
-					console.log(result)
-
-					if (response.status !== 200){
-						return false
-					}
-					localStorage.setItem("token", result.access_token)
-					return true
-				} catch (error) {
-					console.error(error);
-				};
-
-
-
-			},
 
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
@@ -79,7 +43,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch("https://symmetrical-journey-69r6wvr76v5x25g4-3001.app.github.dev/api/login", requestOptions);
+					const response = await fetch("https://crispy-memory-q7gwp7ggrjx34pjp-3001.app.github.dev/api/login", requestOptions);
 					const result = await response.json();
 					console.log(response);
 					
