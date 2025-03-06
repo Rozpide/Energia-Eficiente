@@ -106,8 +106,8 @@ def get_token_usuario():
         if true_o_false: 
             expires = timedelta(days=1) 
             user_id = login_user.user_id 
-            access_token = create_access_token(identity=user_id, expires_delta=expires) 
-            return jsonify({'access_token': access_token}), 200 
+            access_token = create_access_token(identity={'id': user_id, 'role': 'User '}, expires_delta=expires) 
+            return jsonify({'access_token': access_token, 'role': 'User '}), 200  
         else: 
             return jsonify({"Error": "Contraseña incorrecta"}), 404
 
@@ -209,8 +209,8 @@ def get_token_doctor():
      if true_o_false: 
          expires=timedelta(days=1) 
          doctor_id=login_doctor.doctor_id 
-         access_token=create_access_token(identity=doctor_id, expires_delta=expires) 
-         return jsonify({'access_token': access_token}),200 
+         access_token = create_access_token(identity={'id': doctor_id, 'role': 'Doctor'}, expires_delta=expires) 
+         return jsonify({'access_token': access_token, 'role': 'Doctor'}), 200
      else: 
          return{"Error":"Contraseña incorrecta"},404
 
@@ -305,8 +305,8 @@ def get_token_admin():
          expires=timedelta(days=1) 
 
          admin_id=login_admin.admin_id 
-         access_token=create_access_token(identity=admin_id,expires_delta=expires) 
-         return jsonify({'access_token':access_token}),200 
+         access_token = create_access_token(identity={'id': admin_id, 'role': 'Admin'}, expires_delta=expires) 
+         return jsonify({'access_token': access_token, 'role': 'Admin'}), 200 
      else: 
          return{"Error":"Contraseña incorrecta"},404
 

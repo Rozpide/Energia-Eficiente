@@ -15,12 +15,12 @@ function RegistroPacientes() {
     // Si la acción de registro actualiza store.user o alguna otra propiedad que indique éxito,
     // redirige a la ruta deseada. Por ejemplo, a la página de inicio:
     if (store.user) {
-      navigate("/");
+      navigate("/logIn");
     }
   };
 
   return (
-    <div>ww
+    <div className='container'>
       <h2>Registro de Pacientes</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -31,7 +31,7 @@ function RegistroPacientes() {
             onChange={(e) => setName(e.target.value)}
             required
           />
-        </div>
+        </div> 
         <div>
           <label>Email:</label>
           <input
@@ -51,7 +51,7 @@ function RegistroPacientes() {
           />
         </div>
         <button type="submit">Registrar</button>  
-        <button onClick={()=>navigate('/edituser')}></button>
+        
 
       </form>
     </div>
