@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
+
 db = SQLAlchemy()
 
         #  USER REGISTER AND PROFILE MODEL
@@ -8,13 +9,15 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    full_name = db.Column(db.String(120), unique=True, nullable=True)
+    fullName = db.Column(db.String(120), unique=True, nullable=True)
     username = db.Column(db.String(120), unique=True, nullable=True)
+    address = db.Column(db.String(120), unique=True, nullable=False)
 
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
+    password_hash = db.Column(db.String(512), unique=False, nullable=False)
 
     is_artist = db.Column(db.Boolean, default=False) # Check if account is artist
+    is_active = db.Column(db.Boolean(), default=True)
     profile_photo = db.Column(db.String(255), nullable=True)  # Profile photo URL
 
     #  Relationships
@@ -23,16 +26,30 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+    
+    def artist(is_artist):
+        if is_artist:
+            return "Si"
+        else:
+            return "No"
 
     def serialize(self):
         return {
             "id": self.id,
-            "full_name": self.full_name,
+            "full_name": self.fullName,
             "username": self.username,
             "email": self.email,
-            "is_artist": self.is_artist,
+            "address":self.address,
+            "artist":self.artist(),
             "profile_photo": self.profile_photo,
         }
+
+def set_password(self, password):
+    self.password_hash = generate_password_hash(password)
+
+def check_password(self,password):
+    return check_password_hash(self.password_hash,password)
+
 
         # ARTIST PROFILE MODEL
 class Artist_Profile(db.Model):
