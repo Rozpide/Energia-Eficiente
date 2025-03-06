@@ -52,7 +52,9 @@ export const Navbar = () => {
 							    <Link to="/favoritos"  style={{ textDecoration: 'none' }}>
 								<li><a className="dropdown-item" href="#">Favoritos</a></li>
 								</Link>
+								<Link to="/pedidos">
 								<li><a className="dropdown-item" href="#">Pedidos</a></li>
+								</Link>
 								<Link to="/"  style={{ textDecoration: 'none' }}>
 								<li><a className="dropdown-item" href="#">Cerrar Sesión</a></li>
 								</Link>

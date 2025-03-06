@@ -5,6 +5,7 @@ import { BackendURL } from "./component/backendURL";
 
 import { Decada } from "./views/Decada";
 import { InfoAlbum } from "./views/InfoAlbum";
+import { Pedidos } from "./views/Pedidos";
 import { Demo } from "./pages/demo";
 import { Login } from "./pages/login";
 import { Favoritos } from "./pages/favoritos";
@@ -38,6 +39,7 @@ const Layout = () => {
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Favoritos />} path="/favoritos" />
+                        <Route element={<Pedidos />} path="/pedidos" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
