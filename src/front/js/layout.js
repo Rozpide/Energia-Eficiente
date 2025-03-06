@@ -7,6 +7,7 @@ import { Loginview } from "./pages/loginview";
 import { ForgoPassword } from "./pages/resetpassword";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
+import { Profile } from "./pages/profile";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 
