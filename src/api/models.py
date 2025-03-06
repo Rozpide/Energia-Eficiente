@@ -60,11 +60,11 @@ class Artist_Profile(db.Model):
     bio = db.Column(db.Text, nullable=True)
 
     # Relationships
-    artist_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True, nullable=False)
 
-    artist_photos = db.relationship("Photo", backref="artist")
-    artist_videos = db.relationship("Video", backref="artist")
-    artist_music = db.relationship("Music", backref="artist")
+    artist_photos = db.relationship("Photo", backref="artist_profile")
+    artist_videos = db.relationship("Video", backref="artist_profile")
+    artist_music = db.relationship("Music", backref="artist_profile")
 
     def __repr__(self):
         return f'<Artist_Profile {self.id}>'
@@ -88,7 +88,7 @@ class Photo(db.Model):
     media_url = db.Column(db.Text, nullable=False)  # Cloudinary URL
 
     # Relationships
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"), nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), nullable=False)
 
     def __repr__(self):
         return f'<Photo {self.title}>'
@@ -111,7 +111,7 @@ class Video(db.Model):
     duration = db.Column(db.Integer, nullable=False)
 
     # Relationships
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"), nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), nullable=False)
 
     def __repr__(self):
         return f'<Video {self.title}>'
@@ -149,7 +149,7 @@ class Music(db.Model):
     duration = db.Column(db.Integer, nullable=False)
 
     # Relationships
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"), nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), nullable=False)
 
     def __repr__(self):
         return f'<Music {self.title}>'
@@ -189,7 +189,7 @@ class Follow_Artist(db.Model):
     __tablename__ = "follow_artist"
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"), primary_key=True)
+    artist_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), primary_key=True)
 
     def __repr__(self):
         return f'<Follow_Artist user_id={self.user_id}, artist_id={self.artist_id}, is_active={self.is_active}>'
