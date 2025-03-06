@@ -42,6 +42,7 @@ def setup_commands(app):
         catfood.weight = 1.
         catfood.price = 1.
         catfood.animal_type = "gato"
+
         catfood.age = "cachorro"
         catfood.pathologies = "renal"
         db.session.add(catfood)
@@ -57,6 +58,10 @@ def setup_commands(app):
         catfood.animal_type = "gato"
         catfood.age = "adulto"
         catfood.pathologies = "diabético"
+
+        catfood.age = "sd"
+        catfood.pathologies = "asd"
+
         db.session.add(catfood)
         db.session.commit()
         
