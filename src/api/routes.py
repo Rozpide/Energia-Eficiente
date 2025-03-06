@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
+from api.models import db, User, Notes
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy.exc import NoResultFound
@@ -76,6 +76,7 @@ def login():
         # establecer condiciones si el email que me envian desde el front es distinto envia error si no envia el token
         if email != user.email or password != user.password:
             return jsonify({"msg": "Bad password or email"}), 401
+            
 
         access_token = create_access_token(identity=email)
         return jsonify({"access_token":access_token, "user": user.serialize()})
@@ -105,3 +106,29 @@ def protected():
 # user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
     # la entidad verificada se guarda en el espacio de memoria
     return jsonify(logged_in_as=current_user), 200
+
+
+
+
+
+
+
+
+
+
+
+
+
+@api.route("/notes", methods=["GET"])
+@jwt_required()
+def call_notes():
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(email=current_user)).scalar_one()
+#aplicar logica para mostar profile 
+    notes = db.session.execute(db.select(Notes).filter_by(user_id=user.id)).scalars()
+    print(list(notes))
+
+
+#cambiar el mensaje de return que no muestre datos personales 
+    return jsonify(result = "your notes"), 200
