@@ -20,7 +20,10 @@ function RegistroPacientes() {
   };
 
   return (
+
+
     <div className='container'>
+
       <h2>Registro de Pacientes</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -51,7 +54,6 @@ function RegistroPacientes() {
           />
         </div>
         <button type="submit">Registrar</button>  
-        
 
       </form>
     </div>
