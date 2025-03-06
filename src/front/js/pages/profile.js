@@ -3,6 +3,7 @@ import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link } from "react-router-dom";
 import logo from "../store/logo-sin-fondo.jpg"
+
 export const Profile = () => {
 
     return(
