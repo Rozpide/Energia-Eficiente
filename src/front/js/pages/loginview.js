@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../store/logo-sin-fondo.jpg"
 
 export const Loginview = () => {
   const [email, setEmail] = useState("")
@@ -12,24 +13,22 @@ export const Loginview = () => {
   async function handleSubmit(e) {
     e.preventDefault()
     //console.log(email, password);
-
     let logged = await actions.login(email, password)
-    
-    
     if (logged === false) {
       alert("email or password wrong")
     }else{
       navigate("/profile")
     }
   }
-//cambiar HTMLFOR en login y register error de console
-  return (
 
+  // const { store, actions } = useContext(Context);
+  return (
     <div className="container-fluid mx-auto d-flex marginlogintop justify-content-center">
       <div className="card border border-0 marginloginright" style={{ width: "18rem" }}>
-        <img src="https://i.postimg.cc/pd5s9QTf/Sin-t-tulo.jpg" alt="..." />
-      </div>
+      <img src={ logo } alt="Logo sin fondo"/>
 
+
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <div className="d-flex justify-content-center mb-4 fs-1 textcolors">Welcome Back!</div>

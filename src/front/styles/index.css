@@ -42,3 +42,34 @@
 .marginresetleft{
     margin-left: 85px;
 }
+
+/* Estilos para el modo claro */
+.light-mode {
+    background-color: white;
+    color: black;
+  }
+  
+  /* Modo claro */
+.light-mode {
+    background-color: white;
+    color: black;
+  }
+  
+  /* Modo oscuro */
+  .dark-mode {
+    background-color: black;
+    color: white;
+  }
+  
+  /* Opcional: Personalizar el navbar */
+  .navbar {
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .dark-mode .navbar {
+    background-color: #222;
+  }
+  
+  .light-mode .navbar {
+    background-color: #f8f9fa;
+  }

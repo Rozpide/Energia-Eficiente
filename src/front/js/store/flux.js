@@ -2,6 +2,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: null,
+			token: null,
+			user: null,
 			demo: [
 				{
 					title: "FIRST",
@@ -56,6 +58,44 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
+			},
+
+
+			login: async (email, password) => {
+
+				//console.log(email, password);
+				const myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+
+				const raw = JSON.stringify({
+					"email": email,
+					"password": password
+				});
+
+				const requestOptions = {
+					method: "POST",
+					headers: myHeaders,
+					body: raw
+				};
+
+				try {
+					const response = await fetch("https://symmetrical-journey-69r6wvr76v5x25g4-3001.app.github.dev/api/login", requestOptions);
+					const result = await response.json();
+					console.log(response);
+					
+					console.log(result)
+
+					if (response.status !== 200){
+						return false
+					}
+					localStorage.setItem("token", result.access_token)
+					return true
+				} catch (error) {
+					console.error(error);
+				};
+
+
+
 			},
 
 			getMessage: async () => {

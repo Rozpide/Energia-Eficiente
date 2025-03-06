@@ -83,7 +83,8 @@ def login():
         # establecer condiciones si el email que me envian desde el front es distinto envia error si no envia el token
         if email != user.email or password != user.password:
             return jsonify({"msg": "Bad password or email"}), 401
-#con que fin se retorna user serializado 
+            
+
         access_token = create_access_token(identity=email)
         return jsonify({"access_token":access_token})
     # esta ultima de serialize no la entiendo
@@ -92,6 +93,49 @@ def login():
     except NoResultFound:
         return jsonify ({"msg": "Bad password or email"}), 401
     
+    # Protect a route with jwt_required, which will kick out requests
+# without a valid JWT present.
+@api.route("/profile", methods=["GET"])
+# esto de abajo seria el portero de la analogia, entre la ruta y el metodo de autenticación 
+@jwt_required()
+# cuando el corrobora el token entra a la funcion y especifica
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+    # verifica la identidad ( de quien es el token ) , lo corrobora
+    current_user = get_jwt_identity()
+
+    # con la identidad anterior nosotros hacemos una busqueda
+
+    # user = db.session.execute(db.select(User).filter_by(email=current_user)).scalar_one()
+
+
+#con la busqueda del señor anterior en la tabla favoritos fijate cuantos tiene y traemelos 
+# user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+    # la entidad verificada se guarda en el espacio de memoria
+    return jsonify(logged_in_as=current_user), 200
 
 
 
+
+
+
+
+
+
+
+
+
+
+@api.route("/notes", methods=["GET"])
+@jwt_required()
+def call_notes():
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(email=current_user)).scalar_one()
+#aplicar logica para mostar profile 
+    notes = db.session.execute(db.select(Notes).filter_by(user_id=user.id)).scalars()
+    print(list(notes))
+
+
+#cambiar el mensaje de return que no muestre datos personales 
+    return jsonify(result = "your notes"), 200
