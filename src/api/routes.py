@@ -16,28 +16,33 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api)
 
+## ver la finalidad de los endpoins antes de crearlos 
 
-## GET ALL users
+## GET ALL users a menos que muestre un panel de admin en el front no sera necesario
+## Los endpoins que son necesario aclarar esto (los de las rutas)
+
 @api.route('/user', methods=['GET'])
 def get_all_users():
 
     data = db.session.scalars(db.select(User)).all()
     result = list(map(lambda item: item.serialize(),data))
     print(result)
-
+#eliminar print 
     if result == []:
         return jsonify({"msg":"user does not exists"}), 404
-
+#eliminar msg "Hello, this is your GET /user response "
     response_body = {
         "msg": "Hello, this is your GET /user response ",
         "results": result
     }
 
     return jsonify(response_body), 200
+
 ## GET ONE user
 @api.route('/user/<int:id>', methods=['GET'])
 def get_one_user(id):
     try:
+        #eliminar print 
         print(id)
         user = db.session.execute(db.select(User).filter_by(id=id)).scalar_one()
     
@@ -50,11 +55,13 @@ def get_one_user(id):
 @api.route('/user', methods=['POST'])
 def create_user():
     try:
-
+#eliminar print 
         request_body = request.json
         print(request_body)
         user = db.session.execute(db.select(User).filter_by(email= request_body["email"])).scalar_one()
+#falta respuesta return si email es unique validad que no este en la base de dato 
     except:
+# anyadir al cuerpo que entre con el role user (faltan definir) ejemplo puede ser role=3 (admin= 1, moderator=2, user=3)
         user = User(name=request_body["name"],email=request_body["email"], password=request_body["password"], is_active= request_body["is_active"])
         db.session.add(user)
         db.session.commit()
@@ -71,7 +78,7 @@ def login():
         # 1 registro de tabla específica
         user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
         # filtrar user por email y si lo encuentras muéstralo en print
-        print(user)
+        #print(user.serialize())
 
         # establecer condiciones si el email que me envian desde el front es distinto envia error si no envia el token
         if email != user.email or password != user.password:
@@ -79,7 +86,7 @@ def login():
             
 
         access_token = create_access_token(identity=email)
-        return jsonify({"access_token":access_token, "user": user.serialize()})
+        return jsonify({"access_token":access_token})
     # esta ultima de serialize no la entiendo
 
 # # ESTE PROCESO DE DONDE SE GUARDA LOS LLEVA EL PERSONAL DE JWT    
