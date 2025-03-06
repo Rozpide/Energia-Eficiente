@@ -4,6 +4,7 @@ import { Card } from "../component/card";
 import "../../styles/container.css";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
+import { Modal } from "../component/modal";
 
 
 export const PrincipalPage = () => {
@@ -61,6 +62,7 @@ export const PrincipalPage = () => {
                         })}
                     </div>
                 </div>
+                        <Modal />
             </div>
         </div>
     );
