@@ -24,7 +24,7 @@ export const Navbar = () => {
 				<div className="d-flex">
 					<div className="ml-auto">
 						<Link to="/tournament/list">
-							<button className="btn text-light">Torneos</button>
+							<button className="btn btn-primary">Torneos</button>
 						</Link>
 					</div>
 
