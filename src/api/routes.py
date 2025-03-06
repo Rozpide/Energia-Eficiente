@@ -5,8 +5,9 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Food, Pet, Accessories
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from sqlalchemy import select
+from sqlalchemy import select, and_, or_
 import json
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 api = Blueprint('api', __name__)
 
@@ -89,10 +90,10 @@ def get_pet_suggestions(pet_id):
     # Solucion simple: limitar a 1 patologia cada animal por ahora
     #if para pet# anymal_type == perro, animal size    #si no no hace falta size
     if pet["animal_type"] == "perro":   
-        food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet["animal_type"]),
+        food_suggestions = db.session.execute(select(Food).where(and_(Food.animal_type==pet["animal_type"]),
                                                              Food.size==pet["size"],
                                                              Food.age==pet["age"],
-                                                             Food.pathologies==pet["pathologies"]).all()
+                                                             Food.pathologies==pet["pathologies"])).all()
     else:
         food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet["animal_type"]),
                                                              Food.age==pet["age"],
@@ -172,7 +173,7 @@ def create_food():
     db.session.commit()
     return jsonify(new_food.serialize()), 201
 
-#crear nuevo usuario
+#registrar nuevo usuario
 @api.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
@@ -182,9 +183,25 @@ def create_user():
         password=data["password"],
         is_active=data["is_active"]
 )
+    if User.query.filter_by(email=data["email"]).first():
+        return jsonify({"msg": "El usuario ya existe"}), 400
+    
     db.session.add(new_user)
     db.session.commit()
     return jsonify(new_user.serialize()), 201
+
+# iniciar sesion 
+@api.route('loging/user', methods=['POST'])
+def logging_user():
+    data = request.get_json()
+    user = User.query.filter_by(email=data["email"]).first()
+    
+
+    if User.query.filter_by(email=data["email"]).first() and User.query.filter_by(password=data["password"]).first():
+        access_token=create_access_token(identity=user.email)
+        return jsonify(access_token=access_token), 200
+    return jsonify ({"nsg":"credenciales invalidas"}), 400
+
 
 #crear un nuevo accesorio
 @api.route('/accessories', methods=['POST'])

@@ -155,7 +155,7 @@ class Pet(db.Model):
     breed = db.Column(db.String(100), nullable=True) # cambiar raza por tamaño 
     age = db.Column(db.String, nullable=False)
     animal_type= db.Column(db.String, nullable=False)
-    pathologies = db.Column(db.Text, nullable=False) # patología contemple peso 
+    pathologies = db.Column(db.Text, nullable=True) # patología contemple peso 
     user_id = db.Column(db.ForeignKey("user.id"))
     
     # is_hypoallergenic = db.Column(db.Boolean, default=False)
