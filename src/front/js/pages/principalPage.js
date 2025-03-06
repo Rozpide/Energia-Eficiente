@@ -41,7 +41,10 @@ export const PrincipalPage = () => {
         }
     }, []);
 
-    if (!store.auth) return <h1>borrar localstorage</h1>;
+    if (!store.auth){
+        actions.logout()
+        navigate("/");
+    } 
 
     return (
         <div className="d-flex">
