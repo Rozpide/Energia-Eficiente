@@ -10,18 +10,20 @@ from flask_jwt_extended import JWTManager, create_access_token,jwt_required,get_
 from datetime import timedelta
 
 app=Flask(__name__)
-api = Blueprint('api', __name__) 
+api = Blueprint('api', __name__)  
+
 
 CORS(app) 
 
 
 #Encriptacion JWT---- 
-app.config["JWT_SECRET_KEY"]=os.getenv('JWT_SECRET_KEY_OWN')  
+app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY_OWN', 'super-secret-key')
 app.config["JWT_TOKEN_LOCATION"] = ["headers"]  
 
 
 bcrypt = Bcrypt()  
 jwt = JWTManager()  
+jwt.init_app(app) 
 
 # db = SQLAlchemy(app)
 
@@ -115,7 +117,7 @@ def get_token_usuario():
         return jsonify({'Error': 'El email proporcionado no corresponde a ninguno registrado: ' + str(e)}), 500   
 
 #Ruta restringida por Token Usuario 
-@app.route('/users2') 
+@api.route('/users2') 
 @jwt_required() 
 def show_users(): 
     current_user_id= get_jwt_identity() 
@@ -124,7 +126,7 @@ def show_users():
         user_list=[] 
         for user in users: 
             user_dict={ 
-                'id':user.id, 
+                'id':user.user_id, 
                 'email':user.email
             }
             user_list.append(user_dict) 
@@ -218,7 +220,7 @@ def get_token_doctor():
         return ({'Error':'El email proporcionado no corresponde a ninguno registrado:'+ str(e)}),500  
    
     #Ruta restringida por Token DOCTOR
-@app.route('/doctors2') 
+@api.route('/doctors2') 
 @jwt_required() 
 def show_doctors(): 
     current_doctor_id= get_jwt_identity() 
@@ -294,7 +296,7 @@ def get_token_admin():
      if not email or not password: 
          return jsonify({'error':'Email and password are required'}),400 
 
-     login_admin=Administrator.query.filter_by(email=request.json['email']).one() 
+     login_admin=Administrator.query.filter_by(email=request.json['email']).first()
 
      if not login_admin: 
          return jsonify({'error':'Invalid email.'}),404   
@@ -314,7 +316,7 @@ def get_token_admin():
         return ({'Error':'El email proporcionado no corresponde a ninguno registrado:'+ str(e)}),500  
    
 #     #Ruta restringida por Token Admin
-@app.route('/administrators2') 
+@api.route('/administrators2') 
 @jwt_required() 
 def show_administrador(): 
     current_admin_id= get_jwt_identity() 
@@ -429,7 +431,7 @@ def create_availability():
      
 #Delete User 
 
-@api.route('delete_user/<int:user_id>', methods=['DELETE']) 
+@api.route('/delete_user/<int:user_id>', methods=['DELETE']) 
 def delete_user(user_id):
     user=User.query.get(user_id) 
     if user:  
@@ -440,7 +442,7 @@ def delete_user(user_id):
 
 #Delete Doctor 
 
-@api.route('delete_doctor/<int:doctor_id>', methods=['DELETE']) 
+@api.route('/delete_doctor/<int:doctor_id>', methods=['DELETE']) 
 def delete_doctor(doctor_id):
     doctor=Doctor.query.get(doctor_id) 
     if doctor:  
@@ -453,7 +455,7 @@ def delete_doctor(doctor_id):
 
 #Delete Admin for Admin 
 
-@api.route('delete_admin/<int:admin_id>', methods=['DELETE']) 
+@api.route('/delete_admin/<int:admin_id>', methods=['DELETE']) 
 def delete_admin(admin_id):
     admin=Administrator.query.get(admin_id) 
     if admin: 
@@ -464,7 +466,7 @@ def delete_admin(admin_id):
     return jsonify('no se encontro el Administrador'),404
    
 #PUT para User por Admin
-@api.route('edit_user/<int:user_id>', methods=['PUT']) 
+@api.route('/edit_user/<int:user_id>', methods=['PUT']) 
 def edit_user(user_id): 
     user=User.query.get(user_id) 
     if not user: 
@@ -484,7 +486,7 @@ def edit_user(user_id):
 
 #PUT para Doctor por Admin
 
-@api.route('edit_doctor/<int:doctor_id>', methods=['PUT']) 
+@api.route('/edit_doctor/<int:doctor_id>', methods=['PUT']) 
 def edit_doctor(doctor_id): 
     doctor=Doctor.query.get(doctor_id) 
     if not doctor: 
@@ -504,7 +506,7 @@ def edit_doctor(doctor_id):
 
 
 #PUT de Admin para Admin 
-@api.route('edit_admin/<int:admin_id>', methods=['PUT']) 
+@api.route('/edit_admin/<int:admin_id>', methods=['PUT']) 
 def edit_admin(admin_id): 
     admin=Administrator.query.get(admin_id) 
     if not admin: 

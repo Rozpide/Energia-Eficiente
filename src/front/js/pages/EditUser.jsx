@@ -1,15 +1,41 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Context } from '../store/appContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom' 
 
 const EditUser = () => {
-  const { store, actions } = useContext(Context);
+  const { store, actions } = useContext(Context); 
   const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [userData, setUserData] = useState({
+    name: store.user?.name || '',
+    email: store.user?.email || '',
+    password: store.user?.password || '',
+  }) 
+  console.log("El usuario es", store.user)
 
 
 
-  const deleteUs = async () => { 
-    const idUser=store.users?.id
+
+  const handleEdit = () => setIsEditing(!isEditing)
+
+  const handleChange = (e) => {
+    setUserData({ ...userData, [e.target.name]: e.target.value })
+  }
+
+  const handleSave = async () => {
+    try {
+
+      await actions.editUser(userData, store.user.id)
+      setIsEditing(false)
+
+
+    } catch (error) {
+      console.error("No se edito correctamente", error)
+    }
+  }
+
+  const deleteUs = async () => {
+    const idUser = store.user?.id
     const confirmDelete = window.confirm("La cuenta se eliminara permanentemente estas seguro?")
 
     if (confirmDelete) {
@@ -22,35 +48,43 @@ const EditUser = () => {
       console.log("Eliminacion de Cuenta Cancelada")
 
     }
+ }
 
-  }
-  const editUs = async () => {
-    try {
-      await actions.editUser()
-    } catch (error) {
-      console.error("No se edit Correctamente", error)
-    }
-  }
+
 
 
   return (
-    <div> 
-     <i class="fa-solid fa-user"></i><h3>Mi Perfil</h3>
+    <div>
+      <i class="fa-solid fa-user"></i><h3>Mi Perfil</h3>
       {
-        store.user ? ( 
-          <> 
-         <p className='name'>User: {store.user.name} </p>
-         <p className='email'>Email:  {store.user.email}</p>
-         <p className='password'>password:  {store.user.password}</p>
-         
-   
- 
+        store.user ? (
+          <>
+            <p className='name'>
+              User: {isEditing ? <input type='text' name='name' value={userData.name} onChange={handleChange} /> : store.user.name}
+            </p>
+            <p className='email'>
+              Email: {isEditing ? <input type='email' name='email' value={userData.email} onChange={handleChange} /> : store.user.email}
+            </p>
+            <p className='password'>
+              Password: {isEditing ? <input type='password' name='password' value={userData.password} onChange={handleChange} /> : store.user.password}
+            </p>
+            {isEditing ? (
+              <>
+                <button onClick={handleSave}>Guardar</button>
+                <button onClick={handleEdit}>Cancelar</button>
+              </>
 
-  <button onClick={()=>editUs()} type="submit">Edit User</button> 
-  <button onClick={()=>deleteUs()} type="submit">Delete User</button>
-       </> ):( 
-        <p>no funciono.......</p>
-       )}
+            ) : (
+              <button className='btn btn-primary' onClick={handleEdit} type="submit">Edit User</button>
+
+
+            )}
+
+
+            <button className='btn btn-danger' onClick={deleteUs} type="submit">Delete User</button>
+          </>) : (
+          <p>no funciono.......</p>
+        )}
     </div>
   )
 }
