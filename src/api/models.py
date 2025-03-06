@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 db = SQLAlchemy()
@@ -26,7 +27,7 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
-    
+
     def artist(is_artist):
         if is_artist:
             return "Si"
@@ -123,6 +124,21 @@ class Video(db.Model):
             "duration": self.duration,
         }
 
+        # GENRES MODEL TO LOAD GENRES
+class Genre(db.Model):
+  
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f'<Genre {self.name}>'
+      
+    def serialize(self):
+        return {
+          "id": self.id,
+          "name": self.name
+        }
+      
                 # ARTIST MUSIC MODEL
 class Music(db.Model):
     __tablename__ = "music"

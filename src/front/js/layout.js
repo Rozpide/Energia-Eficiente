@@ -12,8 +12,10 @@ import { Login } from "./pages/login";
 import { UserProfile } from "./pages/UserProfile"; // ✅ Nueva vista
 import { SavedSongs } from "./pages/SavedSongs"; // ✅ Nueva vista
 import { SavedArtists } from "./pages/SavedArtists"; // ✅ Nueva vista
+import ArtistProfile from "./pages/ArtistProfile";
 import { Genre } from "./pages/genre";
-
+import { UserData } from "./pages/UserData"
+import { ArtistData } from "./pages/ArtistData"
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 
@@ -52,6 +54,9 @@ const LayoutContent = () => {
                 <Route element={<UserProfile />} path="/userProfile" />  {/* ✅ nueva */}
                 <Route element={<SavedSongs />} path="/savedSongs" />  {/* ✅ nueva */}
                 <Route element={<SavedArtists />} path="/savedArtists" />  {/* ✅ nueva */}
+                <Route element={<ArtistProfile />} path="/artist/:artistId" /> {/* ultima */}
+                <Route element={<UserData />} path="/userData" />
+                <Route element={<ArtistData />} path="/artistData" />
                 <Route element={<h1>Not found!</h1>} />
             </Routes>
 
