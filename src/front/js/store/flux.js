@@ -71,6 +71,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
 				console.log("ESTA ES LA BASE URL", baseURL)
 				try {
+					console.log('DATOS DE ENVIO', name, email, password)
 					const response = await fetch(`${baseURL}api/logIn`, {
 						method: 'POST',
 						headers: {
@@ -85,11 +86,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 					const data = await response.json();
-				
-					setStore({ user: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
+					let store = getStore()
+					setStore({ ...store, user: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
 					localStorage.setItem('token', data.access_token); 
 					localStorage.setItem('user', JSON.stringify(data.user)); 
-
+					localStorage.setItem('name', data.name);
+					localStorage.setItem('email', data.email);
 
 
 				} catch (error) {
@@ -129,7 +131,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					setStore({ user: { name, email, password }, users: [...getStore().users, { name, email, password }], token: data.access_token, message: 'Paciente registrado exitosamente' });
 					localStorage.setItem('token', data.access_token);
-					console.log("usuariocreado", data)
+					console.log("usuario creado", data)
 				
 				} catch (error) {
 					console.error('Error al registrar paciente:', error);

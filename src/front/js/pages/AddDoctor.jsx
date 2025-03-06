@@ -43,19 +43,19 @@ function AddDoctor() {
                 </div>
                 
 
-                <div class="input-group mb-3 mt-3">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Especialidad</button>
+                <div className="input-group mb-3 mt-3">
+                    <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Especialidad</button>
                     <ul className="dropdown-menu" aria-labelledby="specialtiesDropdown">
-                        <li><Link className="dropdown-item" to="/medicina-general">Medicina General</Link></li>
-                        <li><Link className="dropdown-item" to="/pediatria">Pediatría</Link></li>
-                        <li><Link className="dropdown-item" to="/ginecologia">Ginecología y Obstetricia</Link></li>
-                        <li><Link className="dropdown-item" to="/cardiologia">Cardiología</Link></li>
-                        <li><Link className="dropdown-item" to="/dermatologia">Dermatología</Link></li>
-                        <li><Link className="dropdown-item" to="/ortopedia">Ortopedia y Traumatología</Link></li>
-                        <li><Link className="dropdown-item" to="/neurologia">Neurología</Link></li>
-                        <li><Link className="dropdown-item" to="/oftalmologia">Oftalmología</Link></li>
-                        <li><Link className="dropdown-item" to="/otorrinolaringologia">Otorrinolaringología</Link></li>
-                        <li><Link className="dropdown-item" to="/endocrinologia">Endocrinología</Link></li>
+                        <li className="dropdown-item"> Medicina General</li>
+                        <li className="dropdown-item"> Pediatría</li>
+                        <li className="dropdown-item"> Ginecología y Obstetricia</li>
+                        <li className="dropdown-item"> Cardiología</li>
+                        <li className="dropdown-item"> Dermatología</li>
+                        <li className="dropdown-item"> Ortopedia y Traumatología</li>
+                        <li className="dropdown-item"> Neurología</li>
+                        <li className="dropdown-item"> Oftalmología</li>
+                        <li className="dropdown-item"> Otorrinolaringología</li>
+                        <li className="dropdown-item"> Endocrinología</li>
                     </ul>
 
                 </div>

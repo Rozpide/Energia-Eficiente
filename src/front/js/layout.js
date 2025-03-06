@@ -53,8 +53,6 @@ const Layout = () => {
                         <Route element={<EditUser/>} path="/edituser"/>
 
                         
-                        
-
 
 
                         {/* Rutas para las especialidades médicas */}

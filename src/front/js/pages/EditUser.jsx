@@ -52,22 +52,21 @@ const EditUser = () => {
 
 
 
-
+let name= localStorage.getItem('name')
+let email= localStorage.getItem('email')
   return (
     <div>
-      <i class="fa-solid fa-user"></i><h3>Mi Perfil</h3>
+      <i className="fa-solid fa-user"></i><h3>Mi Perfil</h3>
       {
-        store.user ? (
+        name ? (
           <>
             <p className='name'>
-              User: {isEditing ? <input type='text' name='name' value={userData.name} onChange={handleChange} /> : store.user.name}
+              User: {isEditing ? <input type='text' name='name' value={userData.name} onChange={handleChange} /> : name}
             </p>
             <p className='email'>
-              Email: {isEditing ? <input type='email' name='email' value={userData.email} onChange={handleChange} /> : store.user.email}
+              Email: {isEditing ? <input type='email' name='email' value={userData.email} onChange={handleChange} /> : email}
             </p>
-            <p className='password'>
-              Password: {isEditing ? <input type='password' name='password' value={userData.password} onChange={handleChange} /> : store.user.password}
-            </p>
+            
             {isEditing ? (
               <>
                 <button onClick={handleSave}>Guardar</button>

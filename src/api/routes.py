@@ -108,8 +108,14 @@ def get_token_usuario():
         if true_o_false: 
             expires = timedelta(days=1) 
             user_id = login_user.user_id 
-            access_token = create_access_token(identity={'id': user_id, 'role': 'User '}, expires_delta=expires) 
-            return jsonify({'access_token': access_token, 'role': 'User '}), 200  
+            access_token = create_access_token(identity={'id': user_id, 'role': 'User '}, expires_delta=expires)
+            user_data= {
+               "name": login_user.name,
+               "email": login_user.email,
+               "id": login_user.user_id,
+               "access_token": access_token
+            } 
+            return jsonify(user_data), 200  
         else: 
             return jsonify({"Error": "Contraseña incorrecta"}), 404
 
