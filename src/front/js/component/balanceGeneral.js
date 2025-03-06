@@ -1,54 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useContext } from "react";
-import { Context } from "../store/appContext";
 
-export const GeneralBalance = () => {
-  const [balance, setBalance] = useState(0);
+export const GeneralBalance = (props) => {
+  
+  const [showBalance, setShowBalance] = useState(true)
+  
+      const toggleBalance = () => {
+          let toggle = !showBalance
+          setShowBalance(toggle);
+          console.log(toggle);
+  
+      }
 
-  const {store,actions} = useContext(Context)
-
-  const generalBalance = async () => {
-    const myHeaders = new Headers();
-    myHeaders.append(
-      "Cookie",
-      ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yar..."
-    );
-
-    const requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-
-    try {
-      const response = await fetch
-        (`${process.env.BACKEND_URL}/api/user/${store.user.id}/accounts`,
-        requestOptions
-      );
-      const data = await response.json();
-// console.log(data[0].balance);
-setBalance(data.result[0].balance);
-
-
-
-      //  Ajustar según la estructura real de la API
-    //   if (data && Array.isArray(data.valores)) {
-    //     const totalBalance = data.valores.reduce((acc, num) => acc + num, 0);
-    //     setBalance(totalBalance);
-    //   } else {
-    //     console.error("Estructura de datos inesperada:", data);
-    //     setError("Formato de datos incorrecto");
-    //   }
-    } catch (error) {
-      console.error("Error al obtener el balance:", error);
-    }
-  };
-
-  useEffect(() => {
-    generalBalance()
-  }, []);
 
   return (
-   <h1 className="text-2xl font-bold">{balance} euros</h1>
+    <div className="d-flex ">
+      <h1 className="text-2xl font-bold">{showBalance ? props.balance : "****"} euros</h1>
+    {showBalance ? <i className="bi bi-eye-fill" onClick={toggleBalance}></i> : <i className="bi bi-eye-slash-fill" onClick={toggleBalance}></i>}
+</div>
+   
   );
 };
