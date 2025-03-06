@@ -18,7 +18,10 @@ export const PrincipalPage = () => {
         }
     }, []);
 
-    if (!store.auth) return null;
+    if (!store.auth){
+        actions.logout()
+        navigate("/");
+    } 
 
     return (
         <div className="d-flex">
