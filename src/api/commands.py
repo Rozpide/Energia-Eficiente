@@ -41,7 +41,7 @@ def setup_commands(app):
         catfood.ingredients = "ads"
         catfood.weight = 1.
         catfood.price = 1.
-        catfood.animal_type = "asd"
+        catfood.animal_type = "gato"
         catfood.age = "sd"
         catfood.pathologies = "asd"
         db.session.add(catfood)
@@ -91,7 +91,7 @@ def setup_commands(app):
         exoticfood.ingredients = "ads"
         exoticfood.price = 1.
         exoticfood.pathologies = "asd"
-        exoticfood.animal_type = "asd"
+        exoticfood.animal_type = "exótico"
         exoticfood.age = "asd"
         exoticfood.weight = 1.
         db.session.add(exoticfood)
