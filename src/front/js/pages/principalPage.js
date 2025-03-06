@@ -52,7 +52,7 @@ export const PrincipalPage = () => {
                     <div className="scrollmenu">
                         {userAccounts.map((item) => {
                             return (
-                                <Card name={item.name}balance={item.balance}coin={item.coin}type={item.type}/>
+                                <Card id={item.id}name={item.name}balance={item.balance}coin={item.coin}type={item.type}/>
                             )
 
                         })}
