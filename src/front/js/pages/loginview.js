@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link, useNavigate } from "react-router-dom";
-// import logo from "../store/logo-sin-fondo.jpg"
+import logo from "../store/logo-sin-fondo.jpg"
 
 export const Loginview = () => {
   const [email, setEmail] = useState("")
