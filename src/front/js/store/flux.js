@@ -141,6 +141,31 @@ const getState = ({ getStore, getActions, setStore }) => {
 					getActions().getPrivate();
 				}
 			},
+
+			// registro usuario form
+			registerUser: async (formData) => {
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(formData)
+					});
+					const result = await response.json();
+
+					if (response.status === 201) {
+						localStorage.setItem("userLogged", JSON.stringify(result.user));
+						setStore({ user: result.user, auth: true });
+
+						return { success: true, message: "Successfully registered" };
+					} else {
+						return { success: false, message: result.msg || "Registration error. Please try again" };
+					}
+				} catch (error) {
+					console.error("Failed to connect to the server", error);
+					return { success: false, message: "Error en la conexión con el servidor." };
+				}
+			},
+			// fin registro usuario
 		}
 	};
 };

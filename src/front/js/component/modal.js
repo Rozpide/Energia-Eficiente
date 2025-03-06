@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { Context } from "../store/appContext";
 import { useLocation, useParams } from "react-router-dom";
 
-// import "../../styles/modal.css";
+import "../../styles/modal.css";
 
 export const Modal = (props) => {
 	const { store, actions } = useContext(Context)
