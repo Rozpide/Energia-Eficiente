@@ -107,6 +107,26 @@ def protected():
     return jsonify({'success': False, 'msg': 'Token erroneo'})
 
 
+# _________________________________________LOGOUT_________________________________________
+
+blacklisted_tokens = set()
+
+@api.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    # Obtén el token del usuario actual
+    jti = get_jwt()['jti']  # jti es el identificador único del token
+    # Añade el token a la lista negra
+    blacklisted_tokens.add(jti)
+    # Devuelve un mensaje de éxito
+    return jsonify({'msg': 'Sesión cerrada exitosamente'}), 200
+
+# Verifica si un token está en la lista negra
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blacklist(jwt_header, jwt_payload):
+    jti = jwt_payload['jti']
+    return jti in blacklisted_tokens
+
 
 # _________________________________________PLAYER_________________________________________
 
@@ -671,28 +691,30 @@ def create_matches(tournament_id):
             return jsonify({'msg': 'Esperando la formación de otor equipo para crear un match'}), 400
 
         # Crear matches con equipos no asignados
-        while len(teams_unassigned) >= 2:
+        for i in range(0, len(teams_unassigned), 2):
             new_match = Matches(
                 tournament_id=tournament_id,
                 set_1='0-0',
                 set_2='0-0',
                 set_3='0-0',
-                resume='A espera de jugar el partido'
+                resume='A espera de jugar el partido',
+                round_number=1,
+                winner_team_id=None
             )
             db.session.add(new_match)
             db.session.commit()
 
+            team_1 = teams_unassigned[i]
+            team_2 = teams_unassigned[i + 1] if i + 1 < len(teams_unassigned) else None
+
             new_match_participants = Match_participants(
                 match_id=new_match.id,
-                team_1=teams_unassigned[0].id,
-                team_2=teams_unassigned[1].id,
-                winner=False
+                team_1=team_1.id,
+                team_2=team_2.id,
             )
             db.session.add(new_match_participants)
             db.session.commit()
 
-            #Elimina los 2 primeros equipos de la lista que ya han sido asignados a un match
-            teams_unassigned = teams_unassigned[2:]
 
         return jsonify({'msg': 'Matches creados con éxito'}), 201
 
@@ -735,24 +757,3 @@ def upload():
         print('-------------la url donde esta la imagen-------------', upload)
         return jsonify(upload)
     return jsonify({"error": "No file uploaded"}), 400
-
-
-
-# //_________________________________________LOGOUT_________________________________________
-blacklisted_tokens = set()
-
-@api.route('/logout', methods=['POST'])
-@jwt_required()
-def logout():
-    # Obtén el token del usuario actual
-    jti = get_jwt()['jti']  # jti es el identificador único del token
-    # Añade el token a la lista negra
-    blacklisted_tokens.add(jti)
-    # Devuelve un mensaje de éxito
-    return jsonify({'msg': 'Sesión cerrada exitosamente'}), 200
-
-# Verifica si un token está en la lista negra
-@jwt.token_in_blocklist_loader
-def check_if_token_in_blacklist(jwt_header, jwt_payload):
-    jti = jwt_payload['jti']
-    return jti in blacklisted_tokens
