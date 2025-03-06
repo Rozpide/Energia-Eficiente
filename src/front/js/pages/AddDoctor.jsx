@@ -15,7 +15,7 @@ function AddDoctor() {
         await actions.AddDoctor(name, email, specialty, password);
 
         if (store.doctor) {
-            navigate("/");
+            navigate("/logInDoc");
         }
     };
 
@@ -41,15 +41,25 @@ function AddDoctor() {
                         required
                     />
                 </div>
-                <div>
-                    <label>Specialty</label><br />
-                    <input
-                        type="text"
-                        value={specialty}
-                        onChange={(e) => setSpecialty(e.target.value)}
-                        required
-                    />
+                
+
+                <div class="input-group mb-3 mt-3">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Especialidad</button>
+                    <ul className="dropdown-menu" aria-labelledby="specialtiesDropdown">
+                        <li><Link className="dropdown-item" to="/medicina-general">Medicina General</Link></li>
+                        <li><Link className="dropdown-item" to="/pediatria">Pediatría</Link></li>
+                        <li><Link className="dropdown-item" to="/ginecologia">Ginecología y Obstetricia</Link></li>
+                        <li><Link className="dropdown-item" to="/cardiologia">Cardiología</Link></li>
+                        <li><Link className="dropdown-item" to="/dermatologia">Dermatología</Link></li>
+                        <li><Link className="dropdown-item" to="/ortopedia">Ortopedia y Traumatología</Link></li>
+                        <li><Link className="dropdown-item" to="/neurologia">Neurología</Link></li>
+                        <li><Link className="dropdown-item" to="/oftalmologia">Oftalmología</Link></li>
+                        <li><Link className="dropdown-item" to="/otorrinolaringologia">Otorrinolaringología</Link></li>
+                        <li><Link className="dropdown-item" to="/endocrinologia">Endocrinología</Link></li>
+                    </ul>
+
                 </div>
+
                 <div>
                     <label>Password:</label><br />
                     <input

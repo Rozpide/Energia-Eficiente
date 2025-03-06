@@ -14,6 +14,8 @@ import LogInDoc from "./pages/LogInDoc.jsx";
 import AddDoctor from "./pages/AddDoctor.jsx";
 import RegistroPacientes from "./pages/RegistroPacientes.jsx"
 import EditUser from "./pages/EditUser.jsx";
+import PanelAdmin from "./pages/PanelAdmin.jsx";
+
 
 // vistas de especialidades
 import MedicinaGeneral from "./pages/MedicinaGeneral.jsx";
@@ -42,7 +44,7 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
-
+                        <Route element={<PanelAdmin />} path="/panel" />
                         <Route element={<LogIn />} path="/login" />
                         <Route element={<AddDoctor />} path="/addDoctor" />
                         <Route element={<LogInDoc />} path="/logInDoc" />
