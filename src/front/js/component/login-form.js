@@ -10,7 +10,7 @@ export const LoginForm = () => {
     let navigate = useNavigate();
 
     const handleClick = () => {
-        // navigate("/registro")
+        navigate("/registro")
     }
 
     async function handleSubmit(e) {
