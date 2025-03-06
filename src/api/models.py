@@ -2,111 +2,74 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+        #  USER REGISTER AND PROFILE MODEL
 class User(db.Model):
+    __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
+
+    full_name = db.Column(db.String(120), unique=True, nullable=True)
+    username = db.Column(db.String(120), unique=True, nullable=True)
+
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
-    profile_photo_id = db.Column(db.Integer, db.ForeignKey('profile_photo.id'), unique=True)
-    profile_photo = db.relationship('Profile_Photo', uselist=False, foreign_keys=[profile_photo_id])
+    is_artist = db.Column(db.Boolean, default=False) # Check if account is artist
+    profile_photo = db.Column(db.String(255), nullable=True)  # Profile photo URL
 
-    saved_artist = db.relationship('Saved_Artist', backref='user')
+    #  Relationships
+    followed_artists = db.relationship('Follow_Artist', backref='follow_artist')
     saved_music = db.relationship('Saved_Music', backref='user')
 
-    followed_artists = db.relationship('Follow_Artist', backref='user')
-
     def __repr__(self):
-        return f'<User {self.email}>'
+        return f'<User {self.username}>'
 
     def serialize(self):
         return {
             "id": self.id,
+            "full_name": self.full_name,
+            "username": self.username,
             "email": self.email,
-            # do not serialize the password, its a security breach
-            "saved_artist": [saved.serialize() for saved in self.saved_artist],
-            "saved_music": [saved.serialize() for saved in self.saved_music],
+            "is_artist": self.is_artist,
+            "profile_photo": self.profile_photo,
         }
-    
-class Artist(db.Model):
+
+        # ARTIST PROFILE MODEL
+class Artist_Profile(db.Model):
+    __tablename__ = "artist_profile"
 
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    bio = db.Column(db.Text, nullable=True)
 
-    profile_photo_id = db.Column(db.Integer, db.ForeignKey('profile_photo.id'), unique=True)
-    profile_photo = db.relationship('Profile_Photo', uselist=False, foreign_keys=[profile_photo_id])
+    # Relationships
+    artist_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
 
-    artist_bio = db.relationship("Bio", backref="artist")
     artist_photos = db.relationship("Photo", backref="artist")
     artist_videos = db.relationship("Video", backref="artist")
     artist_music = db.relationship("Music", backref="artist")
 
-    saved_artist = db.relationship('Saved_Artist', backref='artist')
-
-    followers = db.relationship('Follow_Artist', backref='artist')
-
     def __repr__(self):
-        return f'<Artist {self.email}>'
+        return f'<Artist_Profile {self.id}>'
 
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
-            # do not serialize the password, its a security breach
+            "artist_id": self.artist_id,
+            "bio": self.bio,
+            "artist_photos": self.artist_photos,
+            "artist_videos": self.artist_videos,
+            "artist_music": self.artist_music
         }
     
-                # USER & ARTIST PROFILE PHOTO MODEL
-class Profile_Photo(db.Model):
-    __tablename__ = "profile_photo"
-    
-    id = db.Column(db.Integer, primary_key=True)
-
-    media_url = db.Column(db.String(255), nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-
-    def __repr__(self):
-        return f"<Profile_Photo {self.id}>"
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "media_url": self.media_url,
-            "is_active": self.is_active,
-        }
-
-                # ARTIST BIO MODEL
-class Bio(db.Model):
-    __tablename__ = "bio"
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    text = db.Column(db.String(1000), nullable=True)
-
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"), nullable=False)
-
-    def __repr__(self):
-        shortened_text = self.text[:50] + '...' if self.text else "No bio available"
-        return f'<Bio text={shortened_text}>'
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "text": self.text,
-            "artist_id": self.artist_id
-        }
-
-
                 # ARTIST PHOTO MODEL
 class Photo(db.Model):
     __tablename__ = "photo"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    media_url = db.Column(db.Text, nullable=False, unique=True)  # Cloudinary URL
+    media_url = db.Column(db.Text, nullable=False)  # Cloudinary URL
 
+    # Relationships
     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"), nullable=False)
 
     def __repr__(self):
@@ -119,15 +82,17 @@ class Photo(db.Model):
             "media_url": self.media_url
         }
 
+
                 # ARTIST VIDEO MODEL
 class Video(db.Model):
     __tablename__ = "video"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    media_url = db.Column(db.Text, nullable=False, unique=True)  # Cloudinary URL
+    media_url = db.Column(db.Text, nullable=False)  # Cloudinary URL
     duration = db.Column(db.Integer, nullable=False)
 
+    # Relationships
     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"), nullable=False)
 
     def __repr__(self):
@@ -147,9 +112,10 @@ class Music(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    media_url = db.Column(db.Text, nullable=False, unique=True)  # Cloudinary URL
+    media_url = db.Column(db.Text, nullable=False)  # Cloudinary URL
     duration = db.Column(db.Integer, nullable=False)
 
+    # Relationships
     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"), nullable=False)
 
     def __repr__(self):
@@ -164,32 +130,14 @@ class Music(db.Model):
         }
 
 
-                # USER SAVED MUSIC & SAVED ARTISTS MODEL
-class Saved_Artist(db.Model):
-    __tablename__ = "saved_artist"
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
-
-    def __repr__(self):
-        return f'<Saved_Artist {self.artist_id}>'
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "artist_id": self.artist_id
-        }
-
+            # USER SAVED MUSIC & FOLLOW ARTIST MODEL
 class Saved_Music(db.Model):
     __tablename__ = "saved_music"
 
     id = db.Column(db.Integer, primary_key=True)
 
+    # Relationships
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
     music_id = db.Column(db.Integer, db.ForeignKey("music.id"))
 
     def __repr__(self):
@@ -199,7 +147,6 @@ class Saved_Music(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "artist_id": self.artist_id,
             "music_id": self.music_id
         }
     
@@ -211,8 +158,6 @@ class Follow_Artist(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"), primary_key=True)
 
-    is_active = db.Column(db.Boolean, default=True)
-
     def __repr__(self):
         return f'<Follow_Artist user_id={self.user_id}, artist_id={self.artist_id}, is_active={self.is_active}>'
 
@@ -220,5 +165,4 @@ class Follow_Artist(db.Model):
         return {
             "user_id": self.user_id,
             "artist_id": self.artist_id,
-            "is_active": self.is_active
         }
