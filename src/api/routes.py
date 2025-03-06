@@ -101,6 +101,40 @@ def get_pet_suggestions(pet_id):
         return "no suggestions found", 404  
     return [food[0].serialize() for food in food_suggestions], 200
 
+#obtener todos los alimentos según tipo de animal
+@api.route('/foods/cat', methods=['GET'])
+def get_all_cat_food():
+    food_cat = db.session.query(Food).filter(Food.animal_type.ilike("%gato%")).all()
+    
+    print("Datos obtenidos:", food_cat)  
+    
+    if not food_cat:
+        return jsonify({"error": "No cat food found"}), 404  
+    
+    return jsonify([food.serialize() for food in food_cat]), 200
+
+@api.route('/foods/dog', methods=['GET'])
+def get_all_dog_food():
+    food_dog = db.session.query(Food).filter(Food.animal_type.ilike("%perro%")).all()
+    
+    print("Datos obtenidos:", food_dog)  
+    
+    if not food_dog:
+        return jsonify({"error": "No dog food found"}), 404  
+    
+    return jsonify([food.serialize() for food in food_dog]), 200
+
+@api.route('/foods/exotic', methods=['GET'])
+def get_all_exotic_food():
+    food_exotic = db.session.query(Food).filter(Food.animal_type.ilike("%exótico%")).all()
+    
+    print("Datos obtenidos:", food_exotic)  
+    
+    if not food_exotic:
+        return jsonify({"error": "No exotic food found"}), 404  
+    
+    return jsonify([food.serialize() for food in food_exotic]), 200
+
 # Obtener todos los accesorios
 @api.route('/accessories', methods=['GET'])
 def get_accessories():
@@ -110,7 +144,7 @@ def get_accessories():
     return jsonify([accessory.serialize() for accessory in accessories]), 200
 
 
-# Obtener una accesotio por ID
+# Obtener una accesorio por ID
 @api.route('/accessories/<int:accessories_id>', methods=['GET'])
 def get_accessory(accessories_id):
     accessories = Accessories.query.get(accessories_id)

@@ -41,9 +41,22 @@ def setup_commands(app):
         catfood.ingredients = "ads"
         catfood.weight = 1.
         catfood.price = 1.
-        catfood.animal_type = "asd"
+        catfood.animal_type = "gato"
         catfood.age = "sd"
         catfood.pathologies = "asd"
+        db.session.add(catfood)
+        db.session.commit()
+
+        catfood = Food()
+        catfood.name = "Farmina Vet Life Diabetic Gato"
+        catfood.brand="Farmina"
+        catfood.description = "Alimento para gatos adultos que facilita el control del aporte de glucosa en los casos de diabetes mellitus."
+        catfood.ingredients = "Proteína de pollo deshidratada, gluten de maíz, avena, espelta, proteína de pescado hidrolizada, grasa de pollo, fibra de guisante, proteína de pescado deshidratada, huevos desecados, aceite de pescado, pulpa de remolacha desecada, semillas de lino, cloruro de potasio, inulina, fructo-oligosacáridos, extracto de levadura (fuente de manno-oligosacáridos), cáscaras y semillas de psyllium, cloruro de sodio, citrato de potasio, sulfato de calcio dihidratado, condroitín sulfato, glucosamina. Fuentes de hidratos de carbono: avena, espelta."
+        catfood.weight = 0.4
+        catfood.price = 6.99
+        catfood.animal_type = "gato"
+        catfood.age = "adulto"
+        catfood.pathologies = "diabético"
         db.session.add(catfood)
         db.session.commit()
         
@@ -91,7 +104,7 @@ def setup_commands(app):
         exoticfood.ingredients = "ads"
         exoticfood.price = 1.
         exoticfood.pathologies = "asd"
-        exoticfood.animal_type = "asd"
+        exoticfood.animal_type = "exótico"
         exoticfood.age = "asd"
         exoticfood.weight = 1.
         db.session.add(exoticfood)
