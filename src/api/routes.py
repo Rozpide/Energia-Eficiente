@@ -5,8 +5,9 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Food, Pet, Accessories
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from sqlalchemy import select
+from sqlalchemy import select, and_, or_
 import json
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 api = Blueprint('api', __name__)
 
@@ -89,10 +90,10 @@ def get_pet_suggestions(pet_id):
     # Solucion simple: limitar a 1 patologia cada animal por ahora
     #if para pet# anymal_type == perro, animal size    #si no no hace falta size
     if pet["animal_type"] == "perro":   
-        food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet["animal_type"]),
+        food_suggestions = db.session.execute(select(Food).where(and_(Food.animal_type==pet["animal_type"]),
                                                              Food.size==pet["size"],
                                                              Food.age==pet["age"],
-                                                             Food.pathologies==pet["pathologies"]).all()
+                                                             Food.pathologies==pet["pathologies"])).all()
     else:
         food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet["animal_type"]),
                                                              Food.age==pet["age"],
@@ -101,6 +102,18 @@ def get_pet_suggestions(pet_id):
         return "no suggestions found", 404  
     return [food[0].serialize() for food in food_suggestions], 200
 
+
+#obtener todos los alimentos según tipo de animal
+@api.route('/foods/cat', methods=['GET'])
+def get_all_cat_food():
+    food_cat = db.session.query(Food).filter(Food.animal_type.ilike("%gato%")).all()
+    
+    print("Datos obtenidos:", food_cat)  
+    
+    if not food_cat:
+        return jsonify({"error": "No cat food found"}), 404  
+    
+
 # #obtener todos los alimentos según tipo de animal
 @api.route('/foods/cat', methods=['GET'])
 def get_all_cat_food():
@@ -108,22 +121,41 @@ def get_all_cat_food():
     print("Datos obtenidos:", food_cat)
     if not food_cat:
         return jsonify({"error": "No cat food found"}), 404
+
     return jsonify([food.serialize() for food in food_cat]), 200
 
 @api.route('/foods/dog', methods=['GET'])
 def get_all_dog_food():
     food_dog = db.session.query(Food).filter(Food.animal_type.ilike("%perro%")).all()
+
+    
+    print("Datos obtenidos:", food_dog)  
+    
+    if not food_dog:
+        return jsonify({"error": "No dog food found"}), 404  
+    
+
     print("Datos obtenidos:", food_dog)
     if not food_dog:
         return jsonify({"error": "No dog food found"}), 404
+
     return jsonify([food.serialize() for food in food_dog]), 200
 
 @api.route('/foods/exotic', methods=['GET'])
 def get_all_exotic_food():
     food_exotic = db.session.query(Food).filter(Food.animal_type.ilike("%exótico%")).all()
+
+    
+    print("Datos obtenidos:", food_exotic)  
+    
+    if not food_exotic:
+        return jsonify({"error": "No exotic food found"}), 404  
+    
+
     print("Datos obtenidos:", food_exotic)
     if not food_exotic:
         return jsonify({"error": "No exotic food found"}), 404
+
     return jsonify([food.serialize() for food in food_exotic]), 200
 
 # Obtener todos los accesorios
@@ -135,7 +167,7 @@ def get_accessories():
     return jsonify([accessory.serialize() for accessory in accessories]), 200
 
 
-# Obtener una accesotio por ID
+# Obtener una accesorio por ID
 @api.route('/accessories/<int:accessories_id>', methods=['GET'])
 def get_accessory(accessories_id):
     accessories = Accessories.query.get(accessories_id)
@@ -163,7 +195,7 @@ def create_food():
     db.session.commit()
     return jsonify(new_food.serialize()), 201
 
-#crear nuevo usuario
+#registrar nuevo usuario
 @api.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
@@ -173,9 +205,25 @@ def create_user():
         password=data["password"],
         is_active=data["is_active"]
 )
+    if User.query.filter_by(email=data["email"]).first():
+        return jsonify({"msg": "El usuario ya existe"}), 400
+    
     db.session.add(new_user)
     db.session.commit()
     return jsonify(new_user.serialize()), 201
+
+# iniciar sesion 
+@api.route('loging/user', methods=['POST'])
+def logging_user():
+    data = request.get_json()
+    user = User.query.filter_by(email=data["email"]).first()
+    
+
+    if User.query.filter_by(email=data["email"]).first() and User.query.filter_by(password=data["password"]).first():
+        access_token=create_access_token(identity=user.email)
+        return jsonify(access_token=access_token), 200
+    return jsonify ({"nsg":"credenciales invalidas"}), 400
+
 
 #crear un nuevo accesorio
 @api.route('/accessories', methods=['POST'])

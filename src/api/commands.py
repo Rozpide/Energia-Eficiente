@@ -42,8 +42,26 @@ def setup_commands(app):
         catfood.weight = 1.
         catfood.price = 1.
         catfood.animal_type = "gato"
+
+        catfood.age = "cachorro"
+        catfood.pathologies = "renal"
+        db.session.add(catfood)
+        db.session.commit()
+
+        catfood = Food()
+        catfood.name = "Farmina Vet Life Diabetic Gato"
+        catfood.brand="Farmina"
+        catfood.description = "Alimento para gatos adultos que facilita el control del aporte de glucosa en los casos de diabetes mellitus."
+        catfood.ingredients = "Proteína de pollo deshidratada, gluten de maíz, avena, espelta, proteína de pescado hidrolizada, grasa de pollo, fibra de guisante, proteína de pescado deshidratada, huevos desecados, aceite de pescado, pulpa de remolacha desecada, semillas de lino, cloruro de potasio, inulina, fructo-oligosacáridos, extracto de levadura (fuente de manno-oligosacáridos), cáscaras y semillas de psyllium, cloruro de sodio, citrato de potasio, sulfato de calcio dihidratado, condroitín sulfato, glucosamina. Fuentes de hidratos de carbono: avena, espelta."
+        catfood.weight = 0.4
+        catfood.price = 6.99
+        catfood.animal_type = "gato"
+        catfood.age = "adulto"
+        catfood.pathologies = "diabético"
+
         catfood.age = "sd"
         catfood.pathologies = "asd"
+
         db.session.add(catfood)
         db.session.commit()
         
@@ -72,10 +90,10 @@ def setup_commands(app):
         dogfood.description = "asd"
         dogfood.ingredients = "ads"
         dogfood.price = 1.
-        dogfood.pathologies = "renal"
+        dogfood.pathologies = "diabetes"
         dogfood.animal_type = "perro"
-        dogfood.age = "senior"
-        dogfood.size = "medium"
+        dogfood.age = "cachorro"
+        dogfood.size = "grande"
         dogfood.weight = 1.
         db.session.add(dogfood)
         db.session.commit()
@@ -116,12 +134,12 @@ def setup_commands(app):
     @app.cli.command("insert_data_pet")
     def insert_data_pet():
         pet= Pet()
-        pet.name = "asd"
+        pet.name = ""
         pet.size=""
         pet.breed= "asd"
         pet.age= "cachorro"
         pet.animal_type = "gato"
-        pet.pathologies="obesidad, diabetes"
+        pet.pathologies="diabetes"
         pet.user_id = 1
         db.session.add(pet)
         db.session.commit()
@@ -138,12 +156,24 @@ def setup_commands(app):
         db.session.commit()
         
         pet= Pet()
+        pet.name = "peluso"
+        pet.size="grande"
+        pet.breed= "asd"
+        pet.age="cachorro"
+        pet.animal_type = "perro"
+        pet.pathologies="diabetes"
+        pet.user_id = 1
+        db.session.add(pet)
+        db.session.commit()
+        
+        pet= Pet()
         pet.name = "asd"
         pet.size="oxbow"
         pet.breed= "asd"
         pet.age= "2"
         pet.animal_type = "cobaya"
         pet.pathologies="escorbuto"
+        pet.user_id = 1
         db.session.add(pet)
         db.session.commit()
         
@@ -154,6 +184,7 @@ def setup_commands(app):
         pet.age= "60"
         pet.animal_type = "loro"
         pet.pathologies=""
+        pet.user_id = 1
         db.session.add(pet)
         db.session.commit()
 
