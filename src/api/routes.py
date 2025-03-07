@@ -128,11 +128,11 @@ def get_one_account_to_one_user(user_id):
 def signup():
     body = request.json
     # para manejo de errores poner exactamente el nombre del front igual en los campos entre parentesis (esperar a que se haga el front)
-    if not body or not body.get("email") or not body.get("password") or not body.get("last_name")or not body.get("first_name")or not body.get("birthdate")or not body.get("country"):
+    if not body or not body.get("email") or not body.get("password") or not body.get("last_name")or not body.get("first_name"):
         return jsonify({"msg": "missing fields"}), 400
     hashe_password = bcrypt.generate_password_hash(body["password"]).decode("utf-8")
     # encajar con los nombres del front estos (solo los que estan entre comillas)
-    new_user = User(email = body["email"],password=hashe_password, last_name= body["last_name"],first_name= body["first_name"],birthdate= body["birthdate"],country= body["country"])
+    new_user = User(email = body["email"],password=hashe_password, last_name= body["last_name"],first_name= body["first_name"])
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"msg": "user created"}), 201
