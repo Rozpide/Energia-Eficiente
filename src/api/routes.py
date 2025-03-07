@@ -96,6 +96,7 @@ def generate_token():
 def get_current_user():
     return jsonify(current_user.serialize()), 200
 
+
 # ROUTE TO LOAD GENRES
 @api.route('/getGenresapi', methods=["GET"])
 def getGenresApi():
@@ -114,14 +115,6 @@ def getGenresApi():
 def getGenres():
     genres = Genre.query.filter(Genre.id != 0).all()
     return jsonify({"genres": [genre.serialize() for genre in genres]}), 200
-
-
-
-
-
-
-
-
 
 
 
@@ -182,3 +175,62 @@ def delete_artist_video(artist_id, video_id):
     db.session.delete(video)
     db.session.commit()
     return jsonify({"msg": "Video eliminado con éxito"}), 200
+
+
+
+
+ # GET: Obtener musica
+@api.route('/artist/<int:artist_id>/songs', methods=['GET'])
+def get_artist_songs(artist_id):
+    # Verifica si el artista existe (descomenta o ajusta según tu modelo real)
+    artist = ArtistProfile.query.get(artist_id)
+    if not artist:
+        return jsonify({"msg": "Artista no encontrado"}), 404
+
+    # Obtén la musica para este artista
+    songs = Music.query.filter_by(artist_id=artist_id).all()
+    serialized_songs = [s.serialize() for s in songs]
+    return jsonify(serialized_songs), 200
+
+ # POST: Guardar nueva musica
+@api.route('/artist/<int:artist_id>/songs', methods=['POST'])
+def create_artist_song(artist_id):
+    artist = ArtistProfile.query.get(artist_id)
+    if not artist:
+        return jsonify({"msg": "Artista no encontrado"}), 404
+
+    body = request.get_json()
+    if not body:
+        return jsonify({"msg": "No data provided"}), 400
+
+    media_url = body.get("media_url")
+    title = body.get("title", "Sin título")
+
+    if not media_url:
+        return jsonify({"msg": "media_url is required"}), 400
+
+    # Creamos la musica
+    new_song = Music(
+        title=title,
+        media_url=media_url,
+        artist_id=artist_id
+    )
+    db.session.add(new_song)
+    db.session.commit()
+
+    return jsonify(new_song.serialize()), 201
+
+ # DELETE: Eliminar musica 
+@api.route('/artist/<int:artist_id>/songs/<int:song_id>', methods=['DELETE'])
+def delete_artist_song(artist_id, song_id):
+    artist = ArtistProfile.query.get(artist_id)
+    if not artist:
+        return jsonify({"msg": "Artista no encontrado"}), 404
+
+    song = Music.query.filter_by(id=song_id, artist_id=artist_id).first()
+    if not song:
+        return jsonify({"msg": "Cancion no encontrada"}), 404
+
+    db.session.delete(song)
+    db.session.commit()
+    return jsonify({"msg": "Cancion eliminada con éxito"}), 200
