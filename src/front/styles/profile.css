@@ -1,10 +1,47 @@
+.parent{
+    display: inline-flex;
+    align-items: center;
+}
+    
+
+div.calendar{
+    border-style: solid;
+    
+width: 400px;
+    border-color: #78A0AF;
+   transform: scale(1.02);
+    
+    border-radius: 10% 10% ;
+    
+    padding: 2% 5% 2% 1%;
+
+}
+
+div.react-calendar{
+    margin-right: 30px;
+    margin-left: 30px;
+    border-radius: 10% 10%;
+    background-color: #78A0AF;
+}
+
 h1{
     color: #78A0AF;
 }
+h2{
+    transform: scale(2);
+    color:#78A0AF
+}
+
+.card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
 div.btn-group{
     background-color: #ffffff;
-    border-radius: 40% 40% 40% 40%;
+    border-radius: 40% 40% 40% 40% !important;
+    transform: scale(1.5);
 
 }
 
@@ -26,4 +63,10 @@ button{
     color:#ffffff;
     padding: 2% 1% 2% 1%;
     
+}
+
+.card {
+   width: 400px;
+   display: inline-flex;
+   
 }
