@@ -1,6 +1,8 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			user: null,
+			token: null,
 			message: null,
 			demo: [
 				{
@@ -24,6 +26,95 @@ const getState = ({ getStore, getActions, setStore }) => {
 				getActions().changeColor(0, "green");
 			},
 
+			login: async (email, password, navigate) => {
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}api/login/user`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({ email, password })
+					});
+
+					if (!resp.ok) {
+						throw new Error("Error al iniciar sesión");
+					}
+
+					const data = await resp.json();
+					console.log("Inicio de sesión exitoso:", data);
+
+					const token = data.token;
+					if (!token) {
+						throw new Error("No se recibió el token");
+					}
+
+					localStorage.setItem("token", token);
+					setStore({ token });
+
+					const actions = getActions();
+					actions.getUser();
+					navigate("/");
+				} catch (error) {
+					console.log("Error al iniciar sesión", error);
+					alert("Error al iniciar sesión");
+				}
+			},
+			signup: async (dataUser, navigate) => {
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}api/signup`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(dataUser)
+					});
+			
+					if (!resp.ok) {
+						throw new Error("Error en el registro");
+					}
+			
+					const data = await resp.json();
+					console.log("Usuario registrado exitosamente", data);
+			
+					const token = data.token; 
+					if (!token) {
+						throw new Error("No se recibió el token");
+					}
+			
+					localStorage.setItem("token", token);
+					setStore({ token });
+			
+					const actions = getActions();
+					actions.getUser();
+					navigate("/");
+				} catch (error) {
+				}
+			},
+			getUser: async () => {
+				try {
+					const token = localStorage.getItem("token");
+					if (!token) throw new Error("No token found");
+
+					const resp = await fetch(`${process.env.BACKEND_URL}api/user`, {
+						headers: {
+							"Authorization": `Bearer ${token}`
+						}
+					});
+
+					if (!resp.ok) throw new Error("Error al obtener el usuario");
+
+					const data = await resp.json();
+					setStore({ user: data });
+				} catch (error) {
+					console.log("Error al obtener usuario", error);
+				}
+			},
+			logout: () => {
+				localStorage.removeItem('token');
+				setStore({token: null, user: null})
+				
+			},
+			
 			getDogFood: async () => {
 				const myHeaders = new Headers();
 				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZs0q_CxPIxRcsYOazLvQz4rP7s5FWFmvGJndFqy0N7fvoY5B6Jou5i4ZPgwsQZsEYGDV4DoaNhJP3xwIvv1aGmoRIVdScF1G2c_hWBWqeCTHFNCvGD1Dy0sm3kBmaNdXiMsSO0myHKUFvlWHCed2AdtyCiC6CHBqk9DHs32cYjJV4GQr4cxW2IXl6QDukWwCPSYuzTnP699Rz_4pCbB8OPOQNBDyDtdks_LUoMZR2Qt6IWKmUnLGt-n3JLFjeQMZiSeKEXKNTcJknrz4p25p9-5rh3BY2FBX_kg6MtH3cLbqOyS6yqrG4cjJPpyZbVfN3iEYSR6lzEGiGZDFPvokcj_PM8fq32HR1_olrhti8nYtDctNR_8YRewW5quhBNW6mtF_-SqGTbCQVH1CiLUF2UKK_H_nGmwvWAce2n4Cdw1BLUCZhlCr3GAKWJWHqLI1K5n9OekmI4zs0TI_60R6urTRxIQx2IgkRPYizg-AUdyr6bORhYr7s3c6oFBrdA4yBShqyJFOo4fuMkQuHflmg717cZeB1MDnWgSm9Xnl4qmOlcta0fCSq15GNUPvXhAwvclIoK9NTrmSSd1wvRhoqz7ypodxTSOafQx0ybhJZwTxDeS_gv-4KjbyFngwj7Bj1TluB2qE5Hijbi4uhZb2KILE9AGYHKWSW-IWoSmEXW71c7HhH8mBEbBxidpsSi_Rip3CdXL2oUO-8TGtLx2HgJtExj_7AyTD1trSanlKgDurPSEfDuXuwtqxawfWf0a1sbp9BGk0pRLOA-tVKrxmMiFAPiNCVC1W2EXb95TKydzKIwtbcC70YyDJ4dFwnHrQmgPYxzIz7PYzICzKqZ-VDpO4lf7C3jf4OBJ9ZMV4JRvPiR2kUwMNX_c5CuMLaKrZNzqCFwZBUa4N4AUyTT83mtzFQGAZjMXDeZNok7mjTYBp121qquiSKX8ft05b1MTsVtRfg3ETiFdOHmYQ2-1EcSwBY-VhjWIlkQiFr1yBWXk-g");
@@ -35,7 +126,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 			
 				try {
-					const response = await fetch("https://silver-meme-jj4x947jg76ghqjg9-3001.app.github.dev/api/foods/dog", requestOptions);
+					const response = await fetch(process.env.BACKEND_URL +"/api/foods/dog", requestOptions);
 					
 					if (!response.ok) {
 						throw new Error('Network response was not ok');
@@ -65,7 +156,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			};
 
 			try {
-			const response = await fetch("https://silver-meme-jj4x947jg76ghqjg9-3001.app.github.dev/api/foods/cat", requestOptions);
+			const response = await fetch(process.env.BACKEND_URL + "/api/foods/cat", requestOptions);
 			if (!response.ok) {
 				throw new Error('Network response was not ok');
 			}
@@ -90,7 +181,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			};
 
 			try {
-			const response = await fetch("https://silver-meme-jj4x947jg76ghqjg9-3001.app.github.dev/api/foods/exotic", requestOptions);
+			const response = await fetch(process.env.BACKEND_URL +"/api/foods/exotic", requestOptions);
 			if (!response.ok) {
 				throw new Error('Network response was not ok');
 			}

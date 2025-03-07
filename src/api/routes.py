@@ -113,16 +113,13 @@ def get_all_cat_food():
     if not food_cat:
         return jsonify({"error": "No cat food found"}), 404  
     
-
-# #obtener todos los alimentos según tipo de animal
-@api.route('/foods/cat', methods=['GET'])
-def get_all_cat_food():
-    food_cat = db.session.query(Food).filter(Food.animal_type.ilike("%gato%")).all()
     print("Datos obtenidos:", food_cat)
     if not food_cat:
         return jsonify({"error": "No cat food found"}), 404
 
     return jsonify([food.serialize() for food in food_cat]), 200
+    
+
 
 @api.route('/foods/dog', methods=['GET'])
 def get_all_dog_food():
