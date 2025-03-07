@@ -15,7 +15,7 @@ const LandingPage = () => {
           "Organize your life, develop lasting habits, keep track of your purposes and goals"
           </p>
           <Link to="/register">
-          <button className="register-button">Register</button>
+          <button className="register-button">Register Now</button>
          </Link>
         </div>
         <div className="app-mockup">
