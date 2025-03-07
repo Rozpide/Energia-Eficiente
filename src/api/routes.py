@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Genre
+from api.models import db, User, Genre, ArtistProfile, Photo, Video, Music, SavedMusic, FollowArtist
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 import os
@@ -115,3 +115,70 @@ def getGenres():
     genres = Genre.query.filter(Genre.id != 0).all()
     return jsonify({"genres": [genre.serialize() for genre in genres]}), 200
 
+
+
+
+
+
+
+
+
+
+
+
+
+ # GET: Obtener videos
+@api.route('/artist/<int:artist_id>/videos', methods=['GET'])
+def get_artist_videos(artist_id):
+    # Verifica si el artista existe (descomenta o ajusta según tu modelo real)
+    artist = ArtistProfile.query.get(artist_id)
+    if not artist:
+        return jsonify({"msg": "Artista no encontrado"}), 404
+
+    # Obtén los videos para este artista
+    videos = Video.query.filter_by(artist_id=artist_id).all()
+    serialized_videos = [v.serialize() for v in videos]
+    return jsonify(serialized_videos), 200
+
+ # POST: Guardar nuevo video
+@api.route('/artist/<int:artist_id>/videos', methods=['POST'])
+def create_artist_video(artist_id):
+    artist = ArtistProfile.query.get(artist_id)
+    if not artist:
+        return jsonify({"msg": "Artista no encontrado"}), 404
+
+    body = request.get_json()
+    if not body:
+        return jsonify({"msg": "No data provided"}), 400
+
+    media_url = body.get("media_url")
+    title = body.get("title", "Sin título")
+
+    if not media_url:
+        return jsonify({"msg": "media_url is required"}), 400
+
+    # Creamos el video
+    new_video = Video(
+        title=title,
+        media_url=media_url,
+        artist_id=artist_id
+    )
+    db.session.add(new_video)
+    db.session.commit()
+
+    return jsonify(new_video.serialize()), 201
+
+ # DELETE: Eliminar video 
+@api.route('/artist/<int:artist_id>/videos/<int:video_id>', methods=['DELETE'])
+def delete_artist_video(artist_id, video_id):
+    artist = ArtistProfile.query.get(artist_id)
+    if not artist:
+        return jsonify({"msg": "Artista no encontrado"}), 404
+
+    video = Video.query.filter_by(id=video_id, artist_id=artist_id).first()
+    if not video:
+        return jsonify({"msg": "Video no encontrado"}), 404
+
+    db.session.delete(video)
+    db.session.commit()
+    return jsonify({"msg": "Video eliminado con éxito"}), 200
