@@ -153,9 +153,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const result = await response.json();
 
 					if (response.status === 201) {
-						localStorage.setItem("userLogged", JSON.stringify(result.user));
-						setStore({ user: result.user, auth: true });
-
 						return { success: true, message: "Successfully registered" };
 					} else {
 						return { success: false, message: result.msg || "Registration error. Please try again" };
