@@ -16,11 +16,6 @@ const LogIn = () => {
             navigate("/edituser");
     };
 }; 
-
-
-    // const userProfile=()=>{ 
-    //     navigate('/edituser')
-    // }
     
 
     return ( 

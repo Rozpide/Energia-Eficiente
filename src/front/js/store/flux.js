@@ -15,7 +15,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// login de admin funcionando!
 			logInAdmin: async (name, email, password) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
+				console.log("esta es la base URL", baseURL)
 				try {
+					console.log("DATOS DE ENVIO", 	name, email, password)
 					const response = await fetch(`${baseURL}api/logIn/admin`, {
 						method: 'POST',
 						headers: {
@@ -25,15 +27,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 
 					if (!response.ok) {
+						console.log("primera parada")
 						const errorData = await response.json();
 						throw new Error(errorData.error || 'Error en el inicio de sesión');
 					}
 
 					const data = await response.json();
+					let store = getStore()
+					setStore({ ...store, admin: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
 
-					setStore({ admin: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
-					console.log("esta e sla data", data)
 					localStorage.setItem('token', data.access_token);
+					localStorage.setItem('name', data.name);
+					localStorage.setItem('email', data.email);
 				} catch (error) {
 					console.error('Error al iniciar sesión:', error);
 					setStore({ message: error.message });
@@ -97,7 +102,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					localStorage.setItem('name', data.name);
 					localStorage.setItem('email', data.email);
 					localStorage.setItem('id', data.id); 
-
 
 				} catch (error) {
 					console.error('Error al iniciar sesión:', error);
