@@ -15,7 +15,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			//estado julia 
+			//estado compañero
 		},
 		actions: {
 
@@ -43,7 +45,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch("https://legendary-adventure-v6gj6r57pq4gcq59-3001.app.github.dev/api/login", requestOptions);
+					const response = await fetch(process.env.BACKEND_URL+"/api/login", requestOptions);
 					const result = await response.json();
 					console.log(response);
 					
@@ -87,7 +89,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
-			}
+			},
+
+
+
+
+
+
+
+
+
+
 		}
 	};
 };
