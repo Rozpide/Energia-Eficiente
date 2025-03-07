@@ -13,6 +13,7 @@ import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import { Login } from "./pages/login";
 import { PrincipalPage } from "./pages/principalPage"
+import { NotFound } from "./pages/notFound";
 
 //create your first component
 const Layout = () => {
@@ -30,7 +31,7 @@ const Layout = () => {
                 <Route element={<PrincipalPage />} path="/cuentas" />
                 <Route element={<SignupForm />} path="/registro" />
                 <Route element={<Single />} path="/single/:theid" />
-                <Route element={<h1>Not found!</h1>} />
+                <Route element={<NotFound/>} path="*" />
             </Routes>
         </BrowserRouter>
     );
