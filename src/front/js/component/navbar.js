@@ -7,7 +7,7 @@ export const Navbar = () => {
 	return (
 		<nav className="navbar navbar-light bg-light p-0">
 			<div className="container-fluid margintop d-flex align-items-center">
-				<Link to="/">
+				<Link to="landingpage">
 					<img
 						src={logo}
 						className="navbar-brand backnavbar"
@@ -17,6 +17,11 @@ export const Navbar = () => {
 				</Link>
 
 				<ul className="navbar-nav d-flex flex-row w-75 justify-content-center gap-5 fs-5 textcolors">
+				<li className="nav-item ms-5 me-5 textcolors">
+						<Link className="nav-link" to="/profile">
+							Profile
+						</Link>
+					</li>
 					<li className="nav-item ms-5 me-5 textcolors">
 						<Link className="nav-link" to="/notes">
 							Notes
@@ -40,11 +45,6 @@ export const Navbar = () => {
 							Login
 						</button>
 					</Link>
-					<div className="m-">
-					<Link to="/landingpage">
-						<button className=" w-50 me-5 backbutton border border rounded text-black p-1">landingpage</button>
-					</Link>
-					</div>
 				</div>
 			</div>
 			{/* <Thememode /> */}
