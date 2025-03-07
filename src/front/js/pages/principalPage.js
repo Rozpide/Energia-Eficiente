@@ -1,6 +1,7 @@
-import React, { useContext, useEffect,useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Sidebar } from "../component/sidebar";
 import { Card } from "../component/card";
+import { GeneralBalance } from "../component/balanceGeneral";
 import "../../styles/container.css";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,6 +11,7 @@ import { Modal } from "../component/modal";
 export const PrincipalPage = () => {
     const { store, actions } = useContext(Context)
     const [userAccounts, setUserAccounts] = useState([])
+    const totalBalance = userAccounts.reduce((acc, item) => acc + item.balance, 0);
     
     let navigate = useNavigate();
     async function getAccountsUser() {
@@ -25,12 +27,12 @@ export const PrincipalPage = () => {
         try {
             const response = await fetch(`${process.env.BACKEND_URL}/api/user/${store.user.id}/accounts`, requestOptions);
             const result = await response.json();
-            setUserAccounts(result.result);  
+            setUserAccounts(result.result);
             console.log(result.result);
-                      
+
         } catch (error) {
             console.error(error);
-            
+
         };
     }
     useEffect(() => {
@@ -42,11 +44,11 @@ export const PrincipalPage = () => {
         }
     }, []);
 
-    if (!store.auth){
+    if (!store.auth) {
         actions.logout()
         navigate("/");
-    } 
-
+    }
+    
     return (
         <div className="d-flex">
             <Sidebar />
@@ -54,15 +56,18 @@ export const PrincipalPage = () => {
                 <div className="row d-flex justify-content-center">
                     <h2>Balance general</h2>
                     <div className="scrollmenu">
+                        <GeneralBalance balance={totalBalance} />
+                    </div>
+                    <div className="scrollmenu">
                         {userAccounts.map((item) => {
                             return (
-                                <Card id={item.id}name={item.name}balance={item.balance}coin={item.coin}type={item.type}/>
+                                <Card id={item.id} name={item.name} balance={item.balance} coin={item.coin} type={item.type} />
                             )
 
                         })}
                     </div>
                 </div>
-                        <Modal />
+                <Modal />
             </div>
         </div>
     );
