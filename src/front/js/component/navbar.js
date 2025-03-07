@@ -40,6 +40,11 @@ export const Navbar = () => {
 							Login
 						</button>
 					</Link>
+					<div className="m-">
+					<Link to="/landingpage">
+						<button className=" w-50 me-5 backbutton border border rounded text-black p-1">landingpage</button>
+					</Link>
+					</div>
 				</div>
 			</div>
 			{/* <Thememode /> */}

@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
+import  LandingPage  from "./pages/landingpage";
+import  Register from "./pages/register";
 
 import { Loginview } from "./pages/loginview";
 import { ForgotPassword } from "./pages/resetpassword";
@@ -37,6 +39,8 @@ const Layout = () => {
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                         <Route element={<Profile />} path="/profile" />
+                        <Route element={<LandingPage />} path="/landingpage" />
+                        <Route element={<Register />} path="/register" />
                     </Routes>
                     <Footer />
                 </ScrollToTop>
