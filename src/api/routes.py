@@ -95,24 +95,37 @@ def login():
     
     # Protect a route with jwt_required, which will kick out requests
 # without a valid JWT present.
-@api.route("/profile", methods=["GET"])
-# esto de abajo seria el portero de la analogia, entre la ruta y el metodo de autenticación 
-@jwt_required()
-# cuando el corrobora el token entra a la funcion y especifica
-def protected():
-    # Access the identity of the current user with get_jwt_identity
-    # verifica la identidad ( de quien es el token ) , lo corrobora
-    current_user = get_jwt_identity()
-
-    # con la identidad anterior nosotros hacemos una busqueda
-
-    # user = db.session.execute(db.select(User).filter_by(email=current_user)).scalar_one()
 
 
-#con la busqueda del señor anterior en la tabla favoritos fijate cuantos tiene y traemelos 
-# user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
-    # la entidad verificada se guarda en el espacio de memoria
-    return jsonify(logged_in_as=current_user), 200
+# @api.route("/profile", methods=["GET"])
+
+# # esto de abajo seria el portero de la analogia, entre la ruta y el metodo de autenticación 
+# @jwt_required()
+# # cuando el corrobora el token entra a la funcion y especifica
+# def protected():
+#     # Access the identity of the current user with get_jwt_identity
+#     # verifica la identidad ( de quien es el token ) , lo corrobora
+#     current_user = get_jwt_identity()
+
+#     # con la identidad anterior nosotros hacemos una busqueda
+
+#     # user = db.session.execute(db.select(User).filter_by(email=current_user)).scalar_one()
+
+
+# #con la busqueda del señor anterior en la tabla favoritos fijate cuantos tiene y traemelos 
+# # user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+#     # la entidad verificada se guarda en el espacio de memoria
+#     return jsonify(logged_in_as=current_user), 200
+
+
+@api.route("/verify-token", methods=["GET"])
+def verify_token():
+    try:
+        verify_jwt_in_request()
+        identify = get_jwt_identity()
+        return jsonify({"valid": True, "user": identify}), 200
+    except NoAuthorizationError:
+        return jsonify({"valid": False, "message": "Token invalido o no proporcionado"})
 
 
 

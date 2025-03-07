@@ -25,7 +25,7 @@ class User(db.Model):
             "name": self.name,
             "email": self.email,
             "is_active": self.is_active,
-            "role": self.role
+            # "role": self.role
         }
 
 class Notes(db.Model):
