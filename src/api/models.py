@@ -12,8 +12,6 @@ class User(db.Model):
     password: Mapped[str] = mapped_column(String(256),nullable=False)
     first_name: Mapped[str] = mapped_column(String(120),nullable=False)
     last_name: Mapped[str] = mapped_column(String(120),nullable=False)
-    birthdate: Mapped[str] = mapped_column(String(80),nullable=False)
-    country: Mapped[str] = mapped_column(String(120),nullable=False)
     accounts: Mapped[List["Accounts"]] = relationship()
 
     def serialize(self):
@@ -22,8 +20,6 @@ class User(db.Model):
             "email": self.email,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "birthdate": self.birthdate,
-            "country": self.country,
             # do not serialize the password, its a security breach
         }
 
