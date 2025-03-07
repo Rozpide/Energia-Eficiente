@@ -100,15 +100,16 @@ def get_token_usuario():
 
         if not login_user: 
             return jsonify({'error': 'Invalid email.'}), 404   
-        print("llegue hasta aca")
+        
         password_from_db = login_user.password 
-        print(f'el valor de password fron db es: {password_from_db}')
+
         true_o_false = bcrypt.check_password_hash(password_from_db, password)  
-        print(f'este es bcrypt {true_o_false}')
+
         if true_o_false: 
             expires = timedelta(days=1) 
             user_id = login_user.user_id 
-            access_token = create_access_token(identity={'id': user_id, 'role': 'User '}, expires_delta=expires)
+            access_token = create_access_token(identity={'id': user_id, 'role':login_user.role}, expires_delta=expires)
+
             user_data= {
                "name": login_user.name,
                "email": login_user.email,
@@ -217,8 +218,16 @@ def get_token_doctor():
      if true_o_false: 
          expires=timedelta(days=1) 
          doctor_id=login_doctor.doctor_id 
-         access_token = create_access_token(identity={'id': doctor_id, 'role': 'Doctor'}, expires_delta=expires) 
-         return jsonify({'access_token': access_token, 'role': 'Doctor'}), 200
+         access_token = create_access_token(identity={'id': doctor_id, 'role': 'Doctor'}, expires_delta=expires)  
+        
+         doctor_data= {
+               "name": login_doctor.name,
+               "email": login_doctor.email,
+               "id": login_doctor.doctor_id,
+               "access_token": access_token
+            } 
+           
+         return jsonify(doctor_data), 200
      else: 
          return{"Error":"Contraseña incorrecta"},404
 
@@ -437,14 +446,15 @@ def create_availability():
      
 #Delete User 
 
-@api.route('/delete_user/<int:user_id>', methods=['DELETE']) 
-def delete_user(user_id):
+@api.route('/delete_user/<int:user_id>', methods=['DELETE'])  
+def delete_user(user_id): 
     user=User.query.get(user_id) 
-    if user:  
-        db.session.delete(user)
-        db.session.commit() 
-        return jsonify('Usuario Borrado'),200 
-    return jsonify('no se encontro Usuario'),404 
+    if not user: 
+        return jsonify({"error":"Usuario no encontrado"}),404 
+      
+    db.session.delete(user)
+    db.session.commit() 
+    return jsonify({"message":'Usuario Borrado Correctamente', "user_id":user_id}),200 
 
 #Delete Doctor 
 
@@ -456,7 +466,7 @@ def delete_doctor(doctor_id):
         db.session.delete(doctor)
         db.session.commit() 
         return jsonify('Doctor Borrado'),200 
-    return jsonify('no se encontro Doctor'),404 
+    return jsonify({"message":'Usuario Borrado Correctamente', "doctor_id":doctor_id}),404 
 
 
 #Delete Admin for Admin 

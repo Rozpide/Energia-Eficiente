@@ -13,7 +13,7 @@ const LogInDoc = () => {
         e.preventDefault();
         await actions.logInDoc(name, email, password); // Llamar a la acción logIn
         if (store.doctor) {
-            navigate("/");
+            navigate("/editdoc");
         };
     };
 

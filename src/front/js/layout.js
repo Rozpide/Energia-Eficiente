@@ -14,7 +14,8 @@ import LogInDoc from "./pages/LogInDoc.jsx";
 import AddDoctor from "./pages/AddDoctor.jsx";
 import RegistroPacientes from "./pages/RegistroPacientes.jsx"
 import EditUser from "./pages/EditUser.jsx";
-import PanelAdmin from "./pages/PanelAdmin.jsx";
+import PanelAdmin from "./pages/PanelAdmin.jsx"; 
+import EditDoctor from "./pages/EditDoctor.jsx";
 
 
 // vistas de especialidades
@@ -50,7 +51,12 @@ const Layout = () => {
                         <Route element={<LogInDoc />} path="/logInDoc" />
                         <Route element={<LogInAdmin />} path="/logInAdmin" />
                         <Route element={<RegistroPacientes />} path = "/registroPacientes"/> 
-                        <Route element={<EditUser/>} path="/edituser"/>
+                        <Route element={<EditUser/>} path="/edituser"/>  
+                        <Route element={<EditDoctor/>} path="/editdoc"/> 
+
+                        
+                        
+
 
                         
 

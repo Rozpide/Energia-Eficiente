@@ -7,7 +7,8 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(100), nullable=False) 
+    role=db.Column(db.String(100),nullable=False, default='user')
     # Relaciones
     posts = db.relationship('Post', backref='user', lazy=True)
     appointments = db.relationship('Appointment', backref='user', lazy=True)
@@ -19,7 +20,8 @@ class User(db.Model):
         return {
             "user_id": self.user_id,
             "name": self.name,
-            "email": self.email,
+            "email": self.email, 
+            "role":self.role
         }
 
 class Doctor(db.Model):
