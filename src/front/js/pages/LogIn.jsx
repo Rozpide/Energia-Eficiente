@@ -12,10 +12,19 @@ const LogIn = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         await actions.logIn(name, email, password);
-        if (store.user) {
-            navigate("/edituser");
+        if (store.user && store.user.role) {
+            if (store.user.role === 'admin') {
+                navigate("/admin/dashboard"); // Redirige al dashboard de admin
+            } else if (store.user.role === 'user') {
+                navigate("/user/dashboard"); // Redirige al dashboard de usuario normal
+            } else {
+                navigate("/edituser"); // Redirige a la edición de usuario
+            }
+        } else {
+            // Si no hay usuario o rol en el store, mostrar un error
+            setError('No se pudo recuperar el rol del usuario');
+        }
     };
-}; 
     
 
     return ( 

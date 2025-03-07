@@ -17,7 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
 				console.log("esta es la base URL", baseURL)
 				try {
-					console.log("DATOS DE ENVIO", 	name, email, password)
+					console.log("DATOS DE ENVIO", name, email, password)
 					const response = await fetch(`${baseURL}api/logIn/admin`, {
 						method: 'POST',
 						headers: {
@@ -62,7 +62,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error(errorData.error || 'Error en el inicio de sesión');
 					}
 
-					const data = await response.json(); 
+					const data = await response.json();
 					let store = getStore()
 					setStore({ ...store, doctor: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
 					localStorage.setItem('token', data.access_token);
@@ -76,11 +76,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			// login de usuario
-			logIn: async (name, email, password) => {
+			 logIn : async (name, email, password) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
-				console.log("ESTA ES LA BASE URL", baseURL)
 				try {
-					console.log('DATOS DE ENVIO', name, email, password)
 					const response = await fetch(`${baseURL}api/logIn`, {
 						method: 'POST',
 						headers: {
@@ -88,21 +86,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify({ name, email, password }),
 					});
-
+			
 					if (!response.ok) {
 						const errorData = await response.json();
 						throw new Error(errorData.error || 'Error en el inicio de sesión');
 					}
-
+			
 					const data = await response.json();
-					let store = getStore()
-					setStore({ ...store, user: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
+					let store = getStore();
+					setStore({
+						...store,
+						user: { name, email, role: data.role },  // Ahora puedes acceder al rol
+						token: data.access_token,
+						message: 'Inicio de sesión exitoso'
+					});
+			
 					localStorage.setItem('token', data.access_token);
-					localStorage.setItem('user', JSON.stringify(data.user));
+					localStorage.setItem('user', JSON.stringify(data));  // Guarda el usuario completo
 					localStorage.setItem('name', data.name);
 					localStorage.setItem('email', data.email);
-					localStorage.setItem('id', data.id); 
-
+					localStorage.setItem('id', data.id);
+					localStorage.setItem('role', data.role);  // Guarda también el rol
+			
 				} catch (error) {
 					console.error('Error al iniciar sesión:', error);
 					setStore({ message: error.message });
@@ -293,7 +298,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error(errorData.error || "Error al editar usuario del Doctor")
 					}
 					console.log("El usuario de Doctor se edito correctamente")
-					
+
 					localStorage.setItem('name', docBody.name);
 					localStorage.setItem('email', docBody.email);
 
