@@ -1,12 +1,22 @@
-import React from 'react';
+import React from "react";
+import DoctorCard from "../component/DoctorCard.jsx";
 
-const Endocrinologia = () => {
+const doctores = [
+    { id: 1, name: "Gustavo Benitez", especialidad: "Endocrinologo" },
+    { id: 2, name: "Doctora Ana Luna", especialidad: "Endocrinologo" },
+];
+
+const Endocrinología = () => {
     return (
         <div>
-            <h1>Endocrinologia</h1>
-            <p>Endocrinologia.</p>
+            <h2>Medicina General</h2>
+            <ul>
+                {doctores.map((doctor) => (
+                    <DoctorCard key={doctor.id} doctor={doctor} />
+                ))}
+            </ul>
         </div>
     );
-}
+};
 
-export default Endocrinologia;
+export default Endocrinología;
