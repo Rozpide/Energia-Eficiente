@@ -38,6 +38,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 					const data = await response.json();
+
 					let store = getStore()
 					setStore({ ...store, admin: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
 
@@ -283,19 +284,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					}
 					console.log("El usuario se edito correctamente")
-					localStorage.setItem('name', userBody.name);
-					localStorage.setItem('email', userBody.email);
 
-					setStore({
-						user: {
-							...getStore().user,
-							name: userBody.name,
-							email: userBody.email
-						}
-					});
+					actions.logIn(name, email, password);
 
-
-					actions.logIn(userBody.name, userBody.email, userBody.password);
 					return true
 
 
@@ -380,6 +371,46 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error('Error al registrar doctor:', error);
 					setStore({ message: error.message });
+				}
+			},
+			// doctorsGet: async () => {
+			// 	const baseURL = process.env.REACT_APP_BASE_URL;
+				
+			// 	try {
+			// 		let response = await fetch(`${baseURL}api/doctors`)
+			// 		if (!response.ok) {//si algo es diferente del .ok entonces tire un nuevo error
+			// 			throw new Error("Error en Doctors!");
+			// 		}
+			// 		let data = await response.json();  //llamamos data y lo traducimos a json
+			// 		let store = getStore() //llamamos la funcion getstore
+			// 		setStore({ ...store, doctor: data })//le decimos que store que tiene  getstore, traiga el array personajes, y sea reamplazado con data. result la propiedad del link
+
+
+
+			// 	} catch (error) {
+			// 		console.error(error);
+			// 	}
+
+			// }
+			doctorsGet: async () => {
+				const baseURL = process.env.REACT_APP_BASE_URL;
+			
+				try {
+					let response = await fetch("https://fuzzy-fortnight-r4ppq7gg65vxhr64-3001.app.github.dev/api/doctors");
+					
+					if (!response.ok) {
+						// Si la respuesta no es correcta, mostrar el texto de respuesta
+						let errorText = await response.text();
+						throw new Error(`Error en Doctors: ${errorText}`);
+					}
+			
+					let data = await response.json();  // Convertimos la respuesta a JSON
+					let store = getStore(); // Obtenemos el estado actual del store
+			
+					setStore({ ...store, doctor: data }); // Guardamos la lista de doctores en el store
+			
+				} catch (error) {
+					console.error("Error obteniendo doctores:", error);
 				}
 			},
 

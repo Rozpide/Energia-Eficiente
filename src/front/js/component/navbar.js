@@ -29,6 +29,7 @@ export const Navbar = () => {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
+
                         {!role && (
                             <>
                                 <li className="nav-item">
@@ -91,6 +92,7 @@ export const Navbar = () => {
                                 <button className="nav-link btn btn-link" onClick={handleLogout}>Cerrar Sesión</button>
                             </li>
                         )}
+
                     </ul>
                 </div>
             </div>

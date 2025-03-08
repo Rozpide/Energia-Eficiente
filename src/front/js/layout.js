@@ -17,7 +17,7 @@ import RegistroPacientes from "./pages/RegistroPacientes.jsx"
 import EditUser from "./pages/EditUser.jsx";
 import PanelAdmin from "./pages/PanelAdmin.jsx"; 
 import EditDoctor from "./pages/EditDoctor.jsx";
-
+import Calendar from "./pages/Calendar.jsx";
 
 // vistas de especialidades
 import MedicinaGeneral from "./pages/MedicinaGeneral.jsx";
@@ -59,6 +59,7 @@ const Layout = () => {
                         <Route element={<RegistroPacientes />} path = "/registroPacientes"/> 
                         <Route element={<EditUser/>} path="/edituser"/>  
                         <Route element={<EditDoctor/>} path="/editdoc"/> 
+                        <Route element={<Calendar/>} path="/Calendar"/>
 
                         
                         
