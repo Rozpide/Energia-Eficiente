@@ -384,12 +384,12 @@ def create_post():
 
 # Endpoints para el modelo Appointment
 @api.route('/appointments', methods=['GET'])
+@jwt_required()
 def get_appointments():
-    try:
-        appointments = Appointment.query.all()
-        return jsonify([appointment.serialize() for appointment in appointments]), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    current_user = get_jwt_identity()  
+    appointments = Appointment.query.filter_by(user_id=current_user['id']).all()
+    return jsonify([appointment.serialize() for appointment in appointments]), 200
+
 
 @api.route('/appointments', methods=['POST'])
 def create_appointment():
@@ -423,6 +423,34 @@ def get_availabilities():
         return jsonify([availability.serialize() for availability in availabilities]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+##############eliminar cita################
+@api.route('/appointments/<int:appointment_id>', methods=['DELETE'])
+@jwt_required()
+def delete_appointment(appointment_id):
+    current_user = get_jwt_identity()
+    appointment = Appointment.query.get(appointment_id)
+    if not appointment or appointment.user_id != current_user['id']:
+        return jsonify({"error": "Cita no encontrada o acceso no autorizado"}), 404
+    db.session.delete(appointment)
+    db.session.commit()
+    return jsonify({"message": "Cita eliminada correctamente"}), 200
+##########editar cita############
+@api.route('/appointments/<int:appointment_id>', methods=['PUT'])
+@jwt_required()
+def update_appointment(appointment_id):
+    current_user = get_jwt_identity()
+    appointment = Appointment.query.get(appointment_id)
+    if not appointment or appointment.user_id != current_user['id']:
+        return jsonify({"error": "Cita no encontrada o acceso no autorizado"}), 404
+    data = request.get_json()
+    # Actualiza los campos necesarios, por ejemplo:
+    if data.get("date"):
+        appointment.date = datetime.strptime(data.get("date"), '%Y-%m-%d').date()
+    if data.get("time"):
+        appointment.time = datetime.strptime(data.get("time"), '%H:%M:%S').time()
+    db.session.commit()
+    return jsonify({"message": "Cita actualizada correctamente"}), 200
+
 
 @api.route('/availabilities', methods=['POST'])
 def create_availability():

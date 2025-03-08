@@ -8,8 +8,58 @@ const getState = ({ getStore, getActions, setStore }) => {
 			token: localStorage.getItem('token') || null,
 			doctor: null,
 			admin: null,
+			events: [],
 		},
 		actions: {
+
+			fetchAppointments: async () => {
+				const baseURL = process.env.REACT_APP_BASE_URL;
+				try {
+					const response = await fetch(`${baseURL}api/appointments`, {
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					});
+					if (!response.ok) throw new Error("Error al cargar citas");
+					const data = await response.json();
+					// Transformamos cada cita en un objeto con el formato que espera FullCalendar
+					// AsegURARSE de que la fecha de la cita venga en formato YYYYMMDD
+					const calendarEvents = data.map((appointment) => ({
+						id: appointment.appointment_id || appointment.id,
+						title: `Cita con el Dr. ${appointment.doctor_name || ""}`, 
+						date: appointment.date, 
+					}));
+					setStore({ events: calendarEvents });
+				} catch (error) {
+					console.error("Error en fetchAppointments:", error);
+				}
+			},
+
+			//aacción para agregar una cita en el backend y actualizar el store
+			addAppointment: async (newAppointment) => {
+				const baseURL = process.env.REACT_APP_BASE_URL;
+				try {
+					const response = await fetch(`${baseURL}api/appointments`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(newAppointment),
+					});
+					if (!response.ok) throw new Error("Error al agregar cita");
+					const data = await response.json();
+					const event = {
+						id: data.appointment_id || data.id,
+						title: `Cita con el Dr. ${data.doctor_name || ""}`,
+						date: data.date,
+					};
+					const store = getStore();
+					setStore({ events: [...store.events, event] });
+				} catch (error) {
+					console.error("Error en addAppointment:", error);
+				}
+			},
 
 
 			// login de admin funcionando!
@@ -351,7 +401,57 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
+			//funcion para eliminar citas 
+
+			deleteAppointment: async (appointmentId) => {
+				const baseURL = process.env.REACT_APP_BASE_URL;
+				try {
+				  const token = getStore().token;
+				  const response = await fetch(`${baseURL}api/appointments/${appointmentId}`, {
+					method: "DELETE",
+					headers: {
+					  "Content-Type": "application/json",
+					  "Authorization": `Bearer ${token}`,
+					},
+				  });
+				  if (!response.ok) throw new Error("Error al eliminar la cita");
+				  // Actualiza el store eliminando el evento borrado
+				  const store = getStore();
+				  setStore({ events: store.events.filter(event => event.id !== appointmentId) });
+				} catch (error) {
+				  console.error("Error en deleteAppointment:", error);
+				  setStore({ message: error.message });
+				}
+			  },
+
+
+			//editar citas 
+
+			updateAppointment: async (appointmentId, updatedData) => {
+				const baseURL = process.env.REACT_APP_BASE_URL;
+				try {
+				  const token = getStore().token;
+				  const response = await fetch(`${baseURL}api/appointments/${appointmentId}`, {
+					method: "PUT",
+					headers: {
+					  "Content-Type": "application/json",
+					  "Authorization": `Bearer ${token}`,
+					},
+					body: JSON.stringify(updatedData),
+				  });
+				  if (!response.ok) throw new Error("Error al actualizar la cita");
+				  // Actualiza el store: aquí podrías hacer un refetch de las citas o actualizar el evento en el store
+				  actions.fetchAppointments();
+				} catch (error) {
+				  console.error("Error en updateAppointment:", error);
+				  setStore({ message: error.message });
+				}
+			  },
+			  
+			  
+
 		},
+
 	};
 };
 
