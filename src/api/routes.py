@@ -548,6 +548,7 @@ def manage_teams (tournament_id):
         if not tournament:
             return jsonify({'msg': 'Torneo no encontrado'}), 404
 
+        #Obtener los participantes del torneo sin equipo
         participants_unassigned = Participants.query.filter(
             Participants.tournament_id == tournament_id,
             ~Participants.id.in_(db.session.query(Teams.left).filter(Teams.tournament_id == tournament_id, Teams.left.isnot(None))),
