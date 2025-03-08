@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
+
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -9,7 +10,6 @@ export const Register = () => {
     password: '',
     confirmPassword: ''
   });
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -17,13 +17,11 @@ export const Register = () => {
       [name]: value
     }));
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add signup logic here
     console.log('Signup data:', formData);
   };
-
   return (
     <div className="mx-auto my-5">
     <div className="container">
@@ -34,12 +32,11 @@ export const Register = () => {
           Onmino helps you organize your ideas, tasks, and projects simply and efficiently. Start today!
         </p>
       </div>
-
       {/* Right Side - Signup Form */}
       <div className="w-1/2 p-8 bg-white">
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <input 
+            <input
               type="text"
               name="name"
               placeholder="Name"
@@ -50,7 +47,7 @@ export const Register = () => {
             />
           </div>
           <div className="mb-4">
-            <input 
+            <input
               type="email"
               name="email"
               placeholder="Email"
@@ -61,7 +58,7 @@ export const Register = () => {
             />
           </div>
           <div className="mb-4 relative">
-            <input 
+            <input
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
@@ -79,7 +76,7 @@ export const Register = () => {
             </button>
           </div>
           <div className="mb-4 relative">
-            <input 
+            <input
               type={showPassword ? "text" : "password"}
               name="confirmPassword"
               placeholder="Confirm Password"
@@ -89,8 +86,8 @@ export const Register = () => {
               required
             />
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn btn-primary"
           >
             Register
