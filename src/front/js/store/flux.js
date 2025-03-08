@@ -8,8 +8,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			token: localStorage.getItem('token') || null,
 			doctor: null,
 			admin: null,
+			role: localStorage.getItem("role") || null // Obtener el rol almacenado
 		},
 		actions: {
+			setRole: (newRole) => {
+                setStore({ role: newRole });
+                localStorage.setItem("role", newRole); // Guardar en localStorage
+            },
 
 
 			// login de admin funcionando!
@@ -76,7 +81,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			// login de usuario
-			 logIn : async (name, email, password) => {
+			logIn: async (name, email, password) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
 				try {
 					const response = await fetch(`${baseURL}api/logIn`, {
@@ -93,26 +98,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 			
 					const data = await response.json();
-					let store = getStore();
-					setStore({
-						...store,
-						user: { name, email, role: data.role },  // Ahora puedes acceder al rol
-						token: data.access_token,
-						message: 'Inicio de sesión exitoso'
-					});
-			
-					localStorage.setItem('token', data.access_token);
-					localStorage.setItem('user', JSON.stringify(data));  // Guarda el usuario completo
+					let store = getStore()
+                    setStore({
+                        user: { name, email, role: data.role },
+                        token: data.access_token,
+                        message: "Inicio de sesión exitoso",
+                    });
+
+                    // Guardar en localStorage
+                    localStorage.setItem("token", data.access_token);
+                    localStorage.setItem("user", JSON.stringify({ name, email, role: data.role }));
 					localStorage.setItem('name', data.name);
 					localStorage.setItem('email', data.email);
 					localStorage.setItem('id', data.id);
-					localStorage.setItem('role', data.role);  // Guarda también el rol
+					
+                } catch (error) {
+                    console.error("Error al iniciar sesión:", error);
+                    setStore({ message: error.message });
+                }
+            },
+
+			logOut: () => {
+				localStorage.removeItem("token");
+				localStorage.removeItem("name");
+				localStorage.removeItem("email");
+				localStorage.removeItem("id");
 			
-				} catch (error) {
-					console.error('Error al iniciar sesión:', error);
-					setStore({ message: error.message });
-				}
+				setStore({ user: null, doctor: null, admin: null, token: null });
+			
+				console.log("Sesión cerrada exitosamente");
 			},
+
+            loadSession: () => {
+                const storedUser = localStorage.getItem("user");
+                const storedToken = localStorage.getItem("token");
+
+                if (storedUser && storedToken) {
+                    setStore({
+                        user: JSON.parse(storedUser),
+                        token: storedToken,
+                    });
+                }
+            },
 
 			// revisar el password
 			// Registro de pacientes

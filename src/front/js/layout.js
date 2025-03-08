@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useEffect, useContext} from "react";
+import { Context } from "./store/appContext";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
@@ -33,8 +34,13 @@ import Endocrinologia from "./pages/Endocrinologia.jsx";
 
 
 
+
 const Layout = () => {
     const basename = process.env.BASENAME || "";
+    const { actions } = useContext(Context);
+    useEffect(() => {
+        actions.loadSession();  // Cargar sesión desde localStorage
+    }, []);
 
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL === "") return <BackendURL />;
 
