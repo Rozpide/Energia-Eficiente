@@ -512,6 +512,37 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
 
+            removeTeam: async (tournamentId, teamId) => {      //Delete un team de un torneo
+                try {
+                    const resp = await fetch(`${process.env.BACKEND_URL}/api/tournaments/${tournamentId}/remove_team/${teamId}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${localStorage.getItem("token")}`
+                        }
+                    });
+            
+                    const data = await resp.json();
+            
+                    if (resp.ok) {
+                        alert("Equipo eliminado del torneo");
+            
+                        setStore({
+                            torneo: { ...getStore().torneo, teams: data.teams }
+                        });
+
+                        return data;
+
+                    } else {
+                        alert(data.msg || "Error al eliminar el equipo del torneo");
+                    }
+                } catch (error) {
+                    console.error("Error en removeTeam:", error);
+                }
+            },
+
+
+            
             //_________________________________________MATCHES_________________________________________
             
             getTournamentMatches: async (tournamentId) => {       //GET todos los matches de un torneo

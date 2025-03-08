@@ -29,12 +29,12 @@ export const BracketCard8 = () => {
                             <div>
                                 <div className="matchup card mb-2">
                                     <div className="d-flex align-items-center">
-                                        <p className="bracketCard__team m-2 m-0">Equipo {semiFinal1?.bracketCard__team_1?.bracketCard__team_number || ""}</p>
+                                        <p className="bracketCard__team m-2 m-0">Equipo {semiFinal1?.bracketCard__team_1?.bracketCard__team_number || "hola"}</p>
                                     </div>
                                 </div>
                                 <div className="matchup card">
                                     <div className="d-flex align-items-center">
-                                        <p className="bracketCard__team m-2 m-0">Equipo {semiFinal1?.bracketCard__team_2?.bracketCard__team_number || ""}</p>
+                                        <p className="bracketCard__team m-2 m-0">Equipo {semiFinal1?.bracketCard__team_2?.bracketCard__team_number || "hola"}</p>
                                     </div>
                                 </div>
                             </div>
@@ -45,12 +45,12 @@ export const BracketCard8 = () => {
                             <div>
                                 <div className="matchup card mb-2">
                                     <div className="d-flex align-items-center">
-                                        <p className="bracketCard__team m-2 m-0">Equipo {semiFinal2?.bracketCard__team_1?.bracketCard__team_number || ""}</p>
+                                        <p className="bracketCard__team m-2 m-0">Equipo {semiFinal2?.bracketCard__team_1?.bracketCard__team_number || "hola"}</p>
                                     </div>
                                 </div>
                                 <div className="matchup card">
                                     <div className="d-flex align-items-center">
-                                        <p className="bracketCard__team m-2 m-0">Equipo {semiFinal2?.bracketCard__team_2?.bracketCard__team_number || ""}</p>
+                                        <p className="bracketCard__team m-2 m-0">Equipo {semiFinal2?.bracketCard__team_2?.bracketCard__team_number || "hola"}</p>
                                     </div>
                                 </div>
                             </div>

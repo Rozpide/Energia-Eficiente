@@ -8,7 +8,6 @@ import "../../styles/navbar.css";
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
-	console.log("Usuario:", store.user);
 	return (
 		<nav className="navbar navbar-light bg-dark py-3">
 			<div className="container-fluid d-flex justify-content-between mx-0 px-5">

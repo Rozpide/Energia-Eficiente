@@ -4,7 +4,6 @@ import "../../styles/teamCard.css";
 
 export const TeamCard = ({ team }) => {
     const { store, actions } = useContext(Context);
-    console.log(team)
 
     return (
         <div className="TeamCard__card">
