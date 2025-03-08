@@ -34,6 +34,9 @@ export const Navbar = () => {
                         <li className="nav-item">
                             <Link to="/registroPacientes" className="nav-link">Registrate</Link>
                         </li>
+                        <li className="nav-item">
+                            <Link to="/calendar" className="nav-link">Calendar Google</Link>
+                        </li>
                         <li className="nav-item dropdown">
                             <a
                                 className="nav-link dropdown-toggle"
