@@ -3,16 +3,16 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 import  LandingPage  from "./pages/landingpage";
-import  Register from "./pages/register";
 
 import { Loginview } from "./pages/loginview";
 import { ForgotPassword } from "./pages/resetpassword";
 import { Home } from "./pages/home";
-import { Demo } from "./pages/demo";
-import { Single } from "./pages/single";
+//import { Demo } from "./pages/demo";
+//import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 import { Profile }   from "./pages/profile"
 import { Notes }   from "./pages/notes"
+import { Register } from "./pages/register";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -35,8 +35,8 @@ const Layout = () => {
                         <Route element={<Loginview />} path="/login" />
                         <Route element={<ForgotPassword />} path="/resetpassword" />
                         <Route element={<Notes />} path="/notes" />
-                        <Route element={<Demo />} path="/demo" />
-                        <Route element={<Single />} path="/single/:theid" />
+                        {/* <Route element={<Demo />} path="/demo" />
+                        <Route element={<Single />} path="/single/:theid" /> */}
                         <Route element={<h1>Not found!</h1>} />
                         <Route element={<Profile />} path="/profile" />
                         <Route element={<LandingPage />} path="/landingpage" />
