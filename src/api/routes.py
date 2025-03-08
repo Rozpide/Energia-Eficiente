@@ -539,7 +539,7 @@ def remove_participant(tournament_id, player_id):
 
 # __________________________________________________TEAMS__________________________________________________
 
-@api.route('/tournaments/<int:tournament_id>/check_teams', methods=['GET'])     #Verificamos el estado de los equipos.
+@api.route('/tournaments/<int:tournament_id>/manage_teams', methods=['GET'])     #Verificamos el estado de los equipos.
 @jwt_required()
 def manage_teams (tournament_id):
     try:
@@ -548,11 +548,10 @@ def manage_teams (tournament_id):
         if not tournament:
             return jsonify({'msg': 'Torneo no encontrado'}), 404
 
-        # Obtener participantes sin equipo. Si no hay terminamos la función
         participants_unassigned = Participants.query.filter(
             Participants.tournament_id == tournament_id,
-            ~Participants.id.in_(db.session.query(Teams.left).filter(Teams.tournament_id == tournament_id)),
-            ~Participants.id.in_(db.session.query(Teams.right).filter(Teams.tournament_id == tournament_id))
+            ~Participants.id.in_(db.session.query(Teams.left).filter(Teams.tournament_id == tournament_id, Teams.left.isnot(None))),
+            ~Participants.id.in_(db.session.query(Teams.right).filter(Teams.tournament_id == tournament_id, Teams.right.isnot(None)))
         ).all()
 
         if not participants_unassigned:
@@ -565,7 +564,7 @@ def manage_teams (tournament_id):
         ).all()
         
         for team in empty_teams:
-            delete_team(team.id)
+            remove_team(tournament_id, team.id)
 
         # Buscamos equipos a los que les falte un participante.
         incomplete_teams = Teams.query.filter(
@@ -593,7 +592,7 @@ def manage_teams (tournament_id):
         return jsonify({'msg': 'Error en la administración de los Teams', 'error': str(e)}), 500
 
 
-@api.route('/tournaments/<int:tournament_id>/teams', methods=['POST'])        #POST equipo de un torneo
+@api.route('/tournaments/<int:tournament_id>/create_team', methods=['POST'])        #POST equipo de un torneo
 @jwt_required()
 def create_team(tournament_id, participant_1_id, participant_2_id=None):
     try:
@@ -606,6 +605,8 @@ def create_team(tournament_id, participant_1_id, participant_2_id=None):
 
         db.session.add(new_team)
         db.session.commit()
+
+        create_matches(tournament_id)
 
         return jsonify({
             'msg': 'Equipo creado con éxito',
@@ -620,16 +621,22 @@ def create_team(tournament_id, participant_1_id, participant_2_id=None):
         return jsonify({'msg': 'Error al crear un equipo', 'error': str(e)}), 500
 
 
-@api.route('/tournaments/<int:tournament_id>/teams', methods=['PUT'])        #PUT equipo de un torneo
+@api.route('/tournaments/<int:tournament_id>/edit_team/<int:team_id>', methods=['PUT'])        #PUT equipo de un torneo
 @jwt_required()
-def edit_team(team, participant_id):
+def edit_team(team_id, participant_id):
     try:
-        # Asignar el jugador al equipo
+        # Obtener el equipo desde la base de datos
+        team = Teams.query.get(team_id)
+
+        # Asignamos el participante a la parte del equipo que esta libre
         if team.left is None:
             team.left = participant_id
-        else:
+        elif team.right is None:
             team.right = participant_id
+        else:
+            return jsonify({'msg': 'El equipo ya está completo'}), 400
 
+        db.session.add(team)
         db.session.commit()
 
         return jsonify({
@@ -643,15 +650,19 @@ def edit_team(team, participant_id):
         return jsonify({'msg': 'Error al postera un equipo', 'error': str(e)}), 500
     
 
-@api.route('/tournaments/<int:tournament_id>/teams', methods=['DELETE'])    #DELETE equipo de un torneo
+@api.route('/tournaments/<int:tournament_id>/remove_team/<int:team_id>', methods=['DELETE'])    #DELETE equipo de un torneo
 @jwt_required()
-def delete_team(team):
+def remove_team(tournament_id, team_id):
     try:
-        # Eliminar el equipo
+
+        team = Teams.query.get(team_id)
+
         db.session.delete(team)
         db.session.commit()
 
-        return jsonify({'msg': f'Equipo {team.id} eliminado con éxito'}), 200
+        manage_teams (tournament_id)
+
+        return jsonify({'msg': f'Equipo {team_id} eliminado con éxito'}), 200
     
     except Exception as e:
         db.session.rollback()
