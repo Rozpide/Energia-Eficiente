@@ -35,7 +35,7 @@ def get_foods():
     foods = Food.query.all()
     if not foods:
         return "food not found", 404
-    else: 
+    else:
         return jsonify([food.serialize() for food in foods]), 200
 
 
@@ -47,7 +47,7 @@ def get_food(food_id):
         return jsonify({"error": "Food not found"}), 404
     return jsonify(food.serialize()), 200
 
-
+#obtener todos los usuarios
 @api.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
@@ -68,7 +68,7 @@ def get_user(user_id):
 @api.route('/pets', methods=['GET'])
 def get_pets():
     pets = Pet.query.all()
-    if not pets: 
+    if not pets:
         return "no pets found", 404
     return jsonify([pet.serialize() for pet in pets]), 200
 
@@ -85,11 +85,11 @@ def get_pet(pet_id):
 @api.route('/foods/suggestions/<int:pet_id>', methods=['GET'])
 def get_pet_suggestions(pet_id):
     pet = Pet.query.get(pet_id).serialize()
-    # Problema: Un animal puede tener varias patologias en su campo, habría que coger este campo y tratarlo, 
-    # separar las patologias en una lista y hacer la query para cada patologia. 
+    # Problema: Un animal puede tener varias patologias en su campo, habría que coger este campo y tratarlo,
+    # separar las patologias en una lista y hacer la query para cada patologia.
     # Solucion simple: limitar a 1 patologia cada animal por ahora
     #if para pet# anymal_type == perro, animal size    #si no no hace falta size
-    if pet["animal_type"] == "perro":   
+    if pet["animal_type"] == "perro":
         food_suggestions = db.session.execute(select(Food).where(and_(Food.animal_type==pet["animal_type"]),
                                                              Food.size==pet["size"],
                                                              Food.age==pet["age"],
@@ -99,7 +99,7 @@ def get_pet_suggestions(pet_id):
                                                              Food.age==pet["age"],
                                                              Food.pathologies==pet["pathologies"]).all()
     if not food_suggestions :
-        return "no suggestions found", 404  
+        return "no suggestions found", 404
     return [food[0].serialize() for food in food_suggestions], 200
 
 
@@ -107,30 +107,30 @@ def get_pet_suggestions(pet_id):
 @api.route('/foods/cat', methods=['GET'])
 def get_all_cat_food():
     food_cat = db.session.query(Food).filter(Food.animal_type.ilike("%gato%")).all()
-    
-    print("Datos obtenidos:", food_cat)  
-    
+
+    print("Datos obtenidos:", food_cat)
+
     if not food_cat:
-        return jsonify({"error": "No cat food found"}), 404  
-    
+        return jsonify({"error": "No cat food found"}), 404
+
     print("Datos obtenidos:", food_cat)
     if not food_cat:
         return jsonify({"error": "No cat food found"}), 404
 
     return jsonify([food.serialize() for food in food_cat]), 200
-    
+
 
 
 @api.route('/foods/dog', methods=['GET'])
 def get_all_dog_food():
     food_dog = db.session.query(Food).filter(Food.animal_type.ilike("%perro%")).all()
 
-    
-    print("Datos obtenidos:", food_dog)  
-    
+
+    print("Datos obtenidos:", food_dog)
+
     if not food_dog:
-        return jsonify({"error": "No dog food found"}), 404  
-    
+        return jsonify({"error": "No dog food found"}), 404
+
 
     print("Datos obtenidos:", food_dog)
     if not food_dog:
@@ -142,12 +142,12 @@ def get_all_dog_food():
 def get_all_exotic_food():
     food_exotic = db.session.query(Food).filter(Food.animal_type.ilike("%exótico%")).all()
 
-    
-    print("Datos obtenidos:", food_exotic)  
-    
+
+    print("Datos obtenidos:", food_exotic)
+
     if not food_exotic:
-        return jsonify({"error": "No exotic food found"}), 404  
-    
+        return jsonify({"error": "No exotic food found"}), 404
+
 
     print("Datos obtenidos:", food_exotic)
     if not food_exotic:
@@ -160,7 +160,7 @@ def get_all_exotic_food():
 def get_accessories():
     accessories = Accessories.query.all()
     if not accessories:
-        return "no accessories found", 404 
+        return "no accessories found", 404
     return jsonify([accessory.serialize() for accessory in accessories]), 200
 
 
@@ -192,34 +192,76 @@ def create_food():
     db.session.commit()
     return jsonify(new_food.serialize()), 201
 
-#registrar nuevo usuario
-@api.route('/users', methods=['POST'])
+
+#registrar nuevo usuario(signup)
+@api.route('/signup', methods=['POST'])
 def create_user():
     data = request.get_json()
     new_user = User(
         name=data["name"],
         email=data["email"],
-        password=data["password"],
-        is_active=data["is_active"]
+        password=data["password"]
 )
     if User.query.filter_by(email=data["email"]).first():
         return jsonify({"msg": "El usuario ya existe"}), 400
-    
+
     db.session.add(new_user)
     db.session.commit()
     return jsonify(new_user.serialize()), 201
 
-# iniciar sesion 
-@api.route('loging/user', methods=['POST'])
-def logging_user():
-    data = request.get_json()
-    user = User.query.filter_by(email=data["email"]).first()
-    
+# iniciar sesion(login)
+# @api.route('/login', methods=['POST'])
+# def logging_user():
+#     data = request.get_json()
+#     user = User.query.filter_by(email=data["email"]).first()
 
-    if User.query.filter_by(email=data["email"]).first() and User.query.filter_by(password=data["password"]).first():
-        access_token=create_access_token(identity=user.email)
-        return jsonify(access_token=access_token), 200
-    return jsonify ({"nsg":"credenciales invalidas"}), 400
+
+#     if User.query.filter_by(email=data["email"]).first() and User.query.filter_by(password=data["password"]).first():
+#         access_token=create_access_token(identity=user.email)
+#         return jsonify(access_token=access_token), 200
+    
+#     return jsonify ({"nsg":"credenciales invalidas"}), 400
+
+@api.route('/login', methods=['POST'])
+def login_user():
+
+    body = request.get_json()
+
+    if not body or "email" not in body or "password" not in body:
+        return jsonify({"msg": "credenciales no validas"}), 400 
+
+    email = body["email"]
+    password = body["password"]
+
+    user = User().query.filter_by(email=email, password=password).first()
+    token=create_access_token(identity=user.email)
+    user_data = {
+        "id": user.id,
+        "email": user.email,
+        "name": user.name
+    }
+    
+    return jsonify({"msg": "inicio de sesion exitoso", "token": token, "user": user_data}), 200
+
+#Vista privada del usuario CON el token
+@api.route('/user', methods=['GET'])
+@jwt_required()
+def get_user_info():
+
+    current_user_email = get_jwt_identity()
+
+    user = User().query.filter_by(email=current_user_email).first()
+
+    if not user:
+        return jsonify({"msg": "usuario no encontrado"}), 400
+
+    user_data = {
+        "id": user.id,
+        "email": user.email,
+        "name": user.name
+    }
+
+    return jsonify(user_data), 200
 
 
 #crear un nuevo accesorio
@@ -251,8 +293,8 @@ def create_pet():
         animal_type=data["animal_type"],
         pathologies=data["pathologies"],
         user_id=data["user_id"],
-      
-        
+
+
 )
     db.session.add(new_accessory)
     db.session.commit()
@@ -265,7 +307,7 @@ def create_pet():
 #         return jsonify({"message": "Food not found"}), 404
 
 #     data = request.get_json()
-    
+
 #     food.name = data.get("name", food.name)
 #     food.brand = data.get("brand", food.brand)
 #     food.description = data.get("description", food.description)
@@ -288,7 +330,7 @@ def create_pet():
 #         "animal_type": food.animal_type,
 #         "price": food.price,
 #         "weight": food.weight,
-#         "size" : food.size,       
+#         "size" : food.size,
 #         "pathologies": food.pathologies,
 #         "url": food.url
 #     })

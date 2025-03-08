@@ -5,10 +5,10 @@ import "../../styles/home.css";
 
 export const LoginSignup = () => {
 
-    const { actions } = useContext(Context);
+    const { actions, store } = useContext(Context);
     const navigate = useNavigate();
     
-    const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSignup, setIsSignup] = useState(false);
@@ -21,13 +21,13 @@ export const LoginSignup = () => {
         setError('');
     
         try {
-            const dataUser = { username, email, password };
+            const dataUser = { name, email, password };
             if (isSignup) {
                 await actions.signup(dataUser, navigate);
             } else {
                 await actions.login(email, password, navigate);
             }
-            setUsername('');
+            setName('');
             setEmail('');
             setPassword('');
         } catch (err) {
@@ -68,10 +68,10 @@ export const LoginSignup = () => {
                     <form className="auth-form signup-form" onSubmit={handleSubmit}>
                         <h2>Regístrate</h2>
                         <input
-                            type="username"
-                            placeholder="Nombre de usuario"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            type="name"
+                            placeholder="Nombre"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             required
                         />
                         <input

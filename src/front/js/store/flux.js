@@ -28,7 +28,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			login: async (email, password, navigate) => {
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}api/login/user`, {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/login`, {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json"
@@ -61,7 +61,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			signup: async (dataUser, navigate) => {
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}api/signup`, {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json"
@@ -95,7 +95,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const token = localStorage.getItem("token");
 					if (!token) throw new Error("No token found");
 
-					const resp = await fetch(`${process.env.BACKEND_URL}api/user`, {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/user`, {
 						headers: {
 							"Authorization": `Bearer ${token}`
 						}
