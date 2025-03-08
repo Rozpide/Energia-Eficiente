@@ -114,6 +114,7 @@ def get_token_usuario():
                "name": login_user.name,
                "email": login_user.email,
                "id": login_user.user_id,
+               "role": login_user.role,
                "access_token": access_token
             } 
             return jsonify(user_data), 200  
