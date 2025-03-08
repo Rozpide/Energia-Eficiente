@@ -45,6 +45,7 @@ class Notes(db.Model):
             "id": self.id,
             "title": self.title,
             "description": self.description,
+            "user_id": self.user_id
         }
     
 class Habits(db.Model):
