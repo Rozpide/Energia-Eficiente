@@ -22,8 +22,8 @@ class User(db.Model):
     profile_photo = db.Column(db.String(255), nullable=True)  # Profile photo URL
 
     #  Relationships
-    followed_artists = db.relationship('Follow_Artist', backref='follow_artist')
-    saved_music = db.relationship('Saved_Music', backref='user')
+    followed_artists = db.relationship('FollowArtist', backref='follow_artist')
+    saved_music = db.relationship('SavedMusic', backref='user')
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -53,7 +53,7 @@ def check_password(self,password):
 
 
         # ARTIST PROFILE MODEL
-class Artist_Profile(db.Model):
+class ArtistProfile(db.Model):
     __tablename__ = "artist_profile"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -164,7 +164,7 @@ class Music(db.Model):
 
 
             # USER SAVED MUSIC & FOLLOW ARTIST MODEL
-class Saved_Music(db.Model):
+class SavedMusic(db.Model):
     __tablename__ = "saved_music"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -185,7 +185,7 @@ class Saved_Music(db.Model):
     
 
                 # FOLLOW ARTIST MODEL
-class Follow_Artist(db.Model):
+class FollowArtist(db.Model):
     __tablename__ = "follow_artist"
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
