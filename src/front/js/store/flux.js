@@ -15,7 +15,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// login de admin funcionando!
 			logInAdmin: async (name, email, password) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
+				console.log("esta es la base URL", baseURL)
 				try {
+					console.log("DATOS DE ENVIO", 	name, email, password)
 					const response = await fetch(`${baseURL}api/logIn/admin`, {
 						method: 'POST',
 						headers: {
@@ -25,15 +27,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 
 					if (!response.ok) {
+						console.log("primera parada")
 						const errorData = await response.json();
 						throw new Error(errorData.error || 'Error en el inicio de sesión');
 					}
 
 					const data = await response.json();
 
-					setStore({ admin: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
-					console.log("esta e sla data", data)
+					let store = getStore()
+					setStore({ ...store, admin: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
+
 					localStorage.setItem('token', data.access_token);
+					localStorage.setItem('name', data.name);
+					localStorage.setItem('email', data.email);
 				} catch (error) {
 					console.error('Error al iniciar sesión:', error);
 					setStore({ message: error.message });
@@ -57,9 +63,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error(errorData.error || 'Error en el inicio de sesión');
 					}
 
-					const data = await response.json();
-					setStore({ doctor: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
+					const data = await response.json(); 
+					let store = getStore()
+					setStore({ ...store, doctor: { name, email }, token: data.access_token, message: 'Inicio de sesión exitoso' });
 					localStorage.setItem('token', data.access_token);
+					localStorage.setItem('name', data.name);
+					localStorage.setItem('email', data.email);
+					localStorage.setItem('id', data.id);
 				} catch (error) {
 					console.error('Error al iniciar sesión:', error);
 					setStore({ message: error.message });
@@ -92,7 +102,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					localStorage.setItem('user', JSON.stringify(data.user));
 					localStorage.setItem('name', data.name);
 					localStorage.setItem('email', data.email);
-
+					localStorage.setItem('id', data.id); 
 
 				} catch (error) {
 					console.error('Error al iniciar sesión:', error);
@@ -141,9 +151,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			deleteUser: async (idUser) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
+				idUser = idUser || getStore().user?.id || localStorage.getItem('id');
+
+				if (!idUser) {
+					console.error("Id usuario invalido:", idUser)
+					return;
+				}
 
 				try {
 					const token = getStore().token
+
 					const response = await fetch(`${baseURL}api/delete_user/${idUser}`, {
 						method: 'DELETE',
 						headers: {
@@ -152,6 +169,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 					})
 					if (!response.ok) {
+
 						const errorData = await response.json()
 						throw new Error(errorData.error || "no se elimino el Usuario correctamente")
 					}
@@ -177,6 +195,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			deleteDoctor: async (idDoctor) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
+				idDoctor = idDoctor || getStore().doctor?.id || localStorage.getItem('id');
+				if (!idDoctor) {
+					console.error("Id usuario invalido:", idDoctor)
+					return;
+				}
 
 				try {
 					const token = getStore().token
@@ -229,7 +252,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					}
 					console.log("El usuario se edito correctamente")
+
 					actions.logIn(name, email, password);
+
 					return true
 
 
@@ -239,13 +264,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 
-			editDoctor: async (docBody, docid) => {
+			editDoctor: async (docBody, docId) => {
 				const baseURL = process.env.REACT_APP_BASE_URL;
 
 				try {
 					const actions = getActions();
 					const token = getStore().token
-					const response = await fetch(`${baseURL}api/edit_doctor/${docid}`, {
+					const response = await fetch(`${baseURL}api/edit_doctor/${docId}`, {
 						method: "PUT",
 						body: JSON.stringify(docBody),
 						headers: {
@@ -259,8 +284,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error(errorData.error || "Error al editar usuario del Doctor")
 					}
 					console.log("El usuario de Doctor se edito correctamente")
+					
+					localStorage.setItem('name', docBody.name);
+					localStorage.setItem('email', docBody.email);
 
-					actions.logInDoc();
+					setStore({
+						doctor: {
+							...getStore().doctor,
+							name: docBody.name,
+							email: docBody.email
+						}
+					});
+
+					actions.logInDoc(docBody.name, docBody.email, docBody.password);
 					return true
 
 				} catch (error) {

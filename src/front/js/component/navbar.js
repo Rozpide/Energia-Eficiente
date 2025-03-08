@@ -29,6 +29,9 @@ export const Navbar = () => {
                             <Link to="/panel" className="nav-link">ADMIN</Link>
                         </li>
                         <li className="nav-item">
+                            <Link to="/logInAdmin" className="nav-link">LogIn Admin</Link>
+                        </li>
+                        <li className="nav-item">
                             <Link to="/registroPacientes" className="nav-link">Registrate</Link>
                         </li>
                         <li className="nav-item dropdown">

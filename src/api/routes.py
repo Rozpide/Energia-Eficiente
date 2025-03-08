@@ -100,15 +100,16 @@ def get_token_usuario():
 
         if not login_user: 
             return jsonify({'error': 'Invalid email.'}), 404   
-        print("llegue hasta aca")
+        
         password_from_db = login_user.password 
-        print(f'el valor de password fron db es: {password_from_db}')
+
         true_o_false = bcrypt.check_password_hash(password_from_db, password)  
-        print(f'este es bcrypt {true_o_false}')
+
         if true_o_false: 
             expires = timedelta(days=1) 
             user_id = login_user.user_id 
-            access_token = create_access_token(identity={'id': user_id, 'role': 'User '}, expires_delta=expires)
+            access_token = create_access_token(identity={'id': user_id, 'role':login_user.role}, expires_delta=expires)
+
             user_data= {
                "name": login_user.name,
                "email": login_user.email,
@@ -217,8 +218,16 @@ def get_token_doctor():
      if true_o_false: 
          expires=timedelta(days=1) 
          doctor_id=login_doctor.doctor_id 
-         access_token = create_access_token(identity={'id': doctor_id, 'role': 'Doctor'}, expires_delta=expires) 
-         return jsonify({'access_token': access_token, 'role': 'Doctor'}), 200
+         access_token = create_access_token(identity={'id': doctor_id, 'role': 'Doctor'}, expires_delta=expires)  
+        
+         doctor_data= {
+               "name": login_doctor.name,
+               "email": login_doctor.email,
+               "id": login_doctor.doctor_id,
+               "access_token": access_token
+            } 
+           
+         return jsonify(doctor_data), 200
      else: 
          return{"Error":"Contraseña incorrecta"},404
 
@@ -292,35 +301,40 @@ def create_admin():
     
 
     #Generador de Token ADMIN
-@api.route('/logIn/admin',methods=['POST']) 
+@api.route('/logIn/admin', methods=['POST']) 
 def get_token_admin(): 
     try: 
-     
-     email=request.json.get('email') 
-     password=request.json.get('password')
-     
-     if not email or not password: 
-         return jsonify({'error':'Email and password are required'}),400 
+        name = request.json.get('name')
+        email = request.json.get('email') 
+        password = request.json.get('password')
+        
+        if not email or not password or not name: 
+            return jsonify({'error': 'Email, password, and name are required'}), 400 
 
-     login_admin=Administrator.query.filter_by(email=request.json['email']).first()
+        login_admin = Administrator.query.filter_by(email=email).first()
 
-     if not login_admin: 
-         return jsonify({'error':'Invalid email.'}),404   
-     password_from_db=login_admin.password 
-     true_o_false=bcrypt.check_password_hash(password_from_db, password)  
+        if not login_admin: 
+            return jsonify({'error': 'Invalid email.'}), 404   
 
-     if true_o_false: 
-         expires=timedelta(days=1) 
+        password_from_db = login_admin.password 
+        true_o_false = bcrypt.check_password_hash(password_from_db, password)  
 
-         admin_id=login_admin.admin_id 
-         access_token = create_access_token(identity={'id': admin_id, 'role': 'Admin'}, expires_delta=expires) 
-         return jsonify({'access_token': access_token, 'role': 'Admin'}), 200 
-     else: 
-         return{"Error":"Contraseña incorrecta"},404
+        if true_o_false: 
+            expires = timedelta(days=1)
+            admin_id = login_admin.admin_id  # Corregido
+            access_token = create_access_token(identity={'id': admin_id, 'role': 'User '}, expires_delta=expires)
+            user_data = {
+                "name": login_admin.name,
+                "email": login_admin.email,
+                "id": login_admin.user_id,
+                "access_token": access_token  # Corregido
+            }
+            return jsonify(user_data), 200  # Corregido
+        else: 
+            return jsonify({"error": "Contraseña incorrecta"}), 404
 
     except Exception as e: 
-        return ({'Error':'El email proporcionado no corresponde a ninguno registrado:'+ str(e)}),500  
-   
+        return jsonify({'error': 'Ocurrió un error en el servidor: ' + str(e)}), 500    
 #     #Ruta restringida por Token Admin
 @api.route('/administrators2') 
 @jwt_required() 
@@ -437,14 +451,15 @@ def create_availability():
      
 #Delete User 
 
-@api.route('/delete_user/<int:user_id>', methods=['DELETE']) 
-def delete_user(user_id):
+@api.route('/delete_user/<int:user_id>', methods=['DELETE'])  
+def delete_user(user_id): 
     user=User.query.get(user_id) 
-    if user:  
-        db.session.delete(user)
-        db.session.commit() 
-        return jsonify('Usuario Borrado'),200 
-    return jsonify('no se encontro Usuario'),404 
+    if not user: 
+        return jsonify({"error":"Usuario no encontrado"}),404 
+      
+    db.session.delete(user)
+    db.session.commit() 
+    return jsonify({"message":'Usuario Borrado Correctamente', "user_id":user_id}),200 
 
 #Delete Doctor 
 
@@ -456,7 +471,7 @@ def delete_doctor(doctor_id):
         db.session.delete(doctor)
         db.session.commit() 
         return jsonify('Doctor Borrado'),200 
-    return jsonify('no se encontro Doctor'),404 
+    return jsonify({"message":'Usuario Borrado Correctamente', "doctor_id":doctor_id}),404 
 
 
 #Delete Admin for Admin 
