@@ -75,7 +75,7 @@ def create_user():
         # 3. Crear nuevo usuario
         new_user = User(
             name=request_body["name"],
-            email=email,
+            email=request_body["email"],
             password=hashed_password,
             is_active=True,
             role=3

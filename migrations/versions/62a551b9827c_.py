@@ -1,14 +1,8 @@
 """empty message
 
-<<<<<<<< HEAD:migrations/versions/9a763a8a3c0f_.py
-Revision ID: 9a763a8a3c0f
+Revision ID: 62a551b9827c
 Revises: 
-Create Date: 2025-03-09 13:17:53.357936
-========
-Revision ID: eef321fae00e
-Revises: 
-Create Date: 2025-03-08 17:43:42.873804
->>>>>>>> 572284bd5b4d8dda324bb67a235841f510547d63:migrations/versions/eef321fae00e_.py
+Create Date: 2025-03-09 17:35:35.831929
 
 """
 from alembic import op
@@ -16,11 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-<<<<<<<< HEAD:migrations/versions/9a763a8a3c0f_.py
-revision = '9a763a8a3c0f'
-========
-revision = 'eef321fae00e'
->>>>>>>> 572284bd5b4d8dda324bb67a235841f510547d63:migrations/versions/eef321fae00e_.py
+revision = '62a551b9827c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -32,12 +22,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=120), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
-    sa.Column('password', sa.String(length=80), nullable=False),
+    sa.Column('password', sa.String(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
-<<<<<<<< HEAD:migrations/versions/9a763a8a3c0f_.py
     sa.Column('role', sa.Integer(), nullable=False),
-========
->>>>>>>> 572284bd5b4d8dda324bb67a235841f510547d63:migrations/versions/eef321fae00e_.py
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -45,36 +32,11 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('description', sa.String(length=1500), nullable=False),
-<<<<<<<< HEAD:migrations/versions/9a763a8a3c0f_.py
     sa.Column('category', sa.String(length=100), nullable=True),
-========
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('goals',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('target', sa.String(length=500), nullable=False),
-    sa.Column('description', sa.String(length=1000), nullable=False),
-    sa.Column('ready', sa.Boolean(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('projects_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['projects_id'], ['projects.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('notes',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(length=150), nullable=False),
-    sa.Column('description', sa.String(length=2000), nullable=False),
->>>>>>>> 572284bd5b4d8dda324bb67a235841f510547d63:migrations/versions/eef321fae00e_.py
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('projects_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['projects_id'], ['projects.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-<<<<<<<< HEAD:migrations/versions/9a763a8a3c0f_.py
     op.create_table('goals',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('target', sa.String(length=500), nullable=False),
@@ -97,16 +59,11 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-========
->>>>>>>> 572284bd5b4d8dda324bb67a235841f510547d63:migrations/versions/eef321fae00e_.py
     op.create_table('habits',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('description', sa.String(length=1000), nullable=False),
-<<<<<<<< HEAD:migrations/versions/9a763a8a3c0f_.py
     sa.Column('category', sa.String(length=100), nullable=True),
-========
->>>>>>>> 572284bd5b4d8dda324bb67a235841f510547d63:migrations/versions/eef321fae00e_.py
     sa.Column('ready', sa.Boolean(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('goals_id', sa.Integer(), nullable=False),
