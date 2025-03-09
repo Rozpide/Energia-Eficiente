@@ -38,7 +38,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					"password": password
 				});
 
-				const requestOptions = {
+				const requestOptions = { 
 					method: "POST",
 					headers: myHeaders,
 					body: raw
@@ -51,7 +51,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					
 					console.log(result)
 
-					if (response.status !== 200){
+					if (!response.ok){
 						return false
 					}
 					localStorage.setItem("token", result.access_token)
@@ -59,10 +59,49 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error(error);
 				};
-
-
-
 			},
+			
+			register: async (name, email, password,) => {
+			const myHeaders = new Headers();
+			myHeaders.append("Content-Type", "application/json");
+
+			const raw = JSON.stringify({
+			"email": email,
+			// "is_active": true,
+			"name": name ,
+			"password": password
+			
+			});
+
+			const requestOptions = {
+			method: "POST",
+			headers: myHeaders,
+			body: raw,
+			redirect: "follow"
+			};
+
+			try {
+			const response = await fetch(process.env.BACKEND_URL+"/api/register", requestOptions);
+			const result = await response.json();
+			console.log(result)
+			        // Guardar el token solo si el backend lo envió
+					if (result.access_token) {
+						localStorage.setItem("token", result.access_token);
+						return true
+					} else {
+						console.warn("El servidor no devolvió un token.");
+					}
+			
+			return false;
+
+			} catch (error) {
+			console.error(error);
+			};
+		},
+
+
+
+
 
 			getMessage: async () => {
 				try {

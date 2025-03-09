@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext} from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { Context } from "../store/appContext";
+import "../../styles/home.css";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'
+
+
 export const Register = () => {
+  const { store, actions } = useContext(Context);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -8,6 +15,9 @@ export const Register = () => {
     password: '',
     confirmPassword: ''
   });
+  
+  const navigate = useNavigate();
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -15,11 +25,54 @@ export const Register = () => {
       [name]: value
     }));
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Add signup logic here
+    if (formData.password !== formData.confirmPassword) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        
+        text: "Passwords are not matching",
+        customClass: {
+          title: "swal-custom-title",
+          confirmButton: "swal-custom-confirm-button",
+        },
+      });
+      return;
+    }
+
+    const userCreated = await actions.register(formData.name, formData.email, formData.password);
+
+      if (!userCreated) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Cannot create user!",
+          footer: '<a href="#">Double check the inputs please...</a>',
+          customClass: {
+            title: "swal-custom-title",
+            confirmButton: "swal-custom-confirm-button",
+          },
+  
+        });
+      }else{
+        Swal.fire({
+          title: "User created!",
+          text: "Welcome to ONMi!",
+          icon: "success",
+          customClass: {
+            title: "swal-custom-title",
+            confirmButton: "swal-custom-confirm-button",
+          },
+  
+        });
+        navigate("/profile");
+      }
+    };
+
     console.log('Signup data:', formData);
-  };
+  
   return (
     <div className="mx-auto my-5">
     <div className="container">
@@ -94,5 +147,6 @@ export const Register = () => {
       </div>
     </div>
   </div>
-)
+);
 }
+

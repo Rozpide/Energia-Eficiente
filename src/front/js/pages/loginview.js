@@ -3,6 +3,7 @@ import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../img/logo-sin-fondo.jpg"
+import Swal from 'sweetalert2'
 
 export const Loginview = () => {
   const [email, setEmail] = useState("")
@@ -15,8 +16,27 @@ export const Loginview = () => {
     //console.log(email, password);
     let logged = await actions.login(email, password)
     if (logged === false) {
-      alert("email or password wrong")
+
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Wrong Email or Password",
+              customClass: {
+                title: "swal-custom-title",
+                confirmButton: "swal-custom-confirm-button",
+              },
+            });
     }else{
+      Swal.fire({
+        title: "Logged in!",
+        text: "Welcome back to ONMi!",
+        icon: "success",
+        customClass: {
+          title: "swal-custom-title",
+          confirmButton: "swal-custom-confirm-button",
+        },
+
+      });
       navigate("/profile")
     }
   }
