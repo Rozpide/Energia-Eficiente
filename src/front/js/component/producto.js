@@ -33,7 +33,7 @@ export const Producto = ({data,id}) => {
             <div className="card mb-3 d-flex flex-column" style={{ height: "100%" }}>
                 <div className="row g-0 flex-fill">
                     <div className="col-md-4">
-                        {/* <img src="https://era2vrmzk5n.exactdn.com/wp-content/uploads/2022/06/Pienso-Ayurveda-gato-kasaludintegral-1080x1080pix.jpg" className="img-fluid rounded-start m-1" alt="Producto" /> */}
+                        <img src={data.url} className="img-fluid rounded-start m-1" alt="Producto" />
                     </div>
                     <div className="col-md-8">
                         <div className="card-body d-flex flex-column flex-grow-1">

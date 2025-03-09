@@ -19,7 +19,7 @@ export const VistaProducto = () => {
         };
 
         try {
-            const response = await fetch(`https://psychic-memory-pjgx9gwj66g72wvq-3001.app.github.dev/api/foods/${id}`, requestOptions);
+            const response = await fetch(`${process.env.BACKEND_URL}/api/foods/${id}`, requestOptions);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
