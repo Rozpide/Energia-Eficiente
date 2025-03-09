@@ -8,8 +8,11 @@ from flask_cors import CORS
 from sqlalchemy import select, and_, or_
 import json
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_bcrypt import Bcrypt 
 
 api = Blueprint('api', __name__)
+bcrypt = Bcrypt()
+
 
 # Allow CORS requests to this API
 CORS(api)
@@ -81,6 +84,8 @@ def get_pet(pet_id):
         return jsonify({"error": "pet not found"}), 404
     return jsonify(pet.serialize()), 200
 
+
+
 #obtener sugerencias de comida según mascota
 @api.route('/foods/suggestions/<int:pet_id>', methods=['GET'])
 def get_pet_suggestions(pet_id):
@@ -101,6 +106,33 @@ def get_pet_suggestions(pet_id):
     if not food_suggestions :
         return "no suggestions found", 404
     return [food[0].serialize() for food in food_suggestions], 200
+
+
+# #obtener sugerencias de comida según mascota
+# @api.route('/foods/suggestions/<int:pet_id>', methods=['GET'])
+# def get_pet_suggestions(pet_id):
+#     pet = Pet.query.get(pet_id)
+#     if not pet:
+#         return jsonify({"error": "pet not found"}), 404
+    
+#     pet_data = pet.serialize()
+#     filters = [Food.animal_type == pet_data["animal_type"], Food.age == pet_data["age"]]
+    
+#     if pet_data["animal_type"] == "perro":
+#         filters.append(Food.size == pet_data["size"])
+    
+#     # Si la mascota tiene patologías, agregarlas al filtro
+#     if pet_data["pathologies"]:
+#         pathologies_list = pet_data["pathologies"].split(",")  
+#         filters.append(Food.pathologies.in_(pathologies_list))
+#     else: 
+#         filters.append(or_(Food.pathologies != None, Food.pathologies == None))
+#     food_suggestions = db.session.execute(select(Food).where(and_(*filters))).all()
+    
+#     if not food_suggestions:
+#         return jsonify({"error": "no suggestions found"}), 404
+    
+#     return jsonify([food[0].serialize() for food in food_suggestions]), 200
 
 
 #obtener todos los alimentos según tipo de animal
@@ -194,13 +226,16 @@ def create_food():
 
 
 #registrar nuevo usuario(signup)
+
 @api.route('/signup', methods=['POST'])
 def create_user():
     data = request.get_json()
+    hashed_password = bcrypt.generate_password_hash(data["password"]).decode('utf-8') 
+
     new_user = User(
         name=data["name"],
         email=data["email"],
-        password=data["password"]
+        password=hashed_password
 )
     if User.query.filter_by(email=data["email"]).first():
         return jsonify({"msg": "El usuario ya existe"}), 400
@@ -232,16 +267,17 @@ def login_user():
 
     email = body["email"]
     password = body["password"]
-
-    user = User().query.filter_by(email=email, password=password).first()
-    token=create_access_token(identity=user.email)
-    user_data = {
-        "id": user.id,
-        "email": user.email,
-        "name": user.name
-    }
-    
-    return jsonify({"msg": "inicio de sesion exitoso", "token": token, "user": user_data}), 200
+    user = User.query.filter_by(email=email).first()
+    if bcrypt.check_password_hash(user.password, body["password"]):
+        token=create_access_token(identity=user.email)
+        user_data = {
+            "id": user.id,
+            "email": user.email,
+            "name": user.name
+        }
+        
+        return jsonify({"msg": "inicio de sesion exitoso", "token": token, "user": user_data}), 200
+    return jsonify({"msg": "credenciales no validas"}), 400 
 
 #Vista privada del usuario CON el token
 @api.route('/user', methods=['GET'])
@@ -283,22 +319,20 @@ def create_accessory():
 
 #crear una nueva mascota
 @api.route('/pets', methods=['POST'])
-def create_pet():
+def create_pet(user_id):
     data = request.get_json()
-    new_accessory = Pet(
+    new_pet = Pet(
         name=data["name"],
         size=data["size"],
         breed=data["breed"],
         age=data["age"],
         animal_type=data["animal_type"],
         pathologies=data["pathologies"],
-        user_id=data["user_id"],
-
-
-)
-    db.session.add(new_accessory)
+        user_id=data["user_id"]
+        )
+    db.session.add(new_pet)
     db.session.commit()
-    return jsonify(new_accessory.serialize()), 201
+    return jsonify(new_pet.serialize()), 201
 
 # @api.route('/foods/<int:food_id>', methods=['PUT'])
 # def update_food(food_id):
