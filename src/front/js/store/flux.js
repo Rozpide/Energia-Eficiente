@@ -18,7 +18,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			dogFood: [],
 			catFood: [] ,
-			exoticFood: []
+			exoticFood: [],
+			infoProducto: [],
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -115,6 +116,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				
 			},
 			
+			//TRAER ALIMENTO POR GRUPO/ESPECIE
 			getDogFood: async () => {
 				const myHeaders = new Headers();
 				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZs0q_CxPIxRcsYOazLvQz4rP7s5FWFmvGJndFqy0N7fvoY5B6Jou5i4ZPgwsQZsEYGDV4DoaNhJP3xwIvv1aGmoRIVdScF1G2c_hWBWqeCTHFNCvGD1Dy0sm3kBmaNdXiMsSO0myHKUFvlWHCed2AdtyCiC6CHBqk9DHs32cYjJV4GQr4cxW2IXl6QDukWwCPSYuzTnP699Rz_4pCbB8OPOQNBDyDtdks_LUoMZR2Qt6IWKmUnLGt-n3JLFjeQMZiSeKEXKNTcJknrz4p25p9-5rh3BY2FBX_kg6MtH3cLbqOyS6yqrG4cjJPpyZbVfN3iEYSR6lzEGiGZDFPvokcj_PM8fq32HR1_olrhti8nYtDctNR_8YRewW5quhBNW6mtF_-SqGTbCQVH1CiLUF2UKK_H_nGmwvWAce2n4Cdw1BLUCZhlCr3GAKWJWHqLI1K5n9OekmI4zs0TI_60R6urTRxIQx2IgkRPYizg-AUdyr6bORhYr7s3c6oFBrdA4yBShqyJFOo4fuMkQuHflmg717cZeB1MDnWgSm9Xnl4qmOlcta0fCSq15GNUPvXhAwvclIoK9NTrmSSd1wvRhoqz7ypodxTSOafQx0ybhJZwTxDeS_gv-4KjbyFngwj7Bj1TluB2qE5Hijbi4uhZb2KILE9AGYHKWSW-IWoSmEXW71c7HhH8mBEbBxidpsSi_Rip3CdXL2oUO-8TGtLx2HgJtExj_7AyTD1trSanlKgDurPSEfDuXuwtqxawfWf0a1sbp9BGk0pRLOA-tVKrxmMiFAPiNCVC1W2EXb95TKydzKIwtbcC70YyDJ4dFwnHrQmgPYxzIz7PYzICzKqZ-VDpO4lf7C3jf4OBJ9ZMV4JRvPiR2kUwMNX_c5CuMLaKrZNzqCFwZBUa4N4AUyTT83mtzFQGAZjMXDeZNok7mjTYBp121qquiSKX8ft05b1MTsVtRfg3ETiFdOHmYQ2-1EcSwBY-VhjWIlkQiFr1yBWXk-g");
@@ -194,7 +196,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 		}
 	}
 		,
-	
+		//INFORMACIÓN PRODUCTO
+		// getInfoProducto: async () =>{
+		// 				const myHeaders = new Headers();
+		// 		myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZtvWIXPtCHcfOofTKgFiVpi5cJP_XHzOx-8ubIRKD1f7HjzoZxyKcmbs-hQMcNR52nO2bPfFTgqTiXBjzJhq00iMbOFDyo5RmN-4xB04hPvVBevVOJj145zSKuGjjzZQaxA9K1reC5AjwKmsEuUpfGv3LldcPKzyx7Ui09wexpXXXUwqnpN3rGlO1V-7SzBOR4LVH5ySIzzsN0I0IUzvvsyC_l_mbmGUNmn6Vc0uCFa2ufBXAiB44jjuvlRaySxVXfvdNxzywOLsmIyXMjJQvr3JnDe4UCAysdXYgJJqDUFg06XSE8mEmGAtZ4_XHDX4MtpPYdb1UxpgiuvbOHMoHSc4E67HtfjyHvfE0CEeRn-TqBcJHjkU37VkidzRCC-d8Ooxm4pZcc-2qjGYcWRXcn6jSOav4anXv6w0mtnG4NnFCqp7Ccr95wiLySm5fU6cNB1EwgSTbUJeHr15w72Uk8wpveAkprQcUo1yQo4i6qvhniMN27Ze4ijTlaG7eQb_zG0SOH0WQFIU3kcGU04JmaWgkYj8g2TwEyjtL6JvkLQhgNWSY3iVH0VKz6NeH6PMfbfpcOVk2LNP9mJ_eNfU5VwjesRECLY1DQ73JzOSzJXXjRTrJFXLmWxZt0y3JnmZwUW4slzbUrAKs1v4WwMb4c0RjpE9q9vQzIojBFtYyoNWtKL7ibivx0nREGkxbryqbsMW-kre846mJOT61Qtoip-0EzPJjs5UrTQ4791h3y4fCWRbxV96_jCuaau3sChJRdEA81uhLKM65W-J1REQjruyVREbpRw9gTmcoiAnM206ZFu9m99hjP6z7s8bNi2agFaWIRx8EiP-bo0s4O3D7XQprAuw1N2IS7g3h5PnTzlN_f9JbMfLBhIU1mzNtJEdIIY930d9od7Hx28_9Auh41aMWWEmCkHugINY_ut3n6uL5wDqEGMs0uPe-lyTUMLodeubJ2BzvJ7Xgrl2Td462uh");
+
+		// 		const requestOptions = {
+		// 		method: "GET",
+		// 		headers: myHeaders,
+		// 		redirect: "follow"
+		// 		};
+
+		// 		try {
+		// 		const response = await fetch(`https://psychic-memory-pjgx9gwj66g72wvq-3001.app.github.dev/api/foods/${id}`, requestOptions);
+		// 		const data = await response.json();
+		// 		setStore({ infoProducto: data })
+		// 		console.log(data)
+		// 		} catch (error) {
+		// 		console.error(error);
+		// 		};
+		// 	}
+		// 	,
+				
 
 
 
