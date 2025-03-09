@@ -52,7 +52,7 @@ export const Loginview = () => {
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <div className="d-flex justify-content-center mb-4 fs-1 textcolors">Welcome Back!</div>
-          <div className="d-flex justify-content-center mb-4">Login below or&nbsp;<a href="forgot password"> create an account</a>
+          <div className="d-flex justify-content-center mb-4">Login below or&nbsp;<Link to="/register"> create an account</Link>
           </div>
           <label htmlFor="exampleInputEmail1" className="form-label ">Email address</label>
           <input type="email" className="form-control bordercolor border border-3" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={(e) => setEmail(e.target.value)} value={email} />
