@@ -26,7 +26,7 @@ const Layout = () => {
                 <ScrollToTop>
                     <Navbar />
                     <Routes>
-                        <Route element={<Home />} path="/" />
+                        {/* <Route element={<Home />} path="/" /> */}
                         <Route element={<Loginview />} path="/login" />
                         <Route element={<ForgotPassword />} path="/resetpassword" />
                         <Route element={<Notes />} path="/notes" />
@@ -34,7 +34,7 @@ const Layout = () => {
                         <Route element={<Single />} path="/single/:theid" /> */}
                         <Route element={<h1>Not found!</h1>} />
                         <Route element={<Profile />} path="/profile" />
-                        <Route element={<LandingPage />} path="/landingpage" />
+                        <Route element={<LandingPage />} path="/" />
                         <Route element={<Register />} path="/register" />
                     </Routes>
                     <Footer />

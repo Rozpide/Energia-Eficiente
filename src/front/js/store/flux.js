@@ -99,6 +99,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 			};
 		},
 
+		verifyToken: async () => {
+			let token = localStorage.getItem("token")
+			const myHeaders = new Headers();
+			myHeaders.append("Authorization", `Bearer ${token}`);
+			
+			const requestOptions = {
+				method: "GET",
+				headers: myHeaders,
+				redirect: "follow"
+			};
+
+			try {
+				const response = await fetch(process.env.BACKEND_URL+"/api/verify-token", requestOptions);
+				const result = await response.json();
+				console.log(result)
+				if (response.status !== 200) {
+					setStore({auth:result.valid})
+				}
+				setStore({auth:result.valid})
+			} catch (error) {
+				console.error(error);
+			};
+		},
+
 
 
 
