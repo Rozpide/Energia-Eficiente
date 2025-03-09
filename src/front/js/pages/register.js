@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext} from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { Context } from "../store/appContext";
+import "../../styles/home.css";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'
 
-const SignupPage = () => {
+
+export const Register = () => {
+  const { store, actions } = useContext(Context);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -9,6 +15,8 @@ const SignupPage = () => {
     password: '',
     confirmPassword: ''
   });
+  
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -17,29 +25,69 @@ const SignupPage = () => {
       [name]: value
     }));
   };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Add signup logic here
-    console.log('Signup data:', formData);
-  };
+    if (formData.password !== formData.confirmPassword) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        
+        text: "Passwords are not matching",
+        customClass: {
+          title: "swal-custom-title",
+          confirmButton: "swal-custom-confirm-button",
+        },
+      });
+      return;
+    }
 
+    const userCreated = await actions.register(formData.name, formData.email, formData.password);
+
+      if (!userCreated) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Cannot create user!",
+          footer: '<a href="#">Double check the inputs please...</a>',
+          customClass: {
+            title: "swal-custom-title",
+            confirmButton: "swal-custom-confirm-button",
+          },
+  
+        });
+      }else{
+        Swal.fire({
+          title: "User created!",
+          text: "Welcome to ONMi!",
+          icon: "success",
+          customClass: {
+            title: "swal-custom-title",
+            confirmButton: "swal-custom-confirm-button",
+          },
+  
+        });
+        navigate("/profile");
+      }
+    };
+
+    console.log('Signup data:', formData);
+  
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4">
-    <div className="w-full max-w-4xl bg-white shadow-md rounded-lg overflow-hidden flex">
+    <div className="mx-auto my-5">
+    <div className="container">
       {/* Left Side - Description */}
-      <div className="w-1/2 bg-[#E6EDF3] p-8 flex flex-col justify-center">
-        <h2 className="text-2xl font-bold text-[#24292F] mb-4">Become a member</h2>
-        <p className="text-[#57606A]">
+      <div className="">
+        <h1 className="">Become a member</h1>
+        <p className="">
           Onmino helps you organize your ideas, tasks, and projects simply and efficiently. Start today!
         </p>
       </div>
-
       {/* Right Side - Signup Form */}
       <div className="w-1/2 p-8 bg-white">
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <input 
+            <input
               type="text"
               name="name"
               placeholder="Name"
@@ -50,7 +98,7 @@ const SignupPage = () => {
             />
           </div>
           <div className="mb-4">
-            <input 
+            <input
               type="email"
               name="email"
               placeholder="Email"
@@ -61,7 +109,7 @@ const SignupPage = () => {
             />
           </div>
           <div className="mb-4 relative">
-            <input 
+            <input
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
@@ -73,13 +121,13 @@ const SignupPage = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#57606A]"
+              className="btn mx-2"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
           <div className="mb-4 relative">
-            <input 
+            <input
               type={showPassword ? "text" : "password"}
               name="confirmPassword"
               placeholder="Confirm Password"
@@ -89,9 +137,9 @@ const SignupPage = () => {
               required
             />
           </div>
-          <button 
-            type="submit" 
-            className="w-full bg-[#1F6FEB] text-white py-2 rounded-md hover:bg-[#1160D3] transition duration-300"
+          <button
+            type="submit"
+            className="btn btn-primary"
           >
             Register
           </button>
@@ -100,5 +148,5 @@ const SignupPage = () => {
     </div>
   </div>
 );
-};
-export default SignupPage;
+}
+
