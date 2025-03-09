@@ -11,6 +11,8 @@ from flask_jwt_extended.exceptions import NoAuthorizationError
 from flask_cors import cross_origin
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from sqlalchemy.exc import NoResultFound
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
@@ -51,22 +53,44 @@ def get_one_user(id):
         return jsonify({"msg":"user do not exist"}), 404
     
 
-
-@api.route('/user', methods=['POST'])
+@api.route('/register', methods=['POST'])
 def create_user():
     try:
-#eliminar print 
         request_body = request.json
-        print(request_body)
-        user = db.session.execute(db.select(User).filter_by(email= request_body["email"])).scalar_one()
-#falta respuesta return si email es unique validad que no este en la base de dato 
-    except:
-# anyadir al cuerpo que entre con el role user (faltan definir) ejemplo puede ser role=3 (admin= 1, moderator=2, user=3)
-        user = User(name=request_body["name"],email=request_body["email"], password=request_body["password"], is_active= request_body["is_active"])
-        db.session.add(user)
+        email = request_body["email"]
+        password = request_body["password"]  
+        name = request_body["name"]
+
+        if not email or not password or not name:
+            return jsonify({"msg": "missing data"}), 400 
+
+        # 1. Verificar si el usuario ya existe
+        existing_user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
+        if existing_user:
+            return jsonify({"msg": "User already exists"}), 400
+
+        # 2. Encriptar contraseña
+        hashed_password = generate_password_hash(password)
+
+        # 3. Crear nuevo usuario
+        new_user = User(
+            name=request_body["name"],
+            email=email,
+            password=hashed_password,
+            is_active=True,
+           #  role=3  Definir roles (1=admin, 2=moderador, 3=usuario normal)
+        )
+
+        db.session.add(new_user)
         db.session.commit()
 
-    return jsonify({"msg": "created"}), 200
+        # 4. Generar token JWT
+        access_token = create_access_token(identity=email)
+
+        return jsonify({"msg": "User created", "access_token": access_token}), 201
+
+    except Exception as e:
+        return jsonify({"msg": "Error creating user", "error": str(e)}), 500
 
 @api.route("/login", methods=["POST"])
 def login():
@@ -76,23 +100,41 @@ def login():
         password = request.json.get("password", None)
 
         # 1 registro de tabla específica
-        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
-        # filtrar user por email y si lo encuentras muéstralo en print
-        #print(user.serialize())
+        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
+        if not user:
+            return jsonify({"msg": "Bad password or email"}), 401
 
         # establecer condiciones si el email que me envian desde el front es distinto envia error si no envia el token
-        if email != user.email or password != user.password:
+        # if email != user.email or check_password_hash(user.password, password):
+        #     return jsonify({"msg": "Bad password or email"}), 401
+    #     access_token = create_access_token(identity=email)
+    #     return jsonify({"access_token":access_token})
+    # except NoResultFound:
+    #     return jsonify ({"msg": "Bad password or email"}), 401
+
+        if not email or not password:
             return jsonify({"msg": "Bad password or email"}), 401
-            
 
+        # 2. Verificar la contraseña encriptada
+        if not password or not check_password_hash(user.password, password):
+            return jsonify({"msg": "Bad password or email"}), 401
+
+        # 3. Crear token JWT
         access_token = create_access_token(identity=email)
-        return jsonify({"access_token":access_token})
-        # esta ultima de serialize no la entiendo
+
+        return jsonify({"access_token": access_token})
+
+    except Exception as e:
+        return jsonify({"msg": "Error logging in", "error": str(e)}), 500
+    
 
 
-        # # ESTE PROCESO DE DONDE SE GUARDA LOS LLEVA EL PERSONAL DE JWT    
-    except NoResultFound:
-        return jsonify ({"msg": "Bad password or email"}), 401
+
+
+
+
+
+
     
     # Protect a route with jwt_required, which will kick out requests
 # without a valid JWT present.
@@ -156,12 +198,6 @@ def call_notes():
 
 
     return jsonify({"resul": list_notes}), 200
-
-
-
-
-
-
 
 
 # @app.route("/protected", methods=["GET"])
