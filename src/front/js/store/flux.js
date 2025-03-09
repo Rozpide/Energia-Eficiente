@@ -61,16 +61,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 			},
 			
-			register: async (name, email, password,) => {
+			register: async (name, email, password) => {
 			const myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
 			const raw = JSON.stringify({
+			"name": name,
 			"email": email,
-			// "is_active": true,
-			"name": name ,
 			"password": password
-			
 			});
 
 			const requestOptions = {

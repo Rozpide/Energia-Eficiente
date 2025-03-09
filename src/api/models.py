@@ -10,9 +10,9 @@ class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String(255))
+    password: Mapped[str] = mapped_column(String(500))
     is_active: Mapped[bool]
-    # role: Mapped[int] = mapped_column(Integer, nullable=False) default=3
+    role: Mapped[int] = mapped_column(Integer, nullable=False)
     notes: Mapped["Notes"] = relationship(back_populates="user")
     habits: Mapped["Habits"] = relationship(back_populates="user")
     goals: Mapped["Goals"] = relationship(back_populates="user")
@@ -25,7 +25,7 @@ class User(db.Model):
             "name": self.name,
             "email": self.email,
             "is_active": self.is_active,
-            # "role": self.role
+            "role": self.role
         }
 
 class Notes(db.Model):
@@ -34,6 +34,7 @@ class Notes(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(150), nullable=False)
     description: Mapped[str] = mapped_column(String(2000), nullable=False)
+    category: Mapped[str] = mapped_column(String(100), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="notes")
     projects_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=True)
@@ -45,6 +46,8 @@ class Notes(db.Model):
             "id": self.id,
             "title": self.title,
             "description": self.description,
+            "category": self.category,
+            "user_id": self.user_id
         }
     
 class Habits(db.Model):
@@ -53,6 +56,7 @@ class Habits(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String(1000), nullable=False)
+    category: Mapped[str] = mapped_column(String(100), nullable=True)
     ready: Mapped[bool]
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="habits")
@@ -65,6 +69,7 @@ class Habits(db.Model):
             "id": self.id,
             "name": self.name,
             "description": self.description,
+            "category": self.category,
             "ready": self.ready
         }
 
@@ -95,6 +100,7 @@ class Projects(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String(1500), nullable=False)
+    category: Mapped[str] = mapped_column(String(100), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="projects")
     notes: Mapped["Notes"] = relationship(back_populates="projects")
@@ -105,5 +111,6 @@ class Projects(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "description": self.description
+            "description": self.description,
+            "category": self.category
         }
