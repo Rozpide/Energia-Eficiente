@@ -5,20 +5,20 @@ from .models import db, User, Notes, Habits, Goals, Projects
 from flask_admin.contrib.sqla import ModelView
 
 class NotesView(ModelView):
-    column_list = ('title', 'description', 'user_id', 'projects_id')
-    form_columns = ('title', 'description', 'user_id', 'projects_id')
+    column_list = ('title', 'description','category', 'user_id', 'projects_id')
+    form_columns = ('title', 'description','category', 'user_id', 'projects_id')
 
 class HabitsView(ModelView):
-    column_list = ('name', 'description', 'user_id', 'goals_id')
-    form_columns = ('name', 'description', 'user_id', 'goals_id')
+    column_list = ('name', 'description', 'category', 'user_id', 'goals_id')
+    form_columns = ('name', 'description', 'category', 'user_id', 'goals_id')
 
 class GoalsView(ModelView):
     column_list = ('target', 'description', 'user_id', 'projects_id')
     form_columns = ('target', 'description', 'user_id', 'projects_id')
 
 class ProjectsView(ModelView):
-    column_list = ('name', 'description', 'user_id')
-    form_columns = ('name', 'description', 'user_id')
+    column_list = ('name', 'description', 'category', 'user_id')
+    form_columns = ('name', 'description', 'category', 'user_id')
 
 
 def setup_admin(app):

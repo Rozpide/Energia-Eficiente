@@ -3,25 +3,23 @@ import React, { useState, useEffect } from "react";
 
 
 export const FormNote = () => {
-  const [contact, setContact] = useState([""])
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [phone, setPhone] = useState("")
-  const [address, setAddress] = useState("")
+  const [note, setContact] = useState({})
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
   
-  console.log((contact));
+  console.log((note));
   
 
-  async function createContact() {
-    if (name === "" || email === "" || phone === "" || address === "") {
-      throw new Error("Contacto no creado. Complete todos los campos de manera correcta");
-    } else {
+  async function createNote() {
+    // if (name === "" || email === "" || phone === "" || address === "") {
+    //   throw new Error("Contacto no creado. Complete todos los campos de manera correcta");
+    // } else {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
       const raw = JSON.stringify({
-        "title": name,
-        "description": email
+        "title": title,
+        "description": description
       });
 
       const requestOptions = {
@@ -32,26 +30,23 @@ export const FormNote = () => {
       };
 
       try {
-        let response = await fetch("https://playground.4geeks.com/contact/agendas/LMezza/contacts", requestOptions);
+        let response = await fetch(process.env.BACKEND_URL+"/api/note", requestOptions);
         if (response === !201) {
-          alert("Contacto no creado")
+          alert("Ups! This note was not create")
         }
         let result = await response.json();
         setContact=(result)
-        setName("")
-        setEmail("")
+        setTitle("")
+        setDescription("")
       } catch (error) {
         console.error(error);
       };
-    }
+    // }
   }
 
-  function save() {
-    createContact()
-  }
-
+ 
   useEffect(() => {
-    createContact()
+    createNote()
   }, [])
 
   return (
@@ -59,11 +54,11 @@ export const FormNote = () => {
       <form>
         <div className="mb-3">
           <label htmlFor="title" className="form-label d-flex">Title</label>
-          <input className="form-control" id="title" type="text" value={name} onChange={(e) => { setName(e.target.value) }} />
+          <input className="form-control" id="title" type="text" value={title} onChange={(e) => { setTitle(e.target.value) }} />
         </div>
         <div className="mb-3">
           <label htmlFor="description" className="form-label d-flex">Description</label>
-          <textarea className="form-control" rows="3" id="description" value={email} onChange={(e) => { setEmail(e.target.value) }} />
+          <textarea className="form-control" rows="3" id="description" value={description} onChange={(e) => { setDescription(e.target.value) }} />
         </div>
       </form>
     </div>

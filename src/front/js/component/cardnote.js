@@ -4,6 +4,11 @@ import { Thememode } from "./Thememode"
 import logo from "../../img/logo-sin-fondo.jpg"
 import { FormNote } from "./formNote";
 
+
+
+
+
+
 export const Cardnote = () => {
     return (
         <div className="col">

@@ -34,6 +34,7 @@ class Notes(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(150), nullable=False)
     description: Mapped[str] = mapped_column(String(2000), nullable=False)
+    category: Mapped[str] = mapped_column(String(100), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="notes")
     projects_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=True)
@@ -45,6 +46,7 @@ class Notes(db.Model):
             "id": self.id,
             "title": self.title,
             "description": self.description,
+            "category": self.category,
             "user_id": self.user_id
         }
     
@@ -54,6 +56,7 @@ class Habits(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String(1000), nullable=False)
+    category: Mapped[str] = mapped_column(String(100), nullable=True)
     ready: Mapped[bool]
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="habits")
@@ -66,6 +69,7 @@ class Habits(db.Model):
             "id": self.id,
             "name": self.name,
             "description": self.description,
+            "category": self.category,
             "ready": self.ready
         }
 
@@ -96,6 +100,7 @@ class Projects(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String(1500), nullable=False)
+    category: Mapped[str] = mapped_column(String(100), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="projects")
     notes: Mapped["Notes"] = relationship(back_populates="projects")
@@ -106,5 +111,6 @@ class Projects(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "description": self.description
+            "description": self.description,
+            "category": self.category
         }
