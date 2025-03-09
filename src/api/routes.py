@@ -75,10 +75,10 @@ def create_user():
         # 3. Crear nuevo usuario
         new_user = User(
             name=request_body["name"],
-            email=email,
+            email=request_body["email"],
             password=hashed_password,
             is_active=True,
-           #  role=3  Definir roles (1=admin, 2=moderador, 3=usuario normal)
+            role=3
         )
 
         db.session.add(new_user)
@@ -185,13 +185,24 @@ def verify_token():
 @api.route("/notes", methods=["GET"])
 @jwt_required()
 def call_notes():
-    # Access the identity of the current user with get_jwt_identity
+    
     current_user = get_jwt_identity()
     user = db.session.execute(db.select(User).filter_by(email=current_user)).scalar_one()
-#aplicar logica para mostar profile 
+    print(user)
+
+    #aplicar logica para mostar profile 
     notes = db.session.execute(db.select(Notes).filter_by(user_id=user.id)).scalars()
-    print(list(notes))
+    list_notes = [note.serialize() for note in notes]
+    #print(list_notes)
 
 
-#cambiar el mensaje de return que no muestre datos personales 
-    return jsonify(result = "your notes"), 200
+
+    return jsonify({"resul": list_notes}), 200
+
+
+# @app.route("/protected", methods=["GET"])
+# @jwt_required()
+# def protected():
+#     # Access the identity of the current user with get_jwt_identity
+#     current_user = get_jwt_identity()
+#     return jsonify(logged_in_as=current_user), 200
