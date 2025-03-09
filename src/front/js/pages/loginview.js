@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../img/logo-sin-fondo.jpg"
+import logo from "../../img/logo-sin-fondo.jpg";
 import Swal from 'sweetalert2'
 
 export const Loginview = () => {
@@ -17,16 +17,16 @@ export const Loginview = () => {
     let logged = await actions.login(email, password)
     if (logged === false) {
 
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: "Wrong Email or Password",
-              customClass: {
-                title: "swal-custom-title",
-                confirmButton: "swal-custom-confirm-button",
-              },
-            });
-    }else{
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Wrong Email or Password",
+        customClass: {
+          title: "swal-custom-title",
+          confirmButton: "swal-custom-confirm-button",
+        },
+      });
+    } else {
       Swal.fire({
         title: "Logged in!",
         text: "Welcome back to ONMi!",
@@ -45,7 +45,7 @@ export const Loginview = () => {
   return (
     <div className="container-fluid mx-auto d-flex marginlogintop justify-content-center">
       <div className="card border border-0 marginloginright" style={{ width: "18rem" }}>
-      <img src={ logo } alt="Logo sin fondo"/>
+        <img src={logo} alt="Logo sin fondo" />
 
 
       </div>

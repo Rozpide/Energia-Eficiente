@@ -78,7 +78,7 @@ def create_user():
             email=email,
             password=hashed_password,
             is_active=True,
-           #  role=3  Definir roles (1=admin, 2=moderador, 3=usuario normal)
+            role=3
         )
 
         db.session.add(new_user)
