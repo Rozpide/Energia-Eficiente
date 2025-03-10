@@ -1,22 +1,23 @@
 import React, { useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Thememode } from "./Thememode"
-import logo from "../../img/logo-sin-fondo.jpg"
+import logo from "../../img/logoFinal.jpg"
 import { Context } from "../store/appContext";
+
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		actions.verifyToken();  // ✅ Verifica el token cuando el Navbar se monta
+		
 	}, []);
 
 
 
 	return (
 		<nav className="navbar navbar-light bg-light p-0">
-			<div className="container-fluid margintop d-flex align-items-center">
+			<div className="container-fluid background-color margintop d-flex align-items-center">
 				<Link to="/">
 					<img
 						src={logo}
@@ -59,13 +60,13 @@ export const Navbar = () => {
 					)}
 
 					{store.auth && (<div className="dropdown ">
-						<button className=" me-2 backbutton border rounded text-black p-1 w-100 dropdown-toggle"  aria-expanded="false" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<button className=" me-2 backbutton border rounded text-black p-1 w-100 dropdown-toggle"  aria-expanded="false" type="button" data-bs-toggle="dropdown">
 							<i className="fa-solid fa-gear"></i>
 						</button>
-						<ul class="dropdown-menu">
+						<ul class="dropdown-menu  dropdown-menu-end">
 						
 							<li><button className="btn btn-light w-100" type="button">Tema</button></li>
-							<li><button className="btn btn-light w-100" type="button">Edit Profile</button></li>
+							<li><button className="btn btn-light w-100" type="button"><Link to="/editprofile">Edit Profile</Link></button></li>
 							<li><button onClick={() => {
 								localStorage.removeItem("token");
 								actions.verifyToken();
