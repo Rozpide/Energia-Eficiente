@@ -56,6 +56,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						return false
 					}
 					localStorage.setItem("token", result.access_token)
+					setStore({auth:true})
+					
 					return true
 				} catch (error) {
 					console.error(error);

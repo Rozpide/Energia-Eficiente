@@ -17,7 +17,7 @@ export function Thememode() {
   };
 
   return (
-    <button className="btn btn-outline-dark mx-3" onClick={changetheme}>
+    <button className="btn btn-outline-dark mx-3 border border-0" onClick={changetheme}>
       {theme === "dark" ? "☀️" : "🌙"}
     </button>
   );
