@@ -22,8 +22,8 @@ class User(db.Model):
     profile_photo = db.Column(db.String(255), nullable=True)  # Profile photo URL
 
     #  Relationships
-    followed_artists = db.relationship('FollowArtist', backref='follow_artist')
-    saved_music = db.relationship('SavedMusic', backref='user')
+    followed_artist = db.relationship('FollowArtist', backref='follow_artist')
+    saved_song = db.relationship('SavedSong', backref='user')
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -64,10 +64,10 @@ class ArtistProfile(db.Model):
 
     artist_photos = db.relationship("Photo", backref="artist_profile")
     artist_videos = db.relationship("Video", backref="artist_profile")
-    artist_music = db.relationship("Music", backref="artist_profile")
+    artist_songs = db.relationship("Song", backref="artist_profile")
 
     def __repr__(self):
-        return f'<Artist_Profile {self.id}>'
+        return f'<ArtistProfile {self.id}>'
 
     def serialize(self):
         return {
@@ -76,7 +76,7 @@ class ArtistProfile(db.Model):
             "bio": self.bio,
             "artist_photos": self.artist_photos,
             "artist_videos": self.artist_videos,
-            "artist_music": self.artist_music
+            "artist_songs": self.artist_songs
         }
     
                 # ARTIST PHOTO MODEL
@@ -140,8 +140,8 @@ class Genre(db.Model):
         }
       
                 # ARTIST MUSIC MODEL
-class Music(db.Model):
-    __tablename__ = "music"
+class Song(db.Model):
+    __tablename__ = "song"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -152,7 +152,7 @@ class Music(db.Model):
     artist_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), nullable=False)
 
     def __repr__(self):
-        return f'<Music {self.title}>'
+        return f'<Song {self.title}>'
 
     def serialize(self):
         return {
@@ -164,23 +164,23 @@ class Music(db.Model):
 
 
             # USER SAVED MUSIC & FOLLOW ARTIST MODEL
-class SavedMusic(db.Model):
-    __tablename__ = "saved_music"
+class SavedSong(db.Model):
+    __tablename__ = "saved_song"
 
     id = db.Column(db.Integer, primary_key=True)
 
     # Relationships
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    music_id = db.Column(db.Integer, db.ForeignKey("music.id"))
+    song_id = db.Column(db.Integer, db.ForeignKey("song.id"))
 
     def __repr__(self):
-        return f'<Saved_Music {self.music_id}>'
+        return f'<Saved_Song {self.song_id}>'
 
     def serialize(self):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "music_id": self.music_id
+            "song_id": self.song_id
         }
     
 
@@ -192,7 +192,7 @@ class FollowArtist(db.Model):
     artist_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), primary_key=True)
 
     def __repr__(self):
-        return f'<Follow_Artist user_id={self.user_id}, artist_id={self.artist_id}, is_active={self.is_active}>'
+        return f'<FollowArtist user_id={self.user_id}, artist_id={self.artist_id}, is_active={self.is_active}>'
 
     def serialize(self):
         return {

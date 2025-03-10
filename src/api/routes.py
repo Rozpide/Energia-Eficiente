@@ -2,12 +2,12 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Genre, ArtistProfile, Photo, Video, Music, SavedMusic, FollowArtist
+from api.models import db, User, Genre, ArtistProfile, Photo, Video, Song, SavedSong, FollowArtist
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 import os
 
-from flask_jwt_extended import create_access_token, current_user, jwt_required
+from flask_jwt_extended import create_access_token, current_user, jwt_required, get_jwt_identity
 
 
 import requests
@@ -188,7 +188,7 @@ def get_artist_songs(artist_id):
         return jsonify({"msg": "Artista no encontrado"}), 404
 
     # Obtén la musica para este artista
-    songs = Music.query.filter_by(artist_id=artist_id).all()
+    songs = Song.query.filter_by(artist_id=artist_id).all()
     serialized_songs = [s.serialize() for s in songs]
     return jsonify(serialized_songs), 200
 
@@ -210,7 +210,7 @@ def create_artist_song(artist_id):
         return jsonify({"msg": "media_url is required"}), 400
 
     # Creamos la musica
-    new_song = Music(
+    new_song = Song(
         title=title,
         media_url=media_url,
         artist_id=artist_id
@@ -227,10 +227,92 @@ def delete_artist_song(artist_id, song_id):
     if not artist:
         return jsonify({"msg": "Artista no encontrado"}), 404
 
-    song = Music.query.filter_by(id=song_id, artist_id=artist_id).first()
+    song = Song.query.filter_by(id=song_id, artist_id=artist_id).first()
     if not song:
         return jsonify({"msg": "Cancion no encontrada"}), 404
 
     db.session.delete(song)
     db.session.commit()
     return jsonify({"msg": "Cancion eliminada con éxito"}), 200
+
+
+
+# GET USER FAVOURITE SONGS AND ARTISTS
+@api.route('/user/profile/<int:id>', methods=['GET'])
+def handle_user_favourites(id):
+    # Find the user by id
+    user = User.query.get(id)
+
+    if not user:
+        return jsonify({"ERROR": "Usuario no encontrado"}), 404
+     
+    return jsonify({
+        "saved_songs": [fav.serialize() for fav in user.saved_songs] if user.saved_songs else "No hay canciones guardadas",
+        "followed_artists": [fav.serialize() for fav in user.followed_artists] if user.followed_artists else "No tienes artistas guardados"
+    }), 200
+
+
+
+# POST & DELETE FOR USER FAVOURITE SONGS
+@api.route('/user/profile/<int:id>/favorite/songs/<int:song_id>', methods=['POST', 'DELETE'])
+def handle_favourite_songs(song_id, id):
+    # Find the user by id
+    user = User.query.get(id)
+
+    if not user:
+        return jsonify({"ERROR": "Usuario no encontrado"}), 404
+    
+    # Check if the song is already liked/favourited by the user
+    existing_favourite_song = SavedSong.query.filter_by(user_id=id, song_id=song_id).first()
+
+    # POST
+    if request.method == 'POST':
+        if existing_favourite_song:
+            return jsonify({"msg": "La canción ya está en favoritos"}), 400
+        
+        new_favourite_song = SavedSong(user_id=id, song_id=song_id)
+        db.session.add(new_favourite_song)
+        db.session.commit()
+        return jsonify({"msg": "Canción añadida a favoritos con éxito", "new_favourite_song": new_favourite_song.serialize()}), 200
+
+    # DELETE
+    if request.method == 'DELETE':
+        if not existing_favourite_song:
+            return jsonify({"msg": "La canción no está en favoritos"}), 400
+
+        db.session.delete(existing_favourite_song)
+        db.session.commit()
+        return jsonify({"msg": "Canción eliminada de favoritos con éxito"}), 200
+
+
+
+# POST & DELETE FOR USER FOLLOWED ARTISTS
+@api.route('/user/profile/<int:id>/favorite/aritsts/<int:artist_id>', methods=['POST', 'DELETE'])
+def handle_followed_artists(artist_id, id):
+    # Find the user by id
+    user = User.query.get(id)
+
+    if not user:
+        return jsonify({"ERROR": "Usuario no encontrado"}), 404
+
+    # Check if the artist is already followed by the user
+    existing_followed_artist = FollowArtist.query.filter_by(user_id=id, artist_id=artist_id).first()
+
+    # POST
+    if request.method == 'POST':
+        if existing_followed_artist:
+            return jsonify({"msg": "Ya sigues a este artista"}), 400
+        
+        new_followed_artist = FollowArtist(user_id=id, artist_id=artist_id)
+        db.session.add(new_followed_artist)
+        db.session.commit()
+        return jsonify({"msg": "Artista seguido con éxito", "new_followed_artist": new_followed_artist.serialize()}), 200
+
+    # DELETE
+    if request.method == 'DELETE':
+        if not existing_followed_artist:
+            return jsonify({"msg": "No sigues a este artista"}), 400
+
+        db.session.delete(existing_followed_artist)
+        db.session.commit()
+        return jsonify({"msg": "Artista dejado de seguir con éxito"}), 200
