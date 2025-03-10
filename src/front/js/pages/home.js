@@ -43,6 +43,8 @@ export const Home = () => {
 			  	category={"dogFood"} 
              	id={dogFood.id} 
 				description={dogFood.description}
+				price={dogFood.price}
+				url={dogFood.url}
              	key={index}/>
         	);
 	  		})}</div>
@@ -60,6 +62,8 @@ export const Home = () => {
 			  	category={"catFood"} 
              	id={catFood.id} 
 				description={catFood.description}
+				price={catFood.price}
+				url={catFood.url}
              	key={index}/>
         	);
 	  		})}</div>
@@ -77,6 +81,8 @@ export const Home = () => {
 			  	category={"exóticFood"} 
              	id={exoticFood.id} 
 				description={exoticFood.description}
+				price={exoticFood.price}
+				url={exoticFood.url}
              	key={index}/>
 				);
 				})}</div>

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Context } from "../store/appContext";
 import "../../styles/registroMascota.css";
 
 export const RegistroMascota = () => {
@@ -25,15 +24,40 @@ export const RegistroMascota = () => {
         setFotoMascota(e.target.files[0]);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const formMascota = new formMascota();
-        formMascota.append("mascota", JSON.stringify(nuevaMascota));
+
+        const formData = new FormData();
+        formData.append("mascota", JSON.stringify(nuevaMascota));
         if (fotoMascota) {
-            formMascota.append("foto", fotoMascota);
+            formData.append("foto", fotoMascota);
         }
-        console.log('Datos enviados:', formData);
-        // Aquí puedo enviar formData a la API o manejarlo según sea necesario
+
+        console.log('Datos enviados:', nuevaMascota, fotoMascota);
+
+        try {
+            const response = await crearMascota(formData);
+            console.log('Respuesta de la API:', response);
+        } catch (error) {
+            console.error('Error al crear la mascota:', error);
+        }
+    };
+
+    const crearMascota = async (formData) => {
+        const myHeaders = new Headers();
+        myHeaders.append("Authorization",` ${token}`); // Cambia esto por tu token real
+
+        const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: formData,
+        };
+
+        const response = await fetch(`${process.env.BACKEND_URL}/api/pets`, requestOptions);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
     };
 
     return (
@@ -104,22 +128,17 @@ export const RegistroMascota = () => {
                     <button type="submit" className="btn btn-primary">Registrar Mascota</button>
                 </form>
 
-
                 <div className="fotoMascota ms-4">
                     <h4>Sube una foto de tu compañero/a :</h4>
-                    
                     {fotoMascota && (
                         <div className="mt-2" style={{ width: "200px", height: "200px" }}>
                             <img src={URL.createObjectURL(fotoMascota)} alt="Vista previa" width="100%" />
                             <p>Archivo: {fotoMascota.name}</p>
                         </div>
                     )}
-                    
                     <input type="file" accept="image/*" onChange={handleFileChange} className="mt-2" />
                 </div>
             </div>
         </div>
-  
-
     );
-    }
+};
