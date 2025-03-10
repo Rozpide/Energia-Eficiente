@@ -1,23 +1,20 @@
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
-        #  USER REGISTER AND PROFILE MODEL
+# USER REGISTER AND PROFILE MODEL
 class User(db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
-
     fullName = db.Column(db.String(120), unique=True, nullable=True)
     username = db.Column(db.String(120), unique=True, nullable=True)
     address = db.Column(db.String(120), unique=True, nullable=False)
-
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(512), unique=False, nullable=False)
-
-    is_artist = db.Column(db.Boolean, default=False) # Check if account is artist
+    is_artist = db.Column(db.Boolean, default=False)  # Check if account is artist
     is_active = db.Column(db.Boolean(), default=True)
     profile_photo = db.Column(db.String(255), nullable=True)  # Profile photo URL
 
@@ -28,8 +25,8 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
-    def artist(is_artist):
-        if is_artist:
+    def artist(self):
+        if self.is_artist:
             return "Si"
         else:
             return "No"
@@ -45,11 +42,11 @@ class User(db.Model):
             "profile_photo": self.profile_photo,
         }
 
-def set_password(self, password):
-    self.password_hash = generate_password_hash(password)
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-def check_password(self,password):
-    return check_password_hash(self.password_hash,password)
+    def check_password(self,password):
+        return check_password_hash(self.password_hash,password)
 
 
         # ARTIST PROFILE MODEL
@@ -64,6 +61,7 @@ class ArtistProfile(db.Model):
 
     artist_photos = db.relationship("Photo", backref="artist_profile")
     artist_videos = db.relationship("Video", backref="artist_profile")
+    artist_music = db.relationship("Music", backref="artist_profile")
     artist_songs = db.relationship("Song", backref="artist_profile")
 
     def __repr__(self):
@@ -74,12 +72,12 @@ class ArtistProfile(db.Model):
             "id": self.id,
             "artist_id": self.artist_id,
             "bio": self.bio,
-            "artist_photos": self.artist_photos,
-            "artist_videos": self.artist_videos,
-            "artist_songs": self.artist_songs
+            "artist_photos": [photo.serialize() for photo in self.artist_photos],
+            "artist_videos": [video.serialize() for video in self.artist_videos],
+            "artist_music": [music.serialize() for music in self.artist_music]
         }
-    
-                # ARTIST PHOTO MODEL
+
+# ARTIST PHOTO MODEL
 class Photo(db.Model):
     __tablename__ = "photo"
 
@@ -88,7 +86,7 @@ class Photo(db.Model):
     media_url = db.Column(db.Text, nullable=False)  # Cloudinary URL
 
     # Relationships
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), nullable=False)
+    artist_profile_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), nullable=False)
 
     def __repr__(self):
         return f'<Photo {self.title}>'
@@ -101,7 +99,7 @@ class Photo(db.Model):
         }
 
 
-                # ARTIST VIDEO MODEL
+# ARTIST VIDEO MODEL
 class Video(db.Model):
     __tablename__ = "video"
 
@@ -111,7 +109,7 @@ class Video(db.Model):
     duration = db.Column(db.Integer, nullable=False)
 
     # Relationships
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), nullable=False)
+    artist_profile_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), nullable=False)
 
     def __repr__(self):
         return f'<Video {self.title}>'
@@ -124,22 +122,8 @@ class Video(db.Model):
             "duration": self.duration,
         }
 
-        # GENRES MODEL TO LOAD GENRES
-class Genre(db.Model):
-  
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(250), unique=True, nullable=False)
 
-    def __repr__(self):
-        return f'<Genre {self.name}>'
       
-    def serialize(self):
-        return {
-          "id": self.id,
-          "name": self.name
-        }
-      
-                # ARTIST MUSIC MODEL
 class Song(db.Model):
     __tablename__ = "song"
 
@@ -149,7 +133,7 @@ class Song(db.Model):
     duration = db.Column(db.Integer, nullable=False)
 
     # Relationships
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), nullable=False)
+    artist_profile_id = db.Column(db.Integer, db.ForeignKey("artist_profile.id"), nullable=False)
 
     def __repr__(self):
         return f'<Song {self.title}>'
@@ -182,9 +166,8 @@ class SavedSong(db.Model):
             "user_id": self.user_id,
             "song_id": self.song_id
         }
-    
 
-                # FOLLOW ARTIST MODEL
+
 class FollowArtist(db.Model):
     __tablename__ = "follow_artist"
 
@@ -197,5 +180,19 @@ class FollowArtist(db.Model):
     def serialize(self):
         return {
             "user_id": self.user_id,
-            "artist_id": self.artist_id,
+            "artist_profile_id": self.artist_profile_id,
+        }
+    
+class Genre(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f'<Genre {self.name}>'
+
+    def serialize(self):
+        return {
+          "id": self.id,
+          "name": self.name
         }

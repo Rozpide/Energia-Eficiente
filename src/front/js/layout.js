@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
-import { Home } from "./pages/home";
+import { Genre2 } from "./pages/genre2";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
@@ -13,7 +13,7 @@ import { UserProfile } from "./pages/UserProfile"; // ✅ Nueva vista
 import { SavedSongs } from "./pages/SavedSongs"; // ✅ Nueva vista
 import { SavedArtists } from "./pages/SavedArtists"; // ✅ Nueva vista
 import ArtistProfile from "./pages/ArtistProfile";
-import { Genre } from "./pages/genre";
+import { HomeUser } from "./pages/HomeUser";
 import { UserData } from "./pages/UserData"
 import { ArtistData } from "./pages/ArtistData"
 import { Navbar } from "./component/navbar";
@@ -39,18 +39,18 @@ const Layout = () => {
 const LayoutContent = () => {
     const location = useLocation(); // Obtiene la ruta actual
 
-    const hideNavbarFooter = location.pathname === "/login"; // Solo oculta en /login
+    const hideNavbarFooter = location.pathname === "/"; // Solo oculta en /login
 
     return (
         <>
             {!hideNavbarFooter && <Navbar />}
 
             <Routes>
-                <Route element={<Home />} path="/" />
-                <Route element={<Login />} path="/login" />
+                <Route element={<Genre2 />} path="/genre2" />
+                <Route element={<Login />} path="/" />
                 <Route element={<Demo />} path="/demo" />
                 <Route element={<Single />} path="/single/:theid" />
-                <Route element={<Genre />} path="/genre" />
+                <Route element={<HomeUser />} path="/homeuser" />
                 <Route element={<UserProfile />} path="/userProfile" />  {/* ✅ nueva */}
                 <Route element={<SavedSongs />} path="/savedSongs" />  {/* ✅ nueva */}
                 <Route element={<SavedArtists />} path="/savedArtists" />  {/* ✅ nueva */}
