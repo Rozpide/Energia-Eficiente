@@ -49,6 +49,8 @@ def upload_image():
 
 
 
+
+
 # Creacion de usuario 
 @api.route('/register', methods=['POST'])
 def register():
@@ -57,6 +59,7 @@ def register():
     address = request.json.get('address', None)
     email = request.json.get('email', None)
     password = request.json.get('password', None)
+    is_artist = request.json.get(True,None)
 
     if not fullName or not username or not email or not password:
         return jsonify({"msg": "Missing required fields"}), 400
@@ -69,7 +72,7 @@ def register():
     if existing_user:
         return jsonify({"msg": "Username already exists"}), 400
 
-    user = User(fullName=fullName, username=username, address=address, email=email, is_artist=True, is_active=True)
+    user = User(fullName=fullName, username=username, address=address, email=email, is_artist=is_artist, is_active=True)
     user.set_password(password)
 
     db.session.add(user)
@@ -82,14 +85,27 @@ def generate_token():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
 
+    # Buscar al usuario por el nombre de usuario
     user = User.query.filter_by(username=username).one_or_none()
 
+    # Verificar si el usuario existe y la contraseña es correcta
     if not user or not user.check_password(password):
-        return jsonify("Wrong username or password"), 401
+        return jsonify({"message": "Wrong username or password"}), 401
     
-    access_token = create_access_token(identity=user)  # Se pasa user.id
-    return jsonify(access_token=access_token)
+    # Crear el token de acceso
+    access_token = create_access_token(identity=user)
 
+    # Redirigir dependiendo de si es artista o no
+    if user.is_artist:
+        return jsonify({
+            "access_token": access_token,
+            "redirect_url": f"/user/{user.id}"
+        })
+    else:
+        return jsonify({
+            "access_token": access_token,
+            "redirect_url": "/homeuser"
+        })
 
 @api.route('/profile', methods=['GET'])
 @jwt_required()

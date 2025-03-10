@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { Context } from "../store/appContext";
 import "../../styles/genre.css"
 
-export const Genre = () => {
+export const HomeUser = () => {
 
     const { store, actions } = useContext(Context);
 
