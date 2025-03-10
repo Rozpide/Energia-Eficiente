@@ -16,7 +16,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			notes:[{}],
+			notes:[],
 			//estado julia 
 			//estado compañero
 		},
@@ -133,7 +133,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					};
 
 					const response = await fetch(process.env.BACKEND_URL + "/api/notes", requestOptions);
-					const result = await response.text();
+					const result = await response.json();
 					console.log(response);
 					
 					console.log(result)

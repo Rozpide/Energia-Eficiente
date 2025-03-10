@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useEffect,useContext } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import { Cardnote } from "../component/cardnote";
@@ -6,18 +6,18 @@ import { FormNote } from "../component/formNote";
 
 
 export const Notes = () => {
-    // const { store, actions } = useContext(Context);
-    // const note = store.notes
-    // console.log(note);
+    const { store, actions } = useContext(Context);
+    const note = store.notes
+    console.log(note);
 
 
 
 
 
 
-    // useEffect(() => {
-    //     actions.notes(); 
-    // }, []);
+    useEffect(() => {
+        actions.notes(); 
+    }, []);
 
 
     return (
@@ -28,7 +28,7 @@ export const Notes = () => {
 
 
 
-                    {/* {note.length > 0 ? note.map((item) => <Cardnote key={item.id}>{item.title}{item.description}</Cardnote>) : null} */}
+                    {note.length > 0 ? note.map((item) => <Cardnote key={item.id} title={item.tiitle} description={item.description}/>) : null}
 
 
 

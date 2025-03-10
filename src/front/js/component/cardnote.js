@@ -5,10 +5,11 @@ import logo from "../../img/logo-sin-fondo.jpg"
 import { FormNote } from "./formNote";
 
 
-export const Cardnote = () => {
+export const Cardnote = (props) => {
     // const { store, actions } = useContext(Context);
     // const note = store.notes
-
+    console.log(props);
+    
 
 
 
