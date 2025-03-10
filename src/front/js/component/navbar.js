@@ -67,14 +67,14 @@ export const Navbar = () => {
 						</button>
 					)}
 
-					{store.auth && (<div class="dropdown ">
-						<button class="  me-5 backbutton border rounded text-black p-1 w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-						<i class="fa-solid fa-gear"></i>
+					{store.auth && (<div className="dropdown ">
+						<button className="  me-5 backbutton border rounded text-black p-1 w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<i className="fa-solid fa-gear"></i>
 						</button>
-						<ul class="dropdown-menu">
-							<li><button class="dropdown-item" type="button"><Thememode/></button></li>
-							<li><button class="dropdown-item" type="button">Another action</button></li>
-							<li><button class="dropdown-item" type="button">Something else here</button></li>
+						<ul className="dropdown-menu">
+							<li><button className="dropdown-item" type="button"><Thememode/></button></li>
+							<li><button className="dropdown-item" type="button">Another action</button></li>
+							<li><button className="dropdown-item" type="button">Something else here</button></li>
 						</ul>
 					</div>)}
 				</div>
