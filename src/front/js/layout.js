@@ -4,6 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 import  LandingPage  from "./pages/landingpage";
 
+import { Editprofile } from "./pages/EditProfile";
 import { Loginview } from "./pages/loginview";
 import { ForgotPassword } from "./pages/resetpassword";
 import { Home } from "./pages/home";
@@ -38,6 +39,7 @@ const Layout = () => {
                         <Route element={<Profile />} path="/profile" />
                         <Route element={<LandingPage />} path="/" />
                         <Route element={<Register />} path="/register" />
+                        <Route element={<Editprofile />} path="/editprofile" />
                     </Routes>
                     <Footer />
                 </ScrollToTop>

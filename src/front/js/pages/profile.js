@@ -24,7 +24,7 @@ export const Profile = () => {
         {date.toDateString()}
       </p>
         </div>
-        <div className="container mt-5 " style={{ justifyContent: "center", alignItems: 'center', textAlign:"center", width: "80rem" }}>
+        <div className="container mt-5 " style={{ justifyContent: "center", alignItems: 'center', textAlign:"center", width: "100%" }}>
           
           <h4> Welcome back </h4>
           <p> here goes the avatar </p>
