@@ -23,7 +23,8 @@ export const Navbar = () => {
                 {/* Menú desplegable */}
                 <div className={`dropdown-menu ${menuOpen ? "show" : ""}`}>
                     <Link to="/userProfile" className="dropdown-item" onClick={() => setMenuOpen(false)}>Perfil</Link>
-                    <Link to="/logout" className="dropdown-item" onClick={() => setMenuOpen(false)}>Logout</Link>
+                    <Link to="/userdata" className="dropdown-item" onClick={() => setMenuOpen(false)}>Datos</Link>
+                    <Link to="/" className="dropdown-item" onClick={() => setMenuOpen(false)}>Logout</Link>
                 </div>
                 </div>
             </div>
