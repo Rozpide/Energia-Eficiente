@@ -4,7 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
-
+import { PerfilUsuario} from "./pages/perfilUsuario";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
@@ -34,12 +34,11 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
 
-
                         <Route element={<VistaProducto />} path="/vista-producto" />
 
                         <Route element={<LoginSignup/>} path="/loginSignup" />
 
-
+                        <Route element={<PerfilUsuario/>} path="/perfilUsuario" />    
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />

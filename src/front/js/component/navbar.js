@@ -41,7 +41,7 @@ export const Navbar = () => {
                         {user ? (
                             // Si el usuario está autenticado, mostramos Perfil y Cesta
                             <>
-                                <Link to="/perfil" className="btn btn-primary me-2">Perfil</Link>
+                                <Link to="/perfilUsuario" className="btn btn-primary me-2">Perfil</Link>
                                 <Link to="/cesta" className="btn btn-outline-primary me-2">Cesta</Link>
                                 <button className="btn btn-danger" onClick={actions.logout}>Cerrar sesión</button>
                             </>
