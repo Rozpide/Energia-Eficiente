@@ -15,7 +15,7 @@ return (
 <Link to={`/vista-producto/${id}`} className="text-decoration-none">
   <img 
     src={url}
-    style={{ width: "150px", height: "200px" }} 
+    style={{ width: "100px", height: "150px" }} 
     className="card-img-top mx-auto d-block mt-2" 
     alt="..." 
   />

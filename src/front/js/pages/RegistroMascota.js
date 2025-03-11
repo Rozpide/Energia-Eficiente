@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "../../styles/registroMascota.css";
+import { Context } from "../store/appContext";
 
 export const RegistroMascota = () => {
+    const { actions, store} = useContext (Context)
     const [nuevaMascota, setNuevaMascota] = useState({
         nombre: "",
         especie: "",
         tamaño: "",
         etapaVital: "",
-        patología: ""
+        patologia: ""
     });
 
     const [fotoMascota, setFotoMascota] = useState(null);
+    const token = store.token; // Define tu token aquí
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,39 +29,47 @@ export const RegistroMascota = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const formData = new FormData();
-        formData.append("mascota", JSON.stringify(nuevaMascota));
+    
+        const datosMascota = new FormData(); 
+        datosMascota.append("mascota", JSON.stringify(nuevaMascota));
         if (fotoMascota) {
-            formData.append("foto", fotoMascota);
+            datosMascota.append("foto", fotoMascota);
         }
-
+    
         console.log('Datos enviados:', nuevaMascota, fotoMascota);
-
+    
         try {
-            const response = await crearMascota(formData);
+            const response = await crearMascota(datosMascota);
             console.log('Respuesta de la API:', response);
         } catch (error) {
             console.error('Error al crear la mascota:', error);
         }
     };
 
-    const crearMascota = async (formData) => {
-        const myHeaders = new Headers();
-        myHeaders.append("Authorization",` ${token}`); // Cambia esto por tu token real
 
+    const crearMascota = async (datosMascota) => {
+        const myHeaders = new Headers();
+        myHeaders.append("Authorization", `Bearer ${token}`);
+    
         const requestOptions = {
             method: "POST",
             headers: myHeaders,
-            body: formData,
+            body: datosMascota,
+            redirect: "follow"
         };
-
-        const response = await fetch(`${process.env.BACKEND_URL}/api/pets`, requestOptions);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    
+        try {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/pets`, requestOptions);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+            throw error; 
         }
-        return await response.json();
     };
+    
 
     return (
         <div className="container mt-5">
@@ -123,6 +134,26 @@ export const RegistroMascota = () => {
                             <option value="cachorro">Cachorro (0-1 año)</option>
                             <option value="adulto">Adulto (1-7 años)</option>
                             <option value="senior">Senior (+7 años)</option>
+                        </select>
+                    </div>
+
+                    <div className="mb-3">
+                        <label htmlFor="patologia" className="form-label">Patología</label>
+                        <select
+                            className="form-select"
+                            id="patologia"
+                            name="patologia"
+                            value={nuevaMascota.patologia}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">Selecciona una opción</option>
+                            <option value="diabetico">Diabetes</option>
+                            <option value="renal">Insuficiencia renal</option>
+                            <option value="urinarioStruvita">Urinario Struvita</option>
+                            <option value="urinarioOxalatos">Urinario Oxalatos</option>
+                            <option value="escorbuto">Escorbuto</option>
+                            <option value="obesidad">Obesidad</option>
                         </select>
                     </div>
                     <button type="submit" className="btn btn-primary">Registrar Mascota</button>

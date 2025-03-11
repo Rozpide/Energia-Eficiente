@@ -11,6 +11,7 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager 
+from flask_bcrypt import Bcrypt 
 from datetime import timedelta
 
 # from models import Person
@@ -35,6 +36,7 @@ db.init_app(app)
 
 app.config["JWT_ACCESS_TOKEN_EXPIRE"] = timedelta(hours=1) 
 jwt = JWTManager(app)
+bcrypt = Bcrypt(app)
 
 
 # add the admin
