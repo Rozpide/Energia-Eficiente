@@ -3,7 +3,9 @@ import "../../styles/registroMascota.css";
 import { Context } from "../store/appContext";
 
 export const RegistroMascota = () => {
+
     const { actions, store} = useContext (Context)
+
     const [nuevaMascota, setNuevaMascota] = useState({
         nombre: "",
         especie: "",
@@ -13,8 +15,9 @@ export const RegistroMascota = () => {
     });
 
     const [fotoMascota, setFotoMascota] = useState(null);
-    const token = store.token; // Define tu token aquí
+    const token = store.token; // Definir token aquí??
 
+    //setear datos mascota formulario
     const handleChange = (e) => {
         const { name, value } = e.target;
         setNuevaMascota({
@@ -23,10 +26,12 @@ export const RegistroMascota = () => {
         });
     };
 
+    //cargar foto formulario
     const handleFileChange = (e) => {
         setFotoMascota(e.target.files[0]);
     };
 
+    //enviar al formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
     
@@ -46,7 +51,7 @@ export const RegistroMascota = () => {
         }
     };
 
-
+    //Creación mascota
     const crearMascota = async (datosMascota) => {
         const myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${token}`);
