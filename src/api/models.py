@@ -9,6 +9,7 @@ from sqlalchemy import ForeignKey
 
 db = SQLAlchemy()
 
+
 class User(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
@@ -155,7 +156,7 @@ class Pet(db.Model):
     age = db.Column(db.String, nullable=False)
     animal_type= db.Column(db.String, nullable=False)
     pathologies = db.Column(db.Text, nullable=True) # patología contemple peso 
-    user_id = db.Column(db.ForeignKey("user.id"))
+    user_id = db.Column(db.ForeignKey("user.id"), nullable=False)
     
     # is_hypoallergenic = db.Column(db.Boolean, default=False)
     # is_gluten_free = db.Column(db.Boolean, default=False)
@@ -181,6 +182,7 @@ class Pet(db.Model):
             "breed": self.breed,
             "animal_type": self.animal_type,
             "pathologies": self.pathologies,
+            "user_id": self.user_id,
             "url": self.url
         }
 

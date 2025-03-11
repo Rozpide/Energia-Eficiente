@@ -270,7 +270,9 @@ def login_user():
     user = User.query.filter_by(email=email).first()
     print(user)
     #if bcrypt.check_password_hash(user.password, body["password"]):
+
     if user != None and bcrypt.check_password_hash(user.password, body["password"]):
+
         token=create_access_token(identity=user.email)
         user_data = {
             "id": user.id,
