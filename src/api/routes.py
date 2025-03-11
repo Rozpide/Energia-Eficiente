@@ -268,7 +268,9 @@ def login_user():
     email = body["email"]
     password = body["password"]
     user = User.query.filter_by(email=email).first()
-    if bcrypt.check_password_hash(user.password, body["password"]):
+    print(user)
+    #if bcrypt.check_password_hash(user.password, body["password"]):
+    if user != None and bcrypt.check_password_hash(user.password, body["password"]):
         token=create_access_token(identity=user.email)
         user_data = {
             "id": user.id,
@@ -300,10 +302,29 @@ def get_user_info():
     return jsonify(user_data), 200
 
 
+#Vista privada del usuario a sus mascotas
+@api.route('/user_pets', methods=['GET'])
+@jwt_required()
+def get_user_pets_info():
+
+    current_user_email = get_jwt_identity()
+
+    user = User().query.filter_by(email=current_user_email).first()
+
+    pets = Pet().query.filter_by(user_id=user.id).all()
+    
+    if not pets:
+        return jsonify({"msg": "mascota no econtrada"}), 400
+
+    return jsonify([pet.serialize() for pet in pets]), 200
+
+
+
 #crear un nuevo accesorio
 @api.route('/accessories', methods=['POST'])
 def create_accessory():
     data = request.get_json()
+    
     new_accessory = Accessories(
         name=data["name"],
         brand=data["brand"],
@@ -319,8 +340,15 @@ def create_accessory():
 
 #crear una nueva mascota
 @api.route('/pets', methods=['POST'])
-def create_pet(user_id):
+@jwt_required()
+def create_pet():
     data = request.get_json()
+    current_user_email = get_jwt_identity()
+    user = User().query.filter_by(email=current_user_email).first()
+
+    if not user:
+        return jsonify({"msg": "usuario no encontrado"}), 400
+
     new_pet = Pet(
         name=data["name"],
         size=data["size"],
@@ -328,7 +356,7 @@ def create_pet(user_id):
         age=data["age"],
         animal_type=data["animal_type"],
         pathologies=data["pathologies"],
-        user_id=data["user_id"]
+        user_id=user.id
         )
     db.session.add(new_pet)
     db.session.commit()
