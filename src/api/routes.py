@@ -88,6 +88,7 @@ def get_pet(pet_id):
 
 #obtener sugerencias de comida según mascota
 @api.route('/foods/suggestions/<int:pet_id>', methods=['GET'])
+@jwt_required()
 def get_pet_suggestions(pet_id):
     pet = Pet.query.get(pet_id).serialize()
     # Problema: Un animal puede tener varias patologias en su campo, habría que coger este campo y tratarlo,
@@ -351,11 +352,11 @@ def create_pet():
 
     new_pet = Pet(
         name=data["name"],
-        size=data["size"],
-        breed=data["breed"],
+        size= None,
+        breed= None,
         age=data["age"],
         animal_type=data["animal_type"],
-        pathologies=data["pathologies"],
+        pathologies= None,
         url=data.get("url"),  # Asegúrate de que se está obteniendo correctamente
         user_id=user.id
         )
@@ -447,3 +448,18 @@ def new_pet(pet_id):
     db.session.commit()
     return jsonify(new_pet.serialize()), 201
 
+@api.route('/user', methods=['DELETE'])
+@jwt_required()
+def delete_user():
+    # Buscar el usuario por su ID
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email = current_user_email).first()
+
+    # Eliminar el usuario de la base de datos
+    db.session.delete(user)
+    db.session.commit()
+
+    # Devolver una respuesta JSON indicando que el usuario fue eliminado
+    return jsonify({
+        'message': f'User {user.name} with id {user.id} has been deleted successfully.'
+    }), 200
