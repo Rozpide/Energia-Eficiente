@@ -1,0 +1,35 @@
+.pomodoro-container {
+    text-align: center;
+    background: #ff6b6b;
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+}
+
+.pomodoro-container h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.pomodoro-container h2 {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.pomodoro-container button {
+    margin: 5px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pomodoro-container button:first-of-type {
+    background: #4CAF50;
+    color: white;
+}
+
+.pomodoro-container button:last-of-type {
+    background: #333 !important;
+    color: white;
+}
