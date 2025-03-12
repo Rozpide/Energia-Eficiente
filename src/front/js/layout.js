@@ -5,6 +5,7 @@ import { BackendURL } from "./component/backendURL";
 import  LandingPage  from "./pages/landingpage";
 
 import { Editprofile } from "./pages/EditProfile";
+import { Habits } from "./pages/habits";
 import { Loginview } from "./pages/loginview";
 import { ForgotPassword } from "./pages/resetpassword";
 import { Home } from "./pages/home";
@@ -40,6 +41,7 @@ const Layout = () => {
                         <Route element={<LandingPage />} path="/" />
                         <Route element={<Register />} path="/register" />
                         <Route element={<Editprofile />} path="/editprofile" />
+                        <Route element={<Habits/>} path="/habits"/>
                     </Routes>
                     <Footer />
                 </ScrollToTop>

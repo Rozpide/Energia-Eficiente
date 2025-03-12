@@ -39,7 +39,7 @@ export const Navbar = () => {
 						</Link> : null}
 					</li>
 					<li className="nav-item ms-5 me-5">
-						{store.auth ? <Link className="nav-link" to="/habit-tracker">
+						{store.auth ? <Link className="nav-link" to="/habits">
 							Habit-Tracker
 						</Link> : null}
 					</li>
