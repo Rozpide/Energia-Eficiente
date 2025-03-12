@@ -362,40 +362,87 @@ def create_pet():
     db.session.commit()
     return jsonify(new_pet.serialize()), 201
 
-# @api.route('/foods/<int:food_id>', methods=['PUT'])
-# def update_food(food_id):
-#     food = Food.query.get(food_id)
-#     if not food:
-#         return jsonify({"message": "Food not found"}), 404
+@api.route('/foods/<int:food_id>', methods=['PUT'])
+def update_food(food_id):
+    food = Food.query.get(food_id)
+    if not food:
+        return jsonify({"message": "Food not found"}), 404
 
-#     data = request.get_json()
+    data = request.get_json()
 
-#     food.name = data.get("name", food.name)
-#     food.brand = data.get("brand", food.brand)
-#     food.description = data.get("description", food.description)
-#     food.ingredients = data.get("ingredients", food.ingredients)
-#     food.weight = data.get("weight", food.weight)
-#     food.price = data.get("price", food.price)
-#     food.animal_type = data.get("animal_type", food.animal_type)
-#     food.size = data.get("size", food.size)
-#     food.pathologies = data.get("pathologies", food.patologies)
-#     food.url = data.get("url", food.url)
+    food.name = data.get("name", food.name)
+    food.brand = data.get("brand", food.brand)
+    food.description = data.get("description", food.description)
+    food.ingredients = data.get("ingredients", food.ingredients)
+    food.weight = data.get("weight", food.weight)
+    food.price = data.get("price", food.price)
+    food.animal_type = data.get("animal_type", food.animal_type)
+    food.size = data.get("size", food.size)
+    food.pathologies = data.get("pathologies", food.pathologies)
+    food.url = data.get("url", food.url)
 
-#     db.session.commit()
+    db.session.commit()
 
-#     return jsonify({
-#         "id": food.id,
-#         "name": food.name,
-#         "brand": food.brand,
-#         "description": food.description,
-#         "ingredients": food.ingredients,
-#         "animal_type": food.animal_type,
-#         "price": food.price,
-#         "weight": food.weight,
-#         "size" : food.size,
-#         "pathologies": food.pathologies,
-#         "url": food.url
-#     })
+    return jsonify({
+        "id": food.id,
+        "name": food.name,
+        "brand": food.brand,
+        "description": food.description,
+        "ingredients": food.ingredients,
+        "animal_type": food.animal_type,
+        "price": food.price,
+        "weight": food.weight,
+        "size" : food.size,
+        "pathologies": food.pathologies,
+        "url": food.url
+    })
 
 
+
+@api.route('/users', methods=['PUT'])
+@jwt_required()
+def update_user():
+    current_user_email = get_jwt_identity()
+    user = User().query.filter_by(email=current_user_email).first()
+    if not user:
+        return jsonify({"message": "user not found"}), 404
+
+    data = request.get_json()
+
+    user.name = data.get("name", user.name)
+    user.password = data.get("password" , user.password)
+
+    db.session.commit()
+
+    return jsonify({
+        "id": user.id,
+        "name": user.name,
+        "password":user.password
+    })
+
+
+@api.route('/pets/<int:pet_id>', methods=['PUT'])
+@jwt_required()
+def new_pet(pet_id):
+    data = request.get_json()
+    current_user_email = get_jwt_identity()
+    user = User().query.filter_by(email=current_user_email).first()
+
+    if not user:
+
+        return jsonify({"msg": "usuario no encontrado"}), 400
+    
+    data = request.get_json()
+    
+    pet=Pet().query.filter_by(id=pet_id).first()
+
+    pet.name = data.get("name", pet.name)
+    pet.size = data.get("size", pet.size)
+    pet.age = data.get("age", pet.age)
+    pet.animal_type = data.get("animal_type", pet.animal_type)
+    pet.pathologies = data.get("pathologies", pet.pathologies)
+    pet.url = data.get("url", pet.url)
+
+    db.session.commit()
+    return jsonify(new_pet.serialize()), 201
 
