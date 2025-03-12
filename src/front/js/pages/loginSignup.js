@@ -1,10 +1,9 @@
-import React, { useState, useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import { Context } from '../store/appContext';
 import { Link, useNavigate } from 'react-router-dom';
 import "../../styles/home.css";
 
 export const LoginSignup = () => {
-
     const { actions, store } = useContext(Context);
     const navigate = useNavigate();
     
@@ -14,16 +13,22 @@ export const LoginSignup = () => {
     const [isSignup, setIsSignup] = useState(false);
     const [loading, setLoading] = useState(false); 
     const [error, setError] = useState(''); 
+    const [successMessage, setSuccessMessage] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
+        setSuccessMessage('');
     
         try {
             const dataUser = { name, email, password };
             if (isSignup) {
                 await actions.signup(dataUser, navigate);
+                setSuccessMessage('¡Registro exitoso! Redirigiendo a inicio de sesión...');
+                setTimeout(() => {
+                    setIsSignup(false);
+                }, 3000);
             } else {
                 await actions.login(email, password, navigate);
             }
@@ -35,10 +40,10 @@ export const LoginSignup = () => {
         } finally {
             setLoading(false);
         }
-        
     };
+    
     return (
-        <div className="registration-view-container">
+        <div className="registration-view-container" style={{ background: "linear-gradient(to bottom, #FCE5CD, #FFFFFF)" }}>
             <div className="form-container">
                 {!isSignup && (
                     <form className="auth-form login-form" onSubmit={handleSubmit}>
@@ -61,7 +66,7 @@ export const LoginSignup = () => {
                             {loading ? 'Cargando...' : 'Iniciar sesión'}
                         </button>
                         {error && <p className="error-message">{error}</p>}
-                        <p onClick={() => setIsSignup(true)}>¿No tienes cuenta? Regístrate</p>
+                        <p onClick={() => setIsSignup(true)}>¿No tienes cuenta? <strong>Regístrate</strong></p>
                     </form>
                 )}
                 {isSignup && (
@@ -92,7 +97,8 @@ export const LoginSignup = () => {
                             {loading ? 'Cargando...' : 'Registrar'}
                         </button>
                         {error && <p className="error-message">{error}</p>}
-                        <p onClick={() => setIsSignup(false)}>¿Ya tienes cuenta? Inicia sesión</p>
+                        {successMessage && <p className="success-message">{successMessage}</p>}
+                        <p onClick={() => setIsSignup(false)}>¿Ya tienes cuenta? <strong>Inicia sesión</strong></p>
                     </form>
                 )}
             </div>
