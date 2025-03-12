@@ -111,7 +111,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			logout: () => {
 				localStorage.removeItem('token');
-				setStore({token: null, user: null})
+				setStore({token: null, user: null, pets: [] })
 				
 			},
 			//TRAER ALIMENTO POR GRUPOS
@@ -193,10 +193,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 		}
 	}
 		,
+
+		getUser: async () => {
+			try {
+				const token = localStorage.getItem("token");
+				if (!token) throw new Error("No token found");
+		
+				const resp = await fetch(`${process.env.BACKEND_URL}/api/user`, {
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				});
+		
+				if (!resp.ok) throw new Error("Error al obtener el usuario");
+		
+				const data = await resp.json();
+				setStore({ user: data });
+		
+				// Una vez que tenemos el usuario, obtenemos sus mascotas
+				getActions().getPets(data.id);
+		
+			} catch (error) {
+				console.log("Error al obtener usuario", error);
+			}
+		},
+		
+		getPets: async (userId) => {
+			try {
+				const resp = await fetch(`${process.env.BACKEND_URL}/api/pets`);
+				if (!resp.ok) throw new Error("Error obteniendo mascotas");
+		
+				const allPets = await resp.json();
+				
+				// Filtrar mascotas solo del usuario autenticado
+				const userPets = allPets.filter(pet => pet.user_id === userId);
+				setStore({ pets: userPets });
+		
+			} catch (error) {
+				console.log("Error al obtener mascotas", error);
+			}
+		},
+		
 	
-		//TRAER ALIMENTO A VISTA CARRITO POR ID
-
-
 
 
 

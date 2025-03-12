@@ -356,6 +356,7 @@ def create_pet():
         age=data["age"],
         animal_type=data["animal_type"],
         pathologies=data["pathologies"],
+        url=data.get("url"),  # Asegúrate de que se está obteniendo correctamente
         user_id=user.id
         )
     db.session.add(new_pet)
