@@ -16,6 +16,7 @@ import { Footer } from "./component/footer";
 import { VistaProducto } from "./pages/VistaProducto";
 
 import { LoginSignup } from "./pages/loginSignup";
+import { RegistroMascota } from "./pages/RegistroMascota";
 
 
 

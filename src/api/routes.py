@@ -270,7 +270,9 @@ def login_user():
     user = User.query.filter_by(email=email).first()
     print(user)
     #if bcrypt.check_password_hash(user.password, body["password"]):
-    if user != None:
+
+    if user != None and bcrypt.check_password_hash(user.password, body["password"]):
+
         token=create_access_token(identity=user.email)
         user_data = {
             "id": user.id,
@@ -300,6 +302,24 @@ def get_user_info():
     }
 
     return jsonify(user_data), 200
+
+
+#Vista privada del usuario a sus mascotas
+@api.route('/user_pets', methods=['GET'])
+@jwt_required()
+def get_user_pets_info():
+
+    current_user_email = get_jwt_identity()
+
+    user = User().query.filter_by(email=current_user_email).first()
+
+    pets = Pet().query.filter_by(user_id=user.id).all()
+    
+    if not pets:
+        return jsonify({"msg": "mascota no econtrada"}), 400
+
+    return jsonify([pet.serialize() for pet in pets]), 200
+
 
 
 #crear un nuevo accesorio
@@ -379,6 +399,3 @@ def create_pet():
 #         "pathologies": food.pathologies,
 #         "url": food.url
 #     })
-
-
-
