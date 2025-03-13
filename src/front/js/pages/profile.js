@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import logo from "../../img/logo-sin-fondo.jpg"
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { Pomodoro } from "../component/pomodoro";
 
 
 
@@ -13,24 +14,28 @@ export const Profile = () => {
   const[date,setDate] = useState(new Date());
 
     return(
-      <div className="parent mx-5 ">
+      <div className="parent mx-3 "> 
+     
         <div className="calendar">
-        <h1 className='text-center'>Calendar</h1>
-      <div className='calendar-container'>
+       <div className="title ">
+      <h1 className='text-center'>Calendar</h1>
+       </div>
+      <div className='calendar-container pr-3'>
         <Calendar onChange={setDate} value={date} />
-      </div>
-      <p className='text-center'>
+      
+      <p className='text-center mt-3'>
         <span className='bold'>Selected Date:</span>{' '}
         {date.toDateString()}
       </p>
+      </div>
         </div>
-        <div className="container mt-5 " style={{ justifyContent: "center", alignItems: 'center', textAlign:"center", width: "100%" }}>
-          
-          <h4> Welcome back </h4>
-          <p> here goes the avatar </p>
-          <img src={ logo } alt="Logo sin fondo"/>
-          
+        <div className="container mt-5 " style={{ justifyContent: "center", alignItems: 'center', textAlign:"center"}}>
           <h1> <b>How are you feeling today?</b></h1>
+
+
+
+          
+          
 
           <div className="btn-group mt-3" role="group" aria-label="Basic radio toggle button group">
           <input type="radio" className="btn-check" name="btnradio" id="muybien" autoComplete="off" onChange={() => setSelected("muybien")}/>
@@ -54,38 +59,52 @@ export const Profile = () => {
           <input type="radio" className="btn-check" name="btnradio" id="triste" autoComplete="off" onChange={() => setSelected("triste")}/>
           <label className={`btn ${selected==="triste" ? "btn-primary" : "btn-outline-primary"}`} htmlFor="triste">😭</label>
           </div>
-           <div className= "container mt-3" >
+
+          <p> here goes the avatar </p>
+          <img src={ logo } alt="Logo sin fondo"/>
+
+           <div className= "container mt-5 mb-5" >
               <button> Check my progress </button>
            </div>  
 
         </div>  
 
-          <div className="pomodoro container">
-          <div className="card text-center">
-            <div className="card-header">
-             <h5 className="card-title"> Pomodoro </h5>
-            </div>
-            <div className="card-body">
-              <h2 className="counter"><b>00:00</b></h2>
-              <div className="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group">
-              <input type="radio" className="btn-check" name="vbtn-radio" id="vbtn-radio1" autoComplete="off" />
-              <label className="btn btn-outline-danger" htmlFor="vbtn-radio1">▷ </label>
-              <br></br>
-              <input type="radio" className="btn-check" name="vbtn-radio" id="vbtn-radio2" autoComplete="off"/>
-              <label className="btn btn-outline-danger" htmlFor="vbtn-radio2">||</label>
-              <br></br>
-              <input type="radio" className="btn-check" name="vbtn-radio" id="vbtn-radio3" autoComplete="off"/>
-              <label className="btn btn-outline-danger" htmlFor="vbtn-radio3">↺</label>
-            </div>
-              {/* <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-              <a href="#" className="btn btn-primary">Go somewhere</a> */}
-              
-            </div>
-            <div className="card-footer text-body-secondary">
-              Timer
-            </div>
-          </div>
+       
+
+        <div className="pomodoro container">
+        {/* <!-- Button trigger modal --> */}
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  Pomodoro Timer
+  ⏱︎ 
+</button>
+
+{/* <!-- Modal --> */}
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Pomodoro Timer</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+         <Pomodoro/>
+      </div>
+      <div class="modal-footer">
+        {/* <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> */}
+        {/* <button type="button" class="btn btn-primary">Understood</button> */}
+      </div>
+    </div>
+  </div>
+</div>
+<br></br>
+<a href="https://www.todoist.com/productivity-methods/pomodoro-technique">What's Pomodoro Technique?</a>
+
+
+
+
        </div>
+       
+
         </div>
       )
 
