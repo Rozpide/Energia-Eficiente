@@ -34,16 +34,18 @@ h1{
     color: #78A0AF;
 }
 h2{
-    transform: scale(2);
+   
     color:#78A0AF
 }
 
-.card-body {
+a{
+    color: #78A0AF;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-  
-  }
+    font-size:small;
+    margin-top: 5px;
+}
+
+
 
 div.btn-group{
     background-color: #ffffff;
@@ -72,9 +74,5 @@ button{
     
 }
 
-.card {
-   width: 400px;
-   display: inline-flex;
-   
-}
+
 

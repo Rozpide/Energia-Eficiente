@@ -195,6 +195,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const newCycle = store.completedCycles + 1;
 				setStore({completedCycles: newCycle});
 				localStorage.setItem("cycles", newCycle);
+				console.log("Nuevo ciclo guardado:", newCycle);
+
 			},
 
 			//pom: reinicia estadística
