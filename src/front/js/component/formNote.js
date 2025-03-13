@@ -7,7 +7,7 @@ export const FormNote = () => {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   
-  console.log((note));
+  //console.log((note));
   
 
   async function createNote() {

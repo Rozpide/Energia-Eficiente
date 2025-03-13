@@ -79,6 +79,7 @@ def create_user():
             password=hashed_password,
             is_active=True,
            # role=3
+            # role=3
         )
 
         db.session.add(new_user)
@@ -122,7 +123,7 @@ def login():
         # 3. Crear token JWT
         access_token = create_access_token(identity=email)
 
-        return jsonify({"access_token": access_token})
+        return jsonify({"access_token": access_token}), 200
 
     except Exception as e:
         return jsonify({"msg": "Error logging in", "error": str(e)}), 500
