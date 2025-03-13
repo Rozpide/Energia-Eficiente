@@ -1,12 +1,14 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
+import {EdicionPerfil} from "../component/edicionPerfil";
 import { Context } from "../store/appContext";
-import { User, Phone, MapPin, PlusCircle } from "lucide-react";
+import { User, MapPin, PlusCircle } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export const PerfilUsuario = () => {
   const { store, actions } = useContext(Context);
   const navigate = useNavigate();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     actions.getUser(); // Obtiene el usuario desde el backend
@@ -38,9 +40,12 @@ export const PerfilUsuario = () => {
         <div className="mt-3">
           <p><User size={16} /> {store.user.name}</p>
           <p><MapPin size={16} /> {store.user.email}</p>
-          <button className="btn btn-outline-primary">Editar perfil</button>
+          <button className="btn btn-outline-primary" onClick={() => setIsEditModalOpen(true)}>Editar perfil</button>
         </div>
       </div>
+
+      {/* Modal de Edición de Perfil */}
+      <EdicionPerfil isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} />
 
       {/* Mis Mascotas */}
       <h3 className="text-dark mb-3">Mis mascotas</h3>
@@ -59,10 +64,10 @@ export const PerfilUsuario = () => {
                 style={{ cursor: "pointer" }}
               >
                 <img 
-                src={pet.url || "https://via.placeholder.com/60"} 
-                alt={pet.name} 
-                className="rounded-circle border border-secondary"
-                style={{ width: 60, height: 60, objectFit: "cover" }} 
+                  src={pet.url || "https://via.placeholder.com/60"} 
+                  alt={pet.name} 
+                  className="rounded-circle border border-secondary"
+                  style={{ width: 60, height: 60, objectFit: "cover" }} 
                 />
                 <span className="d-block mt-1">{pet.name}</span>
               </div>
@@ -74,4 +79,4 @@ export const PerfilUsuario = () => {
       </div>
     </div>
   );
-}
+};

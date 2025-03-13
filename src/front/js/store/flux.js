@@ -288,7 +288,65 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
+			},
+
+			updateUser: async (userData) => {
+				try {
+					const token = localStorage.getItem("token");
+					if (!token) throw new Error("No token found");
+			
+					const response = await fetch(`${process.env.BACKEND_URL}/api/users`, {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
+						},
+						body: JSON.stringify(userData)
+					});
+			
+					if (!response.ok) {
+						throw new Error("Error al actualizar el usuario");
+					}
+			
+					const updatedUser = await response.json();
+					setStore({ user: updatedUser }); // Actualiza el usuario en el estado global
+					alert("Perfil actualizado con éxito");
+			
+				} catch (error) {
+					console.error("Error al actualizar usuario:", error);
+					alert("Hubo un error al actualizar el perfil.");
+				}
+			},
+
+			deleteUser: async () => {
+				try {
+					const token = localStorage.getItem("token");
+					if (!token) throw new Error("No token found");
+			
+					const response = await fetch(`${process.env.BACKEND_URL}/api/user`, {
+						method: "DELETE",
+						headers: {
+							"Authorization": `Bearer ${token}`
+						}
+					});
+			
+					if (!response.ok) {
+						throw new Error("Error al eliminar la cuenta");
+					}
+			
+					localStorage.removeItem("token"); // Elimina el token de autenticación
+					setStore({ user: null, token: null }); // Borra el usuario del estado global
+					alert("Cuenta eliminada correctamente");
+			
+					window.location.href = "/"; // Redirige a la página de inicio o login
+			
+				} catch (error) {
+					console.error("Error al eliminar usuario:", error);
+					alert("Hubo un error al eliminar la cuenta.");
+				}
 			}
+				
+
 		}
 	};
 };
