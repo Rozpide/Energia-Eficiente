@@ -1,78 +1,66 @@
 import React, { useState, useContext } from "react";
 import "../../styles/registroMascota.css";
 import { Context } from "../store/appContext";
+import { useNavigate } from "react-router-dom";
 
 export const RegistroMascota = () => {
 
     const { actions, store} = useContext (Context)
+    const navigate = useNavigate();
 
-    const [nuevaMascota, setNuevaMascota] = useState({
-        nombre: "",
-        especie: "",
-        tamaño: "",
-        etapaVital: "",
-        patologia: ""
+    const [newPet, setNewPet] = useState({
+        name: "",
+        animal_type: "",
+        breed:"",
+        size: "",
+        age: "",
+        pathologies: "",
+        url:""
     });
 
-    const [fotoMascota, setFotoMascota] = useState(null);
-    const token = store.token; // Definir token aquí??
+    const [photoPet, setPhotoPet] = useState(null);
+
 
     //setear datos mascota formulario
+  
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setNuevaMascota({
-            ...nuevaMascota,
-            [name]: value,
+        setNewPet({
+            ...newPet,
+            [e.target.name]: e.target.value,
         });
     };
 
-    //cargar foto formulario
-    const handleFileChange = (e) => {
-        setFotoMascota(e.target.files[0]);
-    };
 
-    //enviar al formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        const datosMascota = new FormData(); 
-        datosMascota.append("mascota", JSON.stringify(nuevaMascota));
-        if (fotoMascota) {
-            datosMascota.append("foto", fotoMascota);
-        }
-    
-        console.log('Datos enviados:', nuevaMascota, fotoMascota);
+        console.log(newPet);
     
         try {
-            const response = await crearMascota(datosMascota);
-            console.log('Respuesta de la API:', response);
+            // Llamar función para crear la mascota
+            const response = await actions.createPet(newPet);
+            console.log(response);
+            
+            // Verificar si la respuesta indica que la mascota fue creada exitosamente
+            if (response.success) {
+            // Redirige al perfil de usuario
+                navigate('/perfilUsuario');
+            } else {
+            
+                console.error('Error al crear la mascota:', response.message);
+                alert('No se pudo crear la mascota. Inténtalo de nuevo.');
+            }
         } catch (error) {
-            console.error('Error al crear la mascota:', error);
+            console.error('Error en la creación de la mascota:', error);
+            alert('Ocurrió un error inesperado. Inténtalo de nuevo más tarde.');
         }
     };
 
-    //Creación mascota
-    const crearMascota = async (datosMascota) => {
-        const myHeaders = new Headers();
-        myHeaders.append("Authorization", `Bearer ${token}`);
-    
-        const requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: datosMascota,
-            redirect: "follow"
-        };
-    
-        try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/pets`, requestOptions);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error(error);
-            throw error; 
-        }
+
+
+
+    //cargar foto formulario
+    const handleFileChange = (e) => {
+        setPhotoPet(e.target.files[0]);
     };
     
 
@@ -87,8 +75,8 @@ export const RegistroMascota = () => {
                             type="text"
                             className="form-control"
                             id="nombre"
-                            name="nombre"
-                            value={nuevaMascota.nombre}
+                            name="name"
+                            value={newPet.name}
                             onChange={handleChange}
                             required
                         />
@@ -98,8 +86,8 @@ export const RegistroMascota = () => {
                         <select
                             className="form-select"
                             id="especie"
-                            name="especie"
-                            value={nuevaMascota.especie}
+                            name="animal_type"
+                            value={newPet.animal_type}
                             onChange={handleChange}
                             required
                         >
@@ -109,13 +97,26 @@ export const RegistroMascota = () => {
                             <option value="exótico">Exótico</option>
                         </select>
                     </div>
+
+                    <div className="mb-3">
+                        <label htmlFor="raza" className="form-label">Raza</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="raza"
+                            name="breed"
+                            value={newPet.breed}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
                     <div className="mb-3">
                         <label htmlFor="tamaño" className="form-label">Tamaño</label>
                         <select
                             className="form-select"
                             id="tamaño"
-                            name="tamaño"
-                            value={nuevaMascota.tamaño}
+                            name="size"
+                            value={newPet.size}
                             onChange={handleChange}
                             required
                         >
@@ -130,8 +131,8 @@ export const RegistroMascota = () => {
                         <select
                             className="form-select"
                             id="etapaVital"
-                            name="etapaVital"
-                            value={nuevaMascota.etapaVital}
+                            name="age"
+                            value={newPet.age}
                             onChange={handleChange}
                             required
                         >
@@ -147,8 +148,8 @@ export const RegistroMascota = () => {
                         <select
                             className="form-select"
                             id="patologia"
-                            name="patologia"
-                            value={nuevaMascota.patologia}
+                            name="pathologies"
+                            value={newPet.pathologies}
                             onChange={handleChange}
                             required
                         >
@@ -166,10 +167,10 @@ export const RegistroMascota = () => {
 
                 <div className="fotoMascota ms-4">
                     <h4>Sube una foto de tu compañero/a :</h4>
-                    {fotoMascota && (
+                    {photoPet && (
                         <div className="mt-2" style={{ width: "200px", height: "200px" }}>
-                            <img src={URL.createObjectURL(fotoMascota)} alt="Vista previa" width="100%" />
-                            <p>Archivo: {fotoMascota.name}</p>
+                            <img src={URL.createObjectURL(photoPet)} alt="Vista previa" width="100%" />
+                            <p>Archivo: {photoPet.name}</p>
                         </div>
                     )}
                     <input type="file" accept="image/*" onChange={handleFileChange} className="mt-2" />

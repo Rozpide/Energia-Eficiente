@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { User, Phone, MapPin, PlusCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export const PerfilUsuario = () => {
@@ -48,7 +48,7 @@ export const PerfilUsuario = () => {
         <div className="d-flex align-items-center gap-3 flex-wrap">
           <button className="btn btn-outline-secondary d-flex flex-column align-items-center">
             <PlusCircle size={40} />
-            <span>Añadir perfil mascota</span>
+            <Link to="/registro-mascota" className="btn btn-primary">Añadir perfil mascota</Link>
           </button>
           {store.pets && store.pets.length > 0 ? (
             store.pets.map((pet, index) => (

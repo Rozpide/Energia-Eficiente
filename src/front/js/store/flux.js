@@ -133,7 +133,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				const data = await response.json();
 					setStore({ dogFood: data });
-					console.log(data);
 				} catch (error) {
 					console.error('Error fetching dog food:', error);
 				}
@@ -162,7 +161,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 	
 			const data = await response.json();
 			setStore({ catFood: data });
-			console.log(data);
 		} catch (error) {
 			console.error('Error fetching cat food:', error);
 		}
@@ -187,8 +185,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	
 			const data = await response.json();
 			setStore({ exoticFood: data });
-			console.log(data);
-		} catch (error) {
+			} catch (error) {
 			console.error('Error fetching cat food:', error);
 		}
 	}
@@ -234,7 +231,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			}
 		},
 		
-	
+		
 
 
 
@@ -243,7 +240,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					// fetching data from the backend
 					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
 					const data = await resp.json()
-					setStore({ exoticFood: data })
+					setStore({ message: data.message })
 					// don't forget to return something, that is how the async resolves
 					return data;
 				}catch(error){
@@ -251,6 +248,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
+			createPet: async (newPet) => {
+				const myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+				myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`)
+				const raw = JSON.stringify(newPet);
+			
+				const requestOptions = {
+					method: "POST",
+					headers: myHeaders,
+					body: raw 
+				};
+			
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/pets`,requestOptions);
+					if (!response.ok) {
+						throw new Error(`Error al añadir mascota: ${response.statusText}`);
+					}
+					const result = await response.json();
+					console.log(result);
+					return ({success:true})
+				} catch (error) {
+					console.error(error);
+				}
+			}
+			,
+			
 
 			changeColor: (index, color) => {
 				//get the store
