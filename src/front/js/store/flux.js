@@ -161,7 +161,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 	
 			const data = await response.json();
 			setStore({ catFood: data });
-			console.log(data);
 		} catch (error) {
 			console.error('Error fetching cat food:', error);
 		}
@@ -186,8 +185,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	
 			const data = await response.json();
 			setStore({ exoticFood: data });
-			console.log(data);
-		} catch (error) {
+			} catch (error) {
 			console.error('Error fetching cat food:', error);
 		}
 	}
@@ -259,7 +257,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const requestOptions = {
 					method: "POST",
 					headers: myHeaders,
-					body: raw // Añadiendo el cuerpo aquí
+					body: raw 
 				};
 			
 				try {
