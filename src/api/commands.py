@@ -1,6 +1,9 @@
 
 import click
 from api.models import db, User, Food, Accessories, Pet
+from flask_bcrypt import Bcrypt 
+
+bcrypt = Bcrypt()
 
 """
 In this file, you can add as many commands as you want using the @app.cli.command decorator
@@ -22,7 +25,7 @@ def setup_commands(app):
             user = User()
             user.name = "name"+ str(x)
             user.email = "test_user" + str(x) + "@test.com"
-            user.password = "123456"
+            user.password = bcrypt.generate_password_hash("123456").decode('utf-8') 
             user.address = "asd"
             user.phone = 12324
             user.is_active = True

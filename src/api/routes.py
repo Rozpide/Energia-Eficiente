@@ -412,7 +412,8 @@ def update_user():
     data = request.get_json()
 
     user.name = data.get("name", user.name)
-    user.password = data.get("password" , user.password)
+    user.password = bcrypt.generate_password_hash(data["password"]).decode('utf-8')
+    # user.password = data.get("password" , user.password)
 
     db.session.commit()
 
@@ -448,6 +449,38 @@ def new_pet(pet_id):
     db.session.commit()
     return jsonify(new_pet.serialize()), 201
 
+
+@api.route('/accessories/<int:accessories_id>', methods=['PUT'])
+def update_accessory(accessories_id):
+    accessories = Accessories.query.get(accessories_id)
+    if not accessories:
+        return jsonify({"message": "Accessory not found"}), 404
+
+    data = request.get_json()
+
+    accessories.name = data.get("name", accessories.name)
+    accessories.brand = data.get("brand", accessories.brand)
+    accessories.description = data.get("description", accessories.description)
+    accessories.price = data.get("price", accessories.price)
+    accessories.animal_type = data.get("animal_type", accessories.animal_type)
+    accessories.pathologies = data.get("pathologies", accessories.pathologies)
+    accessories.url = data.get("url", accessories.url)
+
+    db.session.commit()
+
+    return jsonify({
+        "id": accessories.id,
+        "name": accessories.name,
+        "brand": accessories.brand,
+        "description": accessories.description,
+        "animal_type": accessories.animal_type,
+        "price": accessories.price,
+        "pathologies": accessories.pathologies,
+        "url": accessories.url
+    })
+
+
+
 @api.route('/user', methods=['DELETE'])
 @jwt_required()
 def delete_user():
@@ -463,3 +496,50 @@ def delete_user():
     return jsonify({
         'message': f'User {user.name} with id {user.id} has been deleted successfully.'
     }), 200
+
+
+@api.route('/pet/<int:pet_id>', methods=['DELETE'])
+@jwt_required()
+def delete_pet(pet_id):
+    
+    pet = Pet.query.get(pet_id).first()
+
+    # Eliminar la mascota de la base de datos
+    db.session.delete(pet)
+    db.session.commit()
+
+    # Devolver una respuesta JSON indicando que la mascota fue eliminada
+    return jsonify({
+        'message': f'Pet {pet.name} with id {pet.id} has been deleted successfully.'
+    }), 200
+
+
+@api.route('/search', methods=['GET'])
+def search_product():
+    data = request.get_json()
+    # cada query (Food y Accessories) mira en cada uno de los campos de interes la busqueda introducida en el formulario 
+    foods = Food.query.filter(or_(Food.name.like(f'%{data["search"]}%'),Food.animal_type.like(f'%{data["search"]}%'),
+                                  Food.pathologies.like(f'%{data["search"]}%'),Food.brand.like(f'%{data["search"]}%'))).all()
+
+    accessories = Accessories.query.filter(or_(Accessories.name.like(f'%{data["search"]}%'),
+                                               Accessories.animal_type.like(f'%{data["search"]}%'),
+                                               Accessories.pathologies.like(f'%{data["search"]}%'), 
+                                               Accessories.brand.like(f'%{data["search"]}%'))).all()
+    # Queries vacias devolvemos not found
+    if not foods and not accessories:
+        return jsonify({"message":"not results found"}), 404
+
+    # Si la query no esta vacia preparamos una lista con un diccionario y la serializacion de cada item
+    # para poderla jsonificar en el return
+    if len(foods) > 0:
+        dict_foods = [{ "foods":[food.serialize() for food in foods]}]
+    else:
+        dict_foods = []
+    if len(accessories) > 0:
+        dict_accessories = [{"accessories":[accessory.serialize() for accessory in accessories]}]
+    else:
+        dict_accessories = []
+    # concatenamos ambas listas obtenidas en las queries
+    return jsonify(dict_foods + dict_accessories), 200
+
+
