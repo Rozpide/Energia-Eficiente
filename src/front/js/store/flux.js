@@ -219,6 +219,207 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			getProfile: async () => {
+				let token = localStorage.getItem("token")
+				try {
+					const requestOptions = {
+						mode: 'cors',
+						credentials: 'include',
+						method: "GET",
+						headers: {
+							"Authorization": `Bearer ${token}`
+						}
+					};
+
+					const response = await fetch(process.env.BACKEND_URL + "/api/profile", requestOptions);
+					const result = await response.json();
+					console.log(response);
+					
+					console.log(result)
+				setStore({ user: result })
+				} catch (error) {
+					console.error(error);
+				};
+
+			},
 		}
 	};
 };
