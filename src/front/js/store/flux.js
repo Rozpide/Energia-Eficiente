@@ -18,7 +18,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			dogFood: [],
 			catFood: [] ,
-			exoticFood: []
+			exoticFood: [],
+			productos:[],
+			cart:[]
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -273,6 +275,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			}
 			,
+
+				// Función para agregar o eliminar favoritos
+				addToCart: (item) => {
+					const store = getStore(); // Obtiene el estado actual
+					
+					if (item) { // Verifica que el item no sea null o undefined
+					  setStore({
+						cart: [...store.cart, item], // Añade el producto al carrito
+					  });
+					} else {
+					  console.error("No se puede añadir el producto: el item es inválido.");
+					}
+				  }
+				  
+				  ,
 			
 
 			changeColor: (index, color) => {

@@ -1,13 +1,26 @@
 import React, { Component } from "react";
-import { useContext } from "react";
+import { useContext,useState} from "react";
 import { Context } from "../store/appContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 
 
 
 export const Card = ({name, id, description, price, url}) => {
 
+const navigate = useNavigate();
+
 const { store, actions } = useContext(Context); 
+
+const handleAddToCart = () => {
+  
+  // Verifica si el usuario está registrado
+  if (store.user) { // Asumiendo que `store.user` contiene información del usuario si está autenticado
+    actions.addToCart({ name, id, price }); // Añade el producto al carrito
+  } else {
+    navigate("/loginSignup"); // Redirige al login si no está autenticado
+  }
+};
 
 return (
 
@@ -25,11 +38,16 @@ return (
     <h6 className="card-price">{price}€</h6>
   </div>
   </Link>
-  <div className="mt-auto text-center">
  
-  <Link className="btn btn-primary m-2" to="/loginSignup">
-      Añadir carrito.
-  </Link>
+        
+      <div className="mt-auto text-center">
+        <button onClick={handleAddToCart} className="btn btn-primary m-2">
+          Añadir al carrito
+        </button>
+        
+
+
+
   </div>
 </div>
 
