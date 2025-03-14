@@ -78,7 +78,7 @@ def create_user():
             email=request_body["email"],
             password=hashed_password,
             is_active=True,
-           role=3
+            role=3
             
         )
 
