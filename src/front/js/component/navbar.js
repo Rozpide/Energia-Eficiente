@@ -17,7 +17,7 @@ export const Navbar = () => {
 
 	return (
 		<nav className="navbar navbar-light bg-light p-0">
-			<div className="container-fluid background-color margintop d-flex align-items-center">
+			<div className="container-fluid margintop d-flex align-items-center">
 				<Link to="/">
 					<img
 						src={logo}

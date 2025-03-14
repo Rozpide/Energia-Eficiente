@@ -18,7 +18,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			notes: [],
 			//estado julia 
-			//estado compañero
+
+			//maldit pomodoro estado:
+			pomodoroTime: 1500, // 25 min en segundos
+			started: false,
+			completedCycles: Number (localStorage.getItem("cycles")) || 0,
+
+//estado compañero
+
+
+
+
+			
 		},
 		actions: {
 
@@ -181,7 +192,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ demo: demo });
 			},
 
+			//pomodoro: guardar ciclo completado
+			addCompletedCycle: () => {
+				const store = getStore();
+				const newCycle = store.completedCycles + 1;
+				setStore({completedCycles: newCycle});
+				localStorage.setItem("cycles", newCycle);
+				console.log("Nuevo ciclo guardado:", newCycle);
 
+			},
+
+			//pom: reinicia estadística
+			resetCycleCount: () =>{
+				setStore({ completedCycles: 0});
+				localStorage.setItem("cycles", 0);
+			},
+
+			//nos muestra la cuenta de ciclos (estadística)
+			getCycleCount: () => {
+				const store = getStore();
+				console.log(`Completed sessions: ${store.completedCycles}`);
+
+			},
 
 
 
