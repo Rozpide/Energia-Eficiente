@@ -7,11 +7,15 @@ import { Context } from "../store/appContext";
 
 export const Navbar = () => {
     const { store, actions } = useContext(Context);
-    const { user } = store; // Obtenemos el usuario del store
+    const { user, cart } = store; // Obtenemos el usuario del store
 
 	useEffect(() => {
 		console.log("Usuario en navbar:", user);
-	}, [user]);
+	}, [user, cart]);
+
+     // Contar la cantidad de productos en el carrito
+     const cartItemCount = cart.length; 
+
     return (
         <nav className="navbar navbar-expand-lg bg-light">
             <div className="container-fluid">
@@ -42,7 +46,8 @@ export const Navbar = () => {
                             // Si el usuario está autenticado, mostramos Perfil y Cesta
                             <>
                                 <Link to="/perfilUsuario" className="btn btn-primary me-2">Perfil</Link>
-                                <Link to="/cesta" className="btn btn-outline-primary me-2">Cesta</Link>
+                                <Link to="/carrito" className="btn btn-outline-primary me-2">
+                                Cesta {cartItemCount > 0 && `(${cartItemCount})`}</Link> {/* Muestra el contador si hay elementos */}
                                 <button className="btn btn-danger" onClick={actions.logout}>Cerrar sesión</button>
                             </>
                         ) : (
