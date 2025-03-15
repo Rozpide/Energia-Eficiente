@@ -49,6 +49,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 					localStorage.setItem("token", token);
+					localStorage.setItem("user", JSON.stringify(data.user)); // 🔹 Guarda el usuario
 					setStore({ token });
 
 					const actions = getActions();
@@ -110,9 +111,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			logout: () => {
-				localStorage.removeItem('token');
-				setStore({token: null, user: null, pets: [] })
-				
+				localStorage.removeItem("token");
+				localStorage.removeItem("user"); // 🔹 Eliminar usuario de localStorage
+				setStore({ token: null, user: null, pets: [] });
+			},
+
+			loadUserFromStorage: () => {
+				const token = localStorage.getItem("token"); //Cargar usuario
+				const user = localStorage.getItem("user");
+			
+				if (token && user) {
+					setStore({ token, user: JSON.parse(user) });
+				}
 			},
 			//TRAER ALIMENTO POR GRUPOS
 			getDogFood: async () => {
