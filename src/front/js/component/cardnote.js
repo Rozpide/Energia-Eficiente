@@ -1,22 +1,26 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Thememode } from "./Thememode"
 import logo from "../../img/logo-sin-fondo.jpg"
 import { FormNote } from "./formNote";
 
 
+export const Cardnote = (props) => {
+    // const { store, actions } = useContext(Context);
+    // const note = store.notes
+    console.log(props);
+    
 
 
 
 
-export const Cardnote = () => {
     return (
         <div className="col">
             <div className="card">
                 <div className="card-body d-flex flex-column mb-3">
 
                     <div className="container d-flex justify-content-between">
-                        <h5 className="card-title">Card title</h5>
+                        <h5 className="card-title">title</h5>
                         <div className="d-flex justify-content-end">
                             <button type="button" className="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                 <i className="fa-solid fa-ellipsis-vertical"></i>
@@ -57,7 +61,7 @@ export const Cardnote = () => {
                         </div>
 
                     </div>
-                    <p className="card-text text-justufy">text lorem jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                    <p className="card-text text-justufy">text destsdkjvbldafbvldjhfb vfdv</p>
                 </div>
             </div>
         </div>

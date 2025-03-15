@@ -16,8 +16,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
+			notes:[],
 			//estado julia 
-			//estado compañero
+
+			//maldit pomodoro estado:
+			pomodoroTime: 1500, // 25 min en segundos
+			started: false,
+			completedCycles: Number (localStorage.getItem("cycles")) || 0,
+
+//estado compañero
+
+
+
+
+			
 		},
 		actions: {
 
@@ -38,20 +50,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 					"password": password
 				});
 
-				const requestOptions = { 
+				const requestOptions = {
 					method: "POST",
 					headers: myHeaders,
 					body: raw
 				};
 
 				try {
-					const response = await fetch(process.env.BACKEND_URL+"/api/login", requestOptions);
+					const response = await fetch(process.env.BACKEND_URL + "/api/login", requestOptions);
 					const result = await response.json();
 					console.log(response);
-					
+
 					console.log(result)
 
-					if (!response.ok){
+					if (!response.ok) {
 						return false
 					}
 					localStorage.setItem("token", result.access_token)
@@ -62,66 +74,89 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(error);
 				};
 			},
-			
+
 			register: async (name, email, password) => {
-			const myHeaders = new Headers();
-			myHeaders.append("Content-Type", "application/json");
+				const myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
 
-			const raw = JSON.stringify({
-			"name": name,
-			"email": email,
-			"password": password
-			});
+				const raw = JSON.stringify({
+					"name": name,
+					"email": email,
+					"password": password
+				});
 
-			const requestOptions = {
-			method: "POST",
-			headers: myHeaders,
-			body: raw,
-			redirect: "follow"
-			};
+				const requestOptions = {
+					method: "POST",
+					headers: myHeaders,
+					body: raw,
+					redirect: "follow"
+				};
 
-			try {
-			const response = await fetch(process.env.BACKEND_URL+"/api/register", requestOptions);
-			const result = await response.json();
-			console.log(result)
-			        // Guardar el token solo si el backend lo envió
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/register", requestOptions);
+					const result = await response.json();
+					console.log(result)
+					// Guardar el token solo si el backend lo envió
 					if (result.access_token) {
 						localStorage.setItem("token", result.access_token);
 						return true
 					} else {
 						console.warn("El servidor no devolvió un token.");
 					}
-			
-			return false;
 
-			} catch (error) {
-			console.error(error);
-			};
-		},
+					return false;
 
-		verifyToken: async () => {
-			let token = localStorage.getItem("token")
-			const myHeaders = new Headers();
-			myHeaders.append("Authorization", `Bearer ${token}`);
-			
-			const requestOptions = {
-				method: "GET",
-				headers: myHeaders,
-				redirect: "follow"
-			};
+				} catch (error) {
+					console.error(error);
+				};
+			},
 
-			try {
-				const response = await fetch(process.env.BACKEND_URL+"/api/verify-token", requestOptions);
-				const result = await response.json();
-				console.log(result)
-				if (response.status !== 200) {
-					setStore({auth:result.valid})
-				}
-				setStore({auth:result.valid})
-			} catch (error) {
-				console.error(error);
-			};
-		},
+			verifyToken: async () => {
+				let token = localStorage.getItem("token")
+				const myHeaders = new Headers();
+				myHeaders.append("Authorization", `Bearer ${token}`);
+
+				const requestOptions = {
+					method: "GET",
+					headers: myHeaders,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/verify-token", requestOptions);
+					const result = await response.json();
+					//console.log(result)
+					if (response.status !== 200) {
+						setStore({ auth: result.valid })
+					}
+					setStore({ auth: result.valid })
+				} catch (error) {
+					console.error(error);
+				};
+			},
+
+			notes: async () => {
+				let token = localStorage.getItem("token")
+				try {
+					const requestOptions = {
+						method: "GET",
+						headers: {
+							"Authorization": `Bearer ${token}`
+						}
+					};
+
+					const response = await fetch(process.env.BACKEND_URL + "/api/notes", requestOptions);
+					const result = await response.json();
+					console.log(response);
+					
+					console.log(result)
+					//setStore({ message: data.message })
+				} catch (error) {
+					console.error(error);
+				};
+
+			},
+
 
 
 
@@ -154,6 +189,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ demo: demo });
 			},
 
+			//pomodoro: guardar ciclo completado
+			addCompletedCycle: () => {
+				const store = getStore();
+				const newCycle = store.completedCycles + 1;
+				setStore({completedCycles: newCycle});
+				localStorage.setItem("cycles", newCycle);
+				console.log("Nuevo ciclo guardado:", newCycle);
+
+			},
+
+			//pom: reinicia estadística
+			resetCycleCount: () =>{
+				setStore({ completedCycles: 0});
+				localStorage.setItem("cycles", 0);
+			},
+
+			//nos muestra la cuenta de ciclos (estadística)
+			getCycleCount: () => {
+				const store = getStore();
+				console.log(`Completed sessions: ${store.completedCycles}`);
+
+			},
 
 
 
@@ -163,6 +220,206 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			getProfile: async () => {
+				let token = localStorage.getItem("token")
+				try {
+					const requestOptions = {
+						mode: 'cors',
+						credentials: 'include',
+						method: "GET",
+						headers: {
+							"Authorization": `Bearer ${token}`
+						}
+					};
+
+					const response = await fetch(process.env.BACKEND_URL + "/api/profile", requestOptions);
+					const result = await response.json();
+					console.log(response);
+					
+					console.log(result)
+				setStore({ user: result })
+				} catch (error) {
+					console.error(error);
+				};
+
+			},
 		}
 	};
 };

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Thememode } from "./Thememode"
 import logo from "../../img/logoFinal.jpg"
 import { Context } from "../store/appContext";
-
+import "../../styles/index.css";
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
@@ -63,15 +63,15 @@ export const Navbar = () => {
 						<button className=" me-2 backbutton border rounded text-black p-1 w-100 dropdown-toggle"  aria-expanded="false" type="button" data-bs-toggle="dropdown">
 							<i className="fa-solid fa-gear"></i>
 						</button>
-						<ul class="dropdown-menu  dropdown-menu-end">
+						<ul className="dropdown-menu  dropdown-menu-end">
 						
-							<li><button className="btn btn-light w-100" type="button">Tema</button></li>
-							<li><button className="btn btn-light w-100" type="button"><Link to="/editprofile">Edit Profile</Link></button></li>
+							<li><button className="btn btn-light w-100 p-1" type="button">Tema</button></li>
+							<li><Link to="/editprofile"><button className="btn btn-light w-100 p-1" type="button">Edit Profile</button></Link></li>
 							<li><button onClick={() => {
 								localStorage.removeItem("token");
 								actions.verifyToken();
 								navigate("/");
-							}} className="btn btn-light w-100 " type="button">Logout</button></li>
+							}} className="btn btn-light w-100 p-1 " type="button">Logout</button></li>
 						</ul>
 					</div>)}
 				</div>

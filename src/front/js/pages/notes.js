@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useEffect,useContext } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import { Cardnote } from "../component/cardnote";
@@ -7,6 +7,18 @@ import { FormNote } from "../component/formNote";
 
 export const Notes = () => {
     const { store, actions } = useContext(Context);
+    const note = store.notes
+    console.log(note);
+
+
+
+
+
+
+    useEffect(() => {
+        actions.notes(); 
+    }, []);
+
 
     return (
         <div className="container" style={{ position: 'relative', minHeight: '100vh' }}>
@@ -14,8 +26,12 @@ export const Notes = () => {
                 <h1>Notes</h1>
                 <div className="row row-cols-1 row-cols-md-3 g-4 mt-2">
 
-                    <Cardnote />
-                    <Cardnote />
+
+
+                    {note.length > 0 ? note.map((item) => <Cardnote key={item.id} title={item.tiitle} description={item.description}/>) : null}
+
+
+
                     <Cardnote />
                     <Cardnote />
 
@@ -40,59 +56,25 @@ export const Notes = () => {
 
                         </div>
                         <div className="modal-footer">
-            
-                                {/* lista de categorias */}
-                                <div class="dropdown-center">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Label
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Health</a></li>
-                                        <li><a class="dropdown-item" href="#">Sport</a></li>
-                                        <li><a class="dropdown-item" href="#">Education</a></li>
-                                        <li><a class="dropdown-item" href="#">Finance</a></li>
-                                    </ul>
-                                </div>
+
+                            {/* lista de categorias */}
+                            <div class="dropdown-center">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Label
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Health</a></li>
+                                    <li><a class="dropdown-item" href="#">Sport</a></li>
+                                    <li><a class="dropdown-item" href="#">Education</a></li>
+                                    <li><a class="dropdown-item" href="#">Finance</a></li>
+                                </ul>
+                            </div>
 
                             <button type="button" className="btn btn-primary">Create note</button>
                         </div>
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            {/* <div className="modal fade" id="modal2" tabIndex="-1" aria-labelledby="modal2Label" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="modal2Label">new note</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <p>Modal body text goes here.</p>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" className="btn btn-primary">Create note</button>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
-
         </div >
     );
 };
