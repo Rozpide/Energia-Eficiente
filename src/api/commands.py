@@ -40,14 +40,13 @@ def setup_commands(app):
         catfood = Food()
         catfood.name = "KA AYURVEDA Only Fish Gatos Sin Gluten"
         catfood.brand="Feral"
-        catfood.description = "asd"
-        catfood.ingredients = "ads"
-        catfood.weight = 1.
-        catfood.price = 1.
+        catfood.description = "KA AYURVEDA Only Fish es el primer pienso SIN GLUTEN y elaborado sólo con pescado azul. Alimento REALMENTE HIPOALERGÉNICO y de gran digestibilidad. Agregamos a nuestra receta un ingrediente poco conocido, como es la harina de algarroba, cuyas propiedades nutricionales, suponen toda una revolución."
+        catfood.ingredients = "Salmón atlántico deshidratado e hidrolizado min. 21%, arenques deshidratados e hidrolizados 12%, anchoveta deshidratada e hidrolizada 9%, atún deshidratado e hidrolizado 6%, arroz integral, legumbre, levadura de cerveza (Saccharomyces cerevisae), aceite de salmón rico en Omega 3, harina de algarroba, Krill antártico (Euphausia Superba), complejo condroprotector (hidrocloruro de glucosamina, sulfato de condroitina), extracto de mejillón de labios verdes (Perna canaliculus), extracto de Yuca schidigera, manano-oligosacáridos, fructo-oligosacáridos, taurina (2000), caléndula, salvia, fenogreco, equinácea, eneldo, diente de león, té verde, tomillo, romero, cinc quelado, antioxidantes naturales, complejo vitamínico mineral, probióticos (E.faecium NCIMB 1041520×106 UFC), L-carnitina."
+        catfood.weight = 1.5
+        catfood.price = 6.42
         catfood.animal_type = "gato"
-
-        catfood.age = "cachorro"
-        catfood.pathologies = "renal"
+        catfood.age = "adulto"
+        catfood.pathologies = "hipoalergénico"
         db.session.add(catfood)
         db.session.commit()
 
@@ -62,9 +61,35 @@ def setup_commands(app):
         catfood.age = "adulto"
         catfood.pathologies = "diabético"
 
-        catfood.age = "sd"
-        catfood.pathologies = "asd"
+        catfood.age = ""
+        catfood.pathologies = ""
 
+        db.session.add(catfood)
+        db.session.commit()
+
+        catfood = Food()
+        catfood.name = "OWNAT GF PRIME KITTEN (CAT)"
+        catfood.brand="Ownat"
+        catfood.description = "Comida para gatos. Indicado para gatitos de 2 a 12 meses. Con un 50% de carne fresca de pollo y pavo, ofrece un aporte de energía elevado y muy rico en proteínas de alta calidad, que garantizan su óptimo crecimiento, así como el correcto desarrollo del sistema inmunitario del gatito."
+        catfood.ingredients = "Pollo fresco* (mín. 25% antes de la extrusión), pavo fresco* (mín. 25% antes de la extrusión), cerdo deshidratado (13%), guisantes enteros* (9%), grasa avícola (preservada con antioxidantes naturales), hidrolizado de salmón, pollo deshidratado (5%), raíces de mandioca* (5%), pescados deshidratados (anchoveta, jurel y caballa), patata deshidratada* (3%), huevo deshidratado* (2%), levadura de cerveza* (1%), proteína hidrolizada de pollo, manzana* (1%), aceite de pescado (preservado con antioxidantes naturales), sal gema*, fructo y manano oligosacáridos, algas marinas deshidratadas* (500 mg/kg), glucosamina (500 mg/kg), yucca schidigera, condroitín sulfato (100 mg/kg), arándanos* (100 mg/kg), tomillo* (80 mg/kg), flor de manzanilla* (80 mg/kg), hinojo* (80 mg/kg), equinácea* (80 mg/kg), té verde* (80 mg/kg).*INGREDIENTES NATURALES"
+        catfood.weight = 1.
+        catfood.price = 10.70
+        catfood.animal_type = "gato"
+        catfood.age = "cachorro"
+        catfood.pathologies = ""
+        db.session.add(catfood)
+        db.session.commit()
+
+        catfood = Food()
+        catfood.name = "Diet Vet Renal-Oxalate pienso para gatos"
+        catfood.brand="Natural Greatness"
+        catfood.description = "Si tu gato padece insuficiencia renal o cardíaca crónica, es esencial proporcionarle una dieta adaptada. Natural Greatness Diet Vet Renal-Oxalate ha sido especialmente desarrollado para ayudar a la función renal y cardíaca. Este pienso dietético para gatos adultos se caracteriza por una composición equilibrada con proteínas de alta calidad y un contenido reducido de sodio y fósforo."
+        catfood.ingredients = "Pollo fresco (25 %), patatas, aceite de pollo (13 %), guisantes, proteína de patata, pavo y pollo deshidratados (8 %), proteína de guisante, pulpa de remolacha, hidrolizado de hígado de pavo y pollo (2 %), pescado azul deshidratado (1,6 %), aceite de pescado azul (1,1 %), cloruro potásico, citrato de tripotasio [sustancia alcalinizante urinaria] (0,5 %), levadura de cerveza, mezcla de frutas [arándanos y pera] (0,3 %), mezcla de verduras [chirivía, laurel, perejil y diente de león] (0,3 %), huevo entero deshidratado, extracto de malta, achicoria, hidrolizado de la pared celular de la levadura (fuente de MOS), inulina (FOS), glucosamina, condroitín sulfato."
+        catfood.weight = 5.
+        catfood.price = 46.99
+        catfood.animal_type = "gato"
+        catfood.age = "senior"
+        catfood.pathologies = "renal"
         db.session.add(catfood)
         db.session.commit()
         
