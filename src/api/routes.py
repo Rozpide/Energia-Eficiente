@@ -347,7 +347,7 @@ def create_pet():
     current_user_email = get_jwt_identity()
     user = User().query.filter_by(email=current_user_email).first()
 
-    if not user:
+    if not user: 
         return jsonify({"msg": "usuario no encontrado"}), 400
 
     new_pet = Pet(
@@ -424,7 +424,7 @@ def update_user():
     })
 
 
-@api.route('/pets/<int:pet_id>', methods=['PUT'])
+@api.route('/pet/<int:pet_id>', methods=['PUT'])
 @jwt_required()
 def new_pet(pet_id):
     data = request.get_json()
@@ -512,26 +512,6 @@ def delete_pet(pet_id):
     return jsonify({
         'message': f'Pet {pet.name} with id {pet.id} has been deleted successfully.'
     }), 200
-
-@api.route('/pet/<int:pet_id>', methods=['PUT'])
-@jwt_required()
-def edit_pet(pet_id):
-    pet = Pet.query.get(pet_id)
-    if not pet:
-        return jsonify({"error": "Mascota no encontrada"}), 404
-
-    data = request.get_json()
-    pet.name = data.get("name", pet.name)
-    pet.breed = data.get("breed", pet.breed)
-    pet.size = data.get("size", pet.size)
-    pet.age = data.get("age", pet.age)
-    db.session.commit()
-
-    return jsonify({
-        "message": "Mascota actualizada exitosamente",
-        "pet": pet.serialize()
-    }), 200
-
 
 @api.route('/search', methods=['GET'])
 def search_product():
