@@ -51,6 +51,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 					localStorage.setItem("token", token);
+					localStorage.setItem("user", JSON.stringify(data.user));
 					setStore({ token });
 
 					const actions = getActions();
@@ -265,6 +266,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
+					const id = JSON.parse(localStorage.getItem("user")).id;
 					const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
 					const result = await response.json();
 					console.log(result);
