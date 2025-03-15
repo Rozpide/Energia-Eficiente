@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaypal } from '@fortawesome/free-brands-svg-icons';
 
 
 export const CarritoPago = () => {
+    const {store, actions} = useContext(Context)
+
     const [newContact, setNewContact] = useState({
         nombre: "",
         apellidos: "",
@@ -12,13 +15,12 @@ export const CarritoPago = () => {
         códigoPostal: "",
         provincia: "",
         teléfono: "",
-        email: "", // Asegúrate de incluir email
+        email: "", 
     });
     const [carrito, setCarrito] = useState([]);
     
-    const productos = [
-        { id: 1, name: 'Producto 1', price: 10 }
-    ];
+    const productos = store.cart
+    console.log(store);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,21 +32,56 @@ export const CarritoPago = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Datos enviados:', newContact);
-    };
 
-    const handleFormatoChange = (productoId, cantidad) => {
-        const producto = productos.find(p => p.id === productoId);
-        const existingProduct = carrito.find(item => item.id === productoId);
-        
-        if (existingProduct) {
-            setCarrito(carrito.map(item =>
-                item.id === productoId ? { ...item, cantidad } : item
-            ));
-        } else {
-            setCarrito([...carrito, { ...producto, cantidad }]);
+        const orderData = {
+            "selected_food":store.cart.map(item=>item.id),
+            "selected_accessory":[],
+            "status":"carrito"
         }
+    
+        // const orderData = {
+        //     contactDetails: newContact,
+        //     cartItems: carrito.map(item => ({
+        //         id: item.id,
+        //         cantidad: item.cantidad
+        //     })),
+        //     total,
+        //     status: "carrito" // O cualquier otro estado que necesites
+        // };
+    
+        actions.createOrder(orderData)
+            .then(response => {
+                if (response.success) {
+                    // Maneja la respuesta exitosa, como redirigir a una página de confirmación
+                    console.log("Orden creada exitosamente");
+                } else {
+                    // Maneja el error
+                    console.error("Error al crear la orden:", response);
+                }
+            })
+            .catch(error => {
+                console.error("Error al enviar la orden:", error);
+            });
     };
+    
+
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     console.log('Datos enviados:', newContact);
+    // };
+
+    // const handleFormatoChange = (productoId, cantidad) => {
+    //     const producto = productos.find(p => p.id === productoId);
+    //     const existingProduct = carrito.find(item => item.id === productoId);
+        
+    //     if (existingProduct) {
+    //         setCarrito(carrito.map(item =>
+    //             item.id === productoId ? { ...item, cantidad } : item
+    //         ));
+    //     } else {
+    //         setCarrito([...carrito, { ...producto, cantidad }]);
+    //     }
+    // };
 
     const calcularTotal = () => {
         const subtotal = carrito.reduce((acc, item) => acc + (item.price * item.cantidad), 0);
@@ -54,6 +91,10 @@ export const CarritoPago = () => {
     };
 
     const { subtotal, total, totalUnidades } = calcularTotal();
+
+      useEffect(() => {
+        actions.createOrder(); 
+      }, []);
 
     return (
         <div className="container-fluid justify-content-center mt-1 p-3 text-dark">
@@ -71,13 +112,16 @@ export const CarritoPago = () => {
                     <div className="container-fluid overflow-hidden my-4 d-flex">
                         <div className="row col-md-6 flex-grow-1">
                             <h3 className="p-3">Productos en el carrito:</h3>
+                           
                             {productos.map(producto => (
                                 <div className="col-md-8" key={producto.id}>
+                                    
                                     <div className="card mb-3 d-flex flex-column">
                                         <div className="row card-prueba g-0 flex-fill">
                                             <div className="col-md-2">
                                                 <img src={producto.url} alt="Producto" />
                                             </div>
+                                           
                                             <div className="col-md-8">
                                                 <div className="card-body d-flex flex-column flex-grow-1">
                                                     <h5 className="card-title"><strong>{producto.name}</strong></h5>
@@ -85,11 +129,13 @@ export const CarritoPago = () => {
 
                                                 <div className="d-flex justify-content-between align-items-center m-3">
                                                     <div>
-                                                        <p className="card-text mb-0">Descripción breve del producto.</p>
+                                                        <p className="card-text mb-0">{producto.description}.</p>
                                                         <h2 className="card-text text-sm-start">{producto.price}€</h2>
                                                     </div>
-
-                                                    <div className="d-flex align-items-center" style={{ width: '100px' }}>
+                                                    <button className="btn btn-primary" onClick={handleSubmit}>
+                                                    comprar
+                                                    </button>
+                                                    {/* <div className="d-flex align-items-center" style={{ width: '100px' }}>
                                                         <label htmlFor={`formatoProducto-${producto.id}`} className="form-label visually-hidden">Cantidad:</label>
                                                         <select className="form-select form-select-sm" id={`formatoProducto-${producto.id}`} onChange={(e) => handleFormatoChange(producto.id, parseInt(e.target.value))}>
                                                             <option value="">Seleccione cantidad</option>
@@ -97,7 +143,7 @@ export const CarritoPago = () => {
                                                             <option value="2">2 uds.</option>
                                                             <option value="3">3 uds.</option>
                                                         </select>
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             </div>
                                         </div>
