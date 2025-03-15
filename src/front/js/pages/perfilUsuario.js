@@ -55,7 +55,7 @@ export const PerfilUsuario = () => {
               <div 
                 key={index} 
                 className="text-center cursor-pointer" 
-                onClick={() => navigate(`/mascota/${pet.id}`)}
+                onClick={() => navigate(`/pets/${pet.id}`)}
                 style={{ cursor: "pointer" }}
               >
                 <img 

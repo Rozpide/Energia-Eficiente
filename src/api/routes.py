@@ -352,11 +352,11 @@ def create_pet():
 
     new_pet = Pet(
         name=data["name"],
-        size= None,
-        breed= None,
+        size= data["size"],
+        breed= data["breed"],
         age=data["age"],
         animal_type=data["animal_type"],
-        pathologies= None,
+        pathologies= data["pathologies"],
         url=data.get("url"),  # Asegúrate de que se está obteniendo correctamente
         user_id=user.id
         )
@@ -502,7 +502,7 @@ def delete_user():
 @jwt_required()
 def delete_pet(pet_id):
     
-    pet = Pet.query.get(pet_id).first()
+    pet = Pet.query.get(pet_id)
 
     # Eliminar la mascota de la base de datos
     db.session.delete(pet)
@@ -511,6 +511,25 @@ def delete_pet(pet_id):
     # Devolver una respuesta JSON indicando que la mascota fue eliminada
     return jsonify({
         'message': f'Pet {pet.name} with id {pet.id} has been deleted successfully.'
+    }), 200
+
+@api.route('/pet/<int:pet_id>', methods=['PUT'])
+@jwt_required()
+def edit_pet(pet_id):
+    pet = Pet.query.get(pet_id)
+    if not pet:
+        return jsonify({"error": "Mascota no encontrada"}), 404
+
+    data = request.get_json()
+    pet.name = data.get("name", pet.name)
+    pet.breed = data.get("breed", pet.breed)
+    pet.size = data.get("size", pet.size)
+    pet.age = data.get("age", pet.age)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Mascota actualizada exitosamente",
+        "pet": pet.serialize()
     }), 200
 
 
@@ -541,5 +560,4 @@ def search_product():
         dict_accessories = []
     # concatenamos ambas listas obtenidas en las queries
     return jsonify(dict_foods + dict_accessories), 200
-
 

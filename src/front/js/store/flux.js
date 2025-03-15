@@ -20,7 +20,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			catFood: [] ,
 			exoticFood: [],
 			productos:[],
-			cart:[]
+			cart:[],
+			pets: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -287,11 +288,60 @@ const getState = ({ getStore, getActions, setStore }) => {
 					} else {
 					  console.error("No se puede añadir el producto: el item es inválido.");
 					}
-				  }
-				  
-				  ,
+				  },
 			
-
+				  deletePet: async (id) => {
+					const token = localStorage.getItem("token");
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/pet/${id}`, {
+					  method: "DELETE",
+					  headers: {
+						"Authorization": `Bearer ${token}`
+					  }
+					});
+				  
+					if (!resp.ok) {
+					  throw new Error("Error al eliminar mascota");
+					}
+				  
+					// Actualiza el store: filtra la mascota eliminada
+					const store = getStore(); // Obtén el estado actual
+					setStore({
+					  ...store,
+					  pets: store.pets.filter(pet => pet.id !== id)
+					});
+				  
+					alert("Mascota eliminada exitosamente");
+					return true;
+				  },
+				  
+				  editPet: async (id, petData) => {
+					const token = localStorage.getItem("token");
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/pet/${id}`, {
+					  method: "PUT",
+					  headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${token}`
+					  },
+					  body: JSON.stringify(petData)
+					});
+				  
+					if (!resp.ok) {
+					  throw new Error("Error al editar mascota");
+					}
+				  
+					// Se asume que el endpoint retorna un JSON con la mascota actualizada en la propiedad "pet"
+					const data = await resp.json();
+				  
+					// Actualiza el store: reemplaza la mascota actualizada en el array de mascotas
+					const store = getStore();
+					setStore({
+					  ...store,
+					  pets: store.pets.map(pet => pet.id === id ? data.pet : pet)
+					});
+				  
+					alert("Mascota editada exitosamente");
+					return true;
+				  },
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();
