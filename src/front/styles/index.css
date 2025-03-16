@@ -3,7 +3,10 @@
 */
 
 
-
+html, body {
+  height: 100%;
+  margin: 0px;
+}
 
 .backbutton{
     background-color: #78A0AF;

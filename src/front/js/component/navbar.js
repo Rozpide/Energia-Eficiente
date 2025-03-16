@@ -33,7 +33,7 @@ export const Navbar = () => {
 							Profile
 						</Link> : null}
 					</li>
-					<li className="nav-item ms-5 me-5 textcolors">
+					<li className="nav-item ms-5 me-5 ">
 						{store.auth ? <Link className="nav-link" to="/notes">
 							Notes
 						</Link> : null}
@@ -53,7 +53,7 @@ export const Navbar = () => {
 				<div className="ms-2">
 					{!store.auth && ( // 🔥 Aquí se oculta el botón si el usuario está autenticado
 						<Link to="/login">
-							<button className="me-5 backbutton border rounded text-black p-2 w-100">
+							<button className="me-5 backbutton border rounded text-black p-2 w-100 fs-6">
 								Login
 							</button>
 						</Link>
