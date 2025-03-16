@@ -187,3 +187,26 @@ class Pet(db.Model):
         }
 
 
+#tabla para gestionar carrito/pedidos
+
+class Order(db.Model):
+    __tablename__ = 'order'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.ForeignKey("user.id"), nullable=False)
+    ordered_food = db.Column(db.String, nullable=True)
+    ordered_accessories = db.Column(db.String, nullable=True)
+    status = db.Column(db.String, nullable=False)
+
+    def __repr__(self):
+        return f'<Order{self.name}>'
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "ordered_food": self.ordered_food,
+            "ordered_accessories": self.ordered_accessories,
+            "status": self.status
+        }
+    

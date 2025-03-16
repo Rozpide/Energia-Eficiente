@@ -1,10 +1,13 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { Context } from "../store/appContext";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaypal } from '@fortawesome/free-brands-svg-icons';
 
-
 export const CarritoPago = () => {
+    const { store, actions } = useContext(Context);
+    const navigate = useNavigate(); // Inicializa useNavigate
+
     const [newContact, setNewContact] = useState({
         nombre: "",
         apellidos: "",
@@ -12,38 +15,29 @@ export const CarritoPago = () => {
         códigoPostal: "",
         provincia: "",
         teléfono: "",
-        email: "", // Asegúrate de incluir email
+        email: "",
     });
-    const [carrito, setCarrito] = useState([]);
-    
-    const productos = [
-        { id: 1, name: 'Producto 1', price: 10 }
-    ];
+
+    const productos = store.cart; // Usa los productos del store
+    console.log(store);
+
+    // Inicializa el carrito con una cantidad de 1 para cada producto
+    const [carrito, setCarrito] = useState(
+        productos.map(producto => ({ ...producto, cantidad: 1 }))
+    );
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
         setNewContact({
             ...newContact,
-            [name]: value,
+            [e.target.name]: e.target.value,
         });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Datos enviados:', newContact);
-    };
-
     const handleFormatoChange = (productoId, cantidad) => {
-        const producto = productos.find(p => p.id === productoId);
-        const existingProduct = carrito.find(item => item.id === productoId);
-        
-        if (existingProduct) {
-            setCarrito(carrito.map(item =>
-                item.id === productoId ? { ...item, cantidad } : item
-            ));
-        } else {
-            setCarrito([...carrito, { ...producto, cantidad }]);
-        }
+        const cantidadFinal = cantidad || 1; // Asegura que la cantidad sea al menos 1
+        setCarrito(carrito.map(item =>
+            item.id === productoId ? { ...item, cantidad: cantidadFinal } : item
+        ));
     };
 
     const calcularTotal = () => {
@@ -54,6 +48,47 @@ export const CarritoPago = () => {
     };
 
     const { subtotal, total, totalUnidades } = calcularTotal();
+
+    const checkout = (e) => {
+        e.preventDefault();
+    
+        const orderData = {
+            selected_food: store.cart.map(item => item.id),
+            selected_accessory: [],
+            status: "carrito",
+        };
+    
+        actions.createOrder(orderData)
+            .then(response => {
+                if (response.success) {
+                    console.log("Orden creada exitosamente");
+    
+                    // Cambiar a la pestaña de "Dirección de envío y pago"
+                    const profileTabElement = document.getElementById('profile-tab');
+                    if (profileTabElement) {
+                        const profileTab = new window.bootstrap.Tab(profileTabElement);
+                        profileTab.show(); // Activa la pestaña
+                    } else {
+                        console.error("No se encontró el elemento con id 'profile-tab'");
+                    }
+                } else {
+                    console.error("Error al crear la orden:", response);
+                }
+            })
+            .catch(error => {
+                console.error("Error al enviar la orden:", error);
+            });
+    };
+
+ 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log('Datos enviados:', newContact);
+    };
+
+    useEffect(() => {
+        actions.createOrder();
+    }, []);
 
     return (
         <div className="container-fluid justify-content-center mt-1 p-3 text-dark">
@@ -68,9 +103,10 @@ export const CarritoPago = () => {
 
             <div className="tab-content" id="myTabContent">
                 <div className="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabIndex="0">
-                    <div className="container-fluid overflow-hidden my-4 d-flex">
+                    <div className="container-fluid overflow-hidden my-4 d-flex w-75">
                         <div className="row col-md-6 flex-grow-1">
                             <h3 className="p-3">Productos en el carrito:</h3>
+
                             {productos.map(producto => (
                                 <div className="col-md-8" key={producto.id}>
                                     <div className="card mb-3 d-flex flex-column">
@@ -78,6 +114,7 @@ export const CarritoPago = () => {
                                             <div className="col-md-2">
                                                 <img src={producto.url} alt="Producto" />
                                             </div>
+
                                             <div className="col-md-8">
                                                 <div className="card-body d-flex flex-column flex-grow-1">
                                                     <h5 className="card-title"><strong>{producto.name}</strong></h5>
@@ -85,14 +122,18 @@ export const CarritoPago = () => {
 
                                                 <div className="d-flex justify-content-between align-items-center m-3">
                                                     <div>
-                                                        <p className="card-text mb-0">Descripción breve del producto.</p>
+                                                        <p className="card-text mb-0">{producto.description}.</p>
                                                         <h2 className="card-text text-sm-start">{producto.price}€</h2>
                                                     </div>
 
                                                     <div className="d-flex align-items-center" style={{ width: '100px' }}>
                                                         <label htmlFor={`formatoProducto-${producto.id}`} className="form-label visually-hidden">Cantidad:</label>
-                                                        <select className="form-select form-select-sm" id={`formatoProducto-${producto.id}`} onChange={(e) => handleFormatoChange(producto.id, parseInt(e.target.value))}>
-                                                            <option value="">Seleccione cantidad</option>
+                                                        <select
+                                                            className="form-select form-select-sm"
+                                                            id={`formatoProducto-${producto.id}`}
+                                                            defaultValue="1" // Valor por defecto
+                                                            onChange={(e) => handleFormatoChange(producto.id, parseInt(e.target.value))}
+                                                        >
                                                             <option value="1">1 udad.</option>
                                                             <option value="2">2 uds.</option>
                                                             <option value="3">3 uds.</option>
@@ -108,24 +149,28 @@ export const CarritoPago = () => {
 
                         <div className="row carrito col-md-3 m-3 p-4 rounded border" style={{ width: "400px", height: "400px" }}>
                             <h3 className="p-3">Resumen del carrito</h3>
+                            <ul>
+                                {carrito.map(item => (
+                                    <li key={item.id}>
+                                        {item.name} - {item.cantidad} unidades
+                                    </li>
+                                ))}
+                            </ul>
                             <p>Total de productos: {totalUnidades}</p>
                             <p>Subtotal: {subtotal}€</p>
                             <p>IVA (21%): {(subtotal * 0.21).toFixed(2)}€</p>
                             <h4><strong>Total: {total.toFixed(2)}€</strong></h4>
+
+                            <button className="btn btn-primary" onClick={checkout}>
+                                comprar
+                            </button>
                         </div>
                     </div>
-
-                    <ul>
-                        {carrito.map(item => (
-                            <li key={item.id}>
-                                {item.name} - {item.cantidad} unidades
-                            </li>
-                        ))}
-                    </ul>
                 </div>
 
+               
                 <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabIndex="0">
-                    <div className="container-fluid overflow-hidden my-3">
+                <div className="container-fluid overflow-hidden my-3 w-50">
                         <form className="form" onSubmit={handleSubmit}>
                             <h2 className="text-start">Dirección y método de envío</h2>
                             <div className="row mb-3">
