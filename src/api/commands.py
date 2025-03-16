@@ -40,14 +40,14 @@ def setup_commands(app):
         catfood = Food()
         catfood.name = "KA AYURVEDA Only Fish Gatos Sin Gluten"
         catfood.brand="Feral"
-        catfood.description = "asd"
-        catfood.ingredients = "ads"
-        catfood.weight = 1.
-        catfood.price = 1.
+        catfood.description = "KA AYURVEDA Only Fish es el primer pienso SIN GLUTEN y elaborado sólo con pescado azul. Alimento REALMENTE HIPOALERGÉNICO y de gran digestibilidad. Agregamos a nuestra receta un ingrediente poco conocido, como es la harina de algarroba, cuyas propiedades nutricionales, suponen toda una revolución."
+        catfood.ingredients = "Salmón atlántico deshidratado e hidrolizado min. 21%, arenques deshidratados e hidrolizados 12%, anchoveta deshidratada e hidrolizada 9%, atún deshidratado e hidrolizado 6%, arroz integral, legumbre, levadura de cerveza (Saccharomyces cerevisae), aceite de salmón rico en Omega 3, harina de algarroba, Krill antártico (Euphausia Superba), complejo condroprotector (hidrocloruro de glucosamina, sulfato de condroitina), extracto de mejillón de labios verdes (Perna canaliculus), extracto de Yuca schidigera, manano-oligosacáridos, fructo-oligosacáridos, taurina (2000), caléndula, salvia, fenogreco, equinácea, eneldo, diente de león, té verde, tomillo, romero, cinc quelado, antioxidantes naturales, complejo vitamínico mineral, probióticos (E.faecium NCIMB 1041520×106 UFC), L-carnitina."
+        catfood.weight = 1.5
+        catfood.price = 6.42
         catfood.animal_type = "gato"
-
-        catfood.age = "cachorro"
-        catfood.pathologies = "renal"
+        catfood.age = "adulto"
+        catfood.pathologies = "hipoalergénico"
+        catfood.url = ""
         db.session.add(catfood)
         db.session.commit()
 
@@ -61,10 +61,45 @@ def setup_commands(app):
         catfood.animal_type = "gato"
         catfood.age = "adulto"
         catfood.pathologies = "diabético"
+        db.session.add(catfood)
+        db.session.commit()
 
-        catfood.age = "sd"
-        catfood.pathologies = "asd"
+        catfood = Food()
+        catfood.name = "OWNAT GF PRIME KITTEN (CAT)"
+        catfood.brand="Ownat"
+        catfood.description = "Comida para gatos. Indicado para gatitos de 2 a 12 meses. Con un 50% de carne fresca de pollo y pavo, ofrece un aporte de energía elevado y muy rico en proteínas de alta calidad, que garantizan su óptimo crecimiento, así como el correcto desarrollo del sistema inmunitario del gatito."
+        catfood.ingredients = "Pollo fresco* (mín. 25% antes de la extrusión), pavo fresco* (mín. 25% antes de la extrusión), cerdo deshidratado (13%), guisantes enteros* (9%), grasa avícola (preservada con antioxidantes naturales), hidrolizado de salmón, pollo deshidratado (5%), raíces de mandioca* (5%), pescados deshidratados (anchoveta, jurel y caballa), patata deshidratada* (3%), huevo deshidratado* (2%), levadura de cerveza* (1%), proteína hidrolizada de pollo, manzana* (1%), aceite de pescado (preservado con antioxidantes naturales), sal gema*, fructo y manano oligosacáridos, algas marinas deshidratadas* (500 mg/kg), glucosamina (500 mg/kg), yucca schidigera, condroitín sulfato (100 mg/kg), arándanos* (100 mg/kg), tomillo* (80 mg/kg), flor de manzanilla* (80 mg/kg), hinojo* (80 mg/kg), equinácea* (80 mg/kg), té verde* (80 mg/kg).*INGREDIENTES NATURALES"
+        catfood.weight = 1.
+        catfood.price = 10.70
+        catfood.animal_type = "gato"
+        catfood.age = "cachorro"
+        catfood.pathologies = ""
+        db.session.add(catfood)
+        db.session.commit()
 
+        catfood = Food()
+        catfood.name = "Diet Vet Renal-Oxalate pienso para gatos"
+        catfood.brand="Natural Greatness"
+        catfood.description = "Si tu gato padece insuficiencia renal o cardíaca crónica, es esencial proporcionarle una dieta adaptada. Natural Greatness Diet Vet Renal-Oxalate ha sido especialmente desarrollado para ayudar a la función renal y cardíaca. Este pienso dietético para gatos adultos se caracteriza por una composición equilibrada con proteínas de alta calidad y un contenido reducido de sodio y fósforo."
+        catfood.ingredients = "Pollo fresco (25 %), patatas, aceite de pollo (13 %), guisantes, proteína de patata, pavo y pollo deshidratados (8 %), proteína de guisante, pulpa de remolacha, hidrolizado de hígado de pavo y pollo (2 %), pescado azul deshidratado (1,6 %), aceite de pescado azul (1,1 %), cloruro potásico, citrato de tripotasio [sustancia alcalinizante urinaria] (0,5 %), levadura de cerveza, mezcla de frutas [arándanos y pera] (0,3 %), mezcla de verduras [chirivía, laurel, perejil y diente de león] (0,3 %), huevo entero deshidratado, extracto de malta, achicoria, hidrolizado de la pared celular de la levadura (fuente de MOS), inulina (FOS), glucosamina, condroitín sulfato."
+        catfood.weight = 5.
+        catfood.price = 46.99
+        catfood.animal_type = "gato"
+        catfood.age = "senior"
+        catfood.pathologies = "renal"
+        db.session.add(catfood)
+        db.session.commit()
+
+        catfood = Food()
+        catfood.name = "Adulto Obesity "
+        catfood.brand="Criadores Dietetic"
+        catfood.description = "El pienso Criadores Dietetic Obesity para gatos es un alimento dietético desarrollado para reducir el exceso de peso. Una receta completa y equilibrada con un bajo contenido de energía y grasa que favorece la pérdida de peso de forma sencilla y sin pasar hambre. Su fórmula especial mejora la calidad de vida de tu felino con ingredientes seleccionados y componentes que promueven una buena salud articular."
+        catfood.ingredients = "Pollo deshidratado y desgrasado (30%), Almidón de maíz, Gluten de maíz, Lignocelulosa, Proteína de patata, Arroz, Aceite de ave, Harina de ave hidrolizada, Maíz, Pulpa de remolacha, Proteína de arroz, Hidrolizado de hígado de ave, Aceite de pescado (2%), Levaduras, Sustancias minerales, Semillas de Psyllium (1%), Caléndula (0,1%), Inulina (FOS) (0,1%), Pared celular hidrolizada de levaduras (fuente de MOS) (0,1%), Glucosamina (300 mg/kg), Condroitina (200 mg/kg), Metilsulfonilmetano (MSM)."
+        catfood.weight = 2.5
+        catfood.price = 19.99
+        catfood.animal_type = "gato"
+        catfood.age = "adulto"
+        catfood.pathologies = "obesidad"
         db.session.add(catfood)
         db.session.commit()
         
@@ -83,15 +118,15 @@ def setup_commands(app):
         dogfood.animal_type = "perro"
         dogfood.age = "senior"
         dogfood.size = "medium"
-        dogfood.weight = 1.
+        dogfood.weight = 12.
         db.session.add(dogfood)
         db.session.commit()
 
         dogfood = Food()
         dogfood.name = "CARE DIGESTIVE (DOG)"
         dogfood.brand="ownat"
-        dogfood.description = "asd"
-        dogfood.ingredients = "ads"
+        dogfood.description = "Comida para perros. OWNAT CARE DIGESTIVE está indicado para perros con el tracto gastrointestinal sensible. Está elaborado de manera cuidadosa con ingredientes naturales, probióticos y prebióticos para favorecer la salud intestinal, promoviendo una flora intestinal equilibrada y una óptima digestión."
+        dogfood.ingredients = "Pollo fresco* (mín. 20%) antes de la cocción), pollo deshidratado, raíces de mandioca*, batata deshidratada* (10%), maíz integral*, arroz integral* (7%), grasa avícola (preservada con antioxidantes naturales), salmón hidrolizado (6%), pescado deshidratado, vaina de algarroba*, proteína hidrolizada de pollo, pulpa de remolacha, aceite de salmón (preservado con antioxidantes naturales), levaduras (nucleótidos)* (1,5%), manzana* (1%), semilla de lino* (1%), sal gema*, alfalfa deshidratada*, raíces de achicoria (FOS)* (2 g/kg), extracto de levadura (MOS) (2 g/kg), algas marinas deshidratadas (Ascophyllum nodosum)* (500 mg/kg), yucca schidigera, arándanos* (100 mg/kg), raíces de harpagofito* (100 mg/kg), flor de manzanilla* (100 mg/kg), equinácea* (100 mg/kg), té verde* (100 mg/kg). *INGREDIENTES NATURALES"
         dogfood.price = 1.
         dogfood.pathologies = "diabetes"
         dogfood.animal_type = "perro"
@@ -100,40 +135,167 @@ def setup_commands(app):
         dogfood.weight = 1.
         db.session.add(dogfood)
         db.session.commit()
+
+
+        dogfood = Food()
+        dogfood.name = "Weight Loss & Diabetes"
+        dogfood.brand="Virbac W1 Veterinary HPM"
+        dogfood.description = "El alimento dietético para perros tiene un bajo contenido energético y de azúcares totales. Es bajo en hidratos de carbono y se caracteriza por un índice glucémico bajo. En cambio, Virbac Veterinary HPM Dog Weight Loss & Diabetes W1 proporciona a su mascota abundante fibra bruta, que favorece una agradable sensación de saciedad. La receta no contiene trigo, gluten, soja ni carne de vacuno, por lo que es bien tolerada por muchos perros."
+        dogfood.ingredients = "Proteínas deshidratadas de cerdo y de ave, fécula de patata, lignocelulosa, hidrolizado de proteínas de cerdo y de ave, cáscaras de judías, grasa animal, minerales, linaza, pulpa de remolacha deshidratada, fibra de psyllium"
+        dogfood.price = 12.
+        dogfood.pathologies = "diabetes"
+        dogfood.animal_type = "perro"
+        dogfood.age = "adulto"
+        dogfood.size = ""
+        dogfood.weight = 12.
+        db.session.add(dogfood)
+        db.session.commit()
+
+        dogfood = Food()
+        dogfood.name = "Adult Light Sterilised Pavo y patata - SIN CEREALES"
+        dogfood.brand="Briantos"
+        dogfood.description = "Briantos ofrece el alimento adecuado para todas las necesidades. Nuestras recetas sin cereales cuentan con una alta tolerancia entre los perros. El mayor contenido de humedad convence incluso a los perros más quisquillosos. La alta calidad de los ingredientes utilizados en la elaboración de este alimento y todos los controles de calidad durante la producción garantizan el mejor producto para tu perro."
+        dogfood.ingredients = "5 por ciento de proteínas de pavo (deshidratadas), (22 %) de patatas (deshidratadas), fécula de patata (deshidratada), celulosa, 5 % de boniatos (deshidratados), pulpa de remolacha deshidratada (desazucarada), grasa de ave, proteínas de ave (deshidratadas), hidrolizado de proteínas, guisantes (deshidratados), fosfato monocálcico, aceite de pescado, achicoria (deshidratada), levadura (deshidratada), psilio, cloruro sódico, apio (deshidratado), zanahorias (deshidratadas)."
+        dogfood.price = 33.99
+        dogfood.pathologies = "esterilizado"
+        dogfood.animal_type = "perro"
+        dogfood.age = "adulto"
+        dogfood.size = "grande"
+        dogfood.weight = 12.
+        dogfood.url = "https://media.zooplus.com/bilder/2/400/briantos_adult_gf_sterilised_turkey_12kg_1000x1000_2.jpg"
+        db.session.add(dogfood)
+        db.session.commit()
+
+        dogfood = Food()
+        dogfood.name = "Concept for Life Mini Sterilised"
+        dogfood.brand="Concept for Life"
+        dogfood.description = "Un mayor contenido de proteínas combinadas con la L-carnitina, así como un ajustado contenido energético y en grasas (-11 % en comparación con Concept for Life Mini Adult) puede influir ayudar a mantener el peso ideal mediante una alimentación adecuada. De este modo, se puede evitar el aumento de peso causado por la alteración del metabolismo tras la castración. Además, las fibras dietéticas seleccionadas de psilio y lignocelulosa proporcionan una sensación de saciedad, lo que puede favorecer una ingesta menor de energía."
+        dogfood.ingredients = "proteína de ave (31 % parcialmente deshidratada e hidrolizada), carne de pollo fresca (20 %), copos de patata, guisantes, fécula de patata, lignocelulosa (5,4 %), pulpa de remolacha seca, grasa de ave, linaza, pulpa de manzana, aceite de salmón (0,25 %), cloruro de sodio, aceite de girasol (0,15 %), inulina de achicoria (0,2 %), psilio (0,1 %)."
+        dogfood.price = 5.49
+        dogfood.pathologies = "esterilizado"
+        dogfood.animal_type = "perro"
+        dogfood.age = "adulto"
+        dogfood.size = "pequeño"
+        dogfood.weight = 1.
+        db.session.add(dogfood)
+        db.session.commit()
+      
+      
       
 
 
     @app.cli.command("insert_data_exoticfood")
     def insert_data_exoticfood():
         exoticfood = Food()
-        exoticfood.name = "critical care"
-        exoticfood.brand="oxbow"
-        exoticfood.description = "asd"
-        exoticfood.ingredients = "ads"
-        exoticfood.price = 1.
-        exoticfood.pathologies = "asd"
+        exoticfood.name = "Special Edition Harmony"
+        exoticfood.brand="KaninchenTraum"
+        exoticfood.description = "bunny KaninchenTraum Special Edition Harmony es el alimento ideal para tu conejo enano. Su mezcla única de 63 plantas y hierbas de praderas no tratadas ofrece una alimentación natural y variada. Los ingredientes cuidadosamente seleccionados, sobre todo las flores de aciano y siempreviva, garantizan una experiencia aromática y llena sabor que le encantará a tu amiguito."
+        exoticfood.ingredients = "Hierbas de pasto permanente (fleo de los prados, festuca de los prados, festuca roja, hierba de cola de zorra, pasto azul de Kentucky, dactilo, perifollo silvestre, falso diente de león, arveja de campo, milenrama común, alquimila, cerrillo, trébol amarillo, llantén menor, salvia de los prados, briza media, bromo erguido, campanilla silvestre, alcaravea, cártamo silvestre, cerastio común, cardo borriquero, bromo blando, diente de león común, hierba capilar, ulmaria, cerastio de campo, fresa silvestre, arveja silvestre, gallineta blanca, crepis de los prados, galio amarillo, avénula pelosa, lotus común, cola de caballo, galio blanco, geranio blanco de campo, margarita de campo, viuda silvestre, flor de cuclillo, arroyuela, verónica de los campos, hierba triguera, poa de los prados, llantén mediano, pimpinela mayor, alverjilla, nomeolvides silvestre, saxifraga blanca, pimpinela mayor, cincoenrama, primavera común, conejera cabizbaja, pimpinela menor, estelaria, barba de cabra, ortiga mayor, ontineta, trébol rojo, arveja de los setos, búgula de Ginebra, egopodio, margarita), cáscaras de avena, harina de extracción de semilla de girasol, harina de extracción de lino, pulpa de manzana, bagazo de zanahoria, salvado de trigo, harina de extracción de semillas de colza, flor de aciano rojo (2 %), flores de siempreviva (1 %), semillas de hinojo (0,5 %), papaya deshidratada, flores de camomila."
+        exoticfood.price = 14.69
+        exoticfood.pathologies = ""
         exoticfood.animal_type = "exótico"
-        exoticfood.age = "asd"
-        exoticfood.weight = 1.
+        exoticfood.age = "adulto"
+        exoticfood.weight = 1.5
         db.session.add(exoticfood)
         db.session.commit()
 
+        exoticfood = Food()
+        exoticfood.name = "Sbeaphar Care+ comida para conejos"
+        exoticfood.brand="beaphar Care+"
+        exoticfood.description = "Fórmula todo en uno: la comida beaphar Care+ está constituida por gránulos de composición uniforme. Esto permite evitar las carencias nutricionales que se pueden dar por la alimentación selectiva de tu conejo. Su fórmula equilibrada y sin azúcar ha sido elaborada por veterinarios y científicos expertos. Contiene un 25 % de extruido de fibra cruda y una cantidad elevada de nutrientes y otras sustancias vitales. La dureza de los gránulos favorece la abrasión dental y la higiene bucal."
+        exoticfood.price = 26.49
+        exoticfood.ingredients = "Subproductos vegetales (Yucca Schidigera 0,1 %, Echinacea 0,03 %, extracto de té verde 0,03 %, FOS 0,01 %) , cereales, verduras, minerales, levadura  (MOS 0,1 %), semillas, algas (espirulina 0,01 %)."
+        exoticfood.pathologies = "diabético"
+        exoticfood.animal_type = "exótico"
+        exoticfood.age = "senior"
+        exoticfood.weight = 5.
+        db.session.add(exoticfood)
+        db.session.commit()
 
+        exoticfood = Food()
+        exoticfood.name = "Cuni Junior para conejos"
+        exoticfood.brand="beaphar Care+"
+        exoticfood.description = "Alimento variado y rico en fibra como base para el crecimiento óptimo de los conejos y conejos enanos hasta los 8 meses de edad. Nature Cuni Junior contiene una gran cantidad de hierbas, semillas y hierbas aromáticas sabrosas, combinadas con verduras y frutos que suministran altas dosis de vitaminas, minerales y oligoelementos. Sin cereales añadidos."
+        exoticfood.price = 9.99
+        exoticfood.ingredients = "Subproductos vegetales (hierba timotea, 20 % hierbas y hierbas aromáticas), verdura (18,1 % guisantes, 5,4 % zanahorias, 4 % frijol chícharo, 4 % remolacha), frutos, semillas, extracto de proteína vegetal, minerales, aceites y grasas, FOS, caléndula, MOS, algas, yuca."
+        exoticfood.pathologies = ""
+        exoticfood.animal_type = "exótico"
+        exoticfood.age = "cachorro"
+        exoticfood.weight = 2.3
+        db.session.add(exoticfood)
+        db.session.commit()
+        
+        exoticfood = Food()
+        exoticfood.name = "JR Farm Grainless Complete para conejos enanos"
+        exoticfood.brand="JR Farm Grainless"
+        exoticfood.description = "Mezcla natural y totalmente apropiada para esta especie. Hecha a base de hierbas aromáticas, deliciosas flores y verduras con vitaminas. No contiene cereales ni subproductos de cereales."
+        exoticfood.price = 8.69
+        exoticfood.ingredients = "Fleo, dáctilo, hierbas, perejil, copos de guisantes, dados de zanahoria, habas, chirivía, hojas de menta, hinojo, dados de manzana, semilla de lino, hojas de diente de león, remolacha, hojas de ortiga, flor de manzanilla, comino y vitaminas."
+        exoticfood.pathologies = "escorbuto"
+        exoticfood.animal_type = "exótico"
+        exoticfood.age = "senior"
+        exoticfood.weight = 2.3
+        db.session.add(exoticfood)
+        db.session.commit()
     
     @app.cli.command("insert_data_accessories")
     def insert_data_accessories():
         accessories= Accessories()
-        accessories.name = "critical care"
-        accessories.brand="oxbow"
-        accessories.description = "asd"
-        accessories.price = 1.
-        accessories.animal_type = ""
+        accessories.name = "Collarín de seguridad"
+        accessories.brand="TIAKI"
+        accessories.description = "El collar de seguridad TIAKI ofrece a tu perro una seguridad y un confort indispensables en todas sus aventuras. Está fabricado con una cincha ancha y resistente a los desgarros que resulta ideal para el uso diario, el entrenamiento o incluso las salidas de caza. Equipado con una práctica empuñadura , podrá intervenir con rapidez y seguridad en situaciones críticas para controlar a tu perro."
+        accessories.price = 7.99
+        accessories.animal_type = "perro"
         accessories.pathologies = ""
         accessories.url = ""
         db.session.add(accessories)
         db.session.commit()
 
+        accessories= Accessories()
+        accessories.name = "Rascadores de pared"
+        accessories.brand="Modern Living para gatos"
+        accessories.description = "Modern Living está diseñado para personas con mascotas que buscan sofisticación y durabilidad. Entendemos el esfuerzo que pones en la decoración de tu entorno y lo consciente que eres al ponerle más estilo y carácter a tu hogar. La armonía es nuestra pasión. Hacemos muebles y accesorios para mascotas con diseños únicos y llamativos que se integran de forma perfecta incluso en el hogar más elegante y merecen un lugar destacado. Eso siempre sin olvidarnos de las necesidades de tus mascotas."
+        accessories.price = 35.99
+        accessories.animal_type = "gato"
+        accessories.pathologies = ""
+        accessories.url = ""
+        db.session.add(accessories)
+        db.session.commit()
+
+        accessories= Accessories()
+        accessories.name = "Caseta de plástico para perros"
+        accessories.brand="Ferplast Dogvilla"
+        accessories.description = "No sólo para tu amigo canino con alergia, la caseta para perros Dogvilla de Ferplast es un verdadero oasis de bienestar: las partículas de polvo y suciedad de superficies lisas se pueden limpiar sin dejar residuo alguno. ¡Los gérmenes no tendrán ninguna posibilidad! La espaciosa casita ahorra mucho espacio de manera única ya que la pared lateral es plegable gracias a unas bisagras. Las ranuras de ventilación del panel posterior pueden ajustarse manualmente mediante una palanquita para garantizar así un óptimo intercambio de aire. La abertura de la entrada está reforzada con aluminio para resistir los dientes de los perros y da a la caseta una estabilidad adicional."
+        accessories.price = 199.99
+        accessories.animal_type = "perro"
+        accessories.pathologies = ""
+        accessories.url = ""
+        db.session.add(accessories)
+        db.session.commit()
+
+        accessories= Accessories()
+        accessories.name = "Campo de zanahorias juguete de inteligencia"
+        accessories.brand="TIAKI"
+        accessories.description = "El juguete de inteligencia TIAKI para pequeños animales es un juguete maravilloso que estimula el comportamiento natural de búsqueda de comida y juego de conejos, hámsters y cobayas. Este juguete interactivo tiene una serie de zanahorias de madera que ofrecen a tus mascotas un divertido reto , por ejemplo, arrancarlas y roerlas. La zona de juegos no solo es entretenida, sino también segura para que tus animales la roan, ya que está hecha de papel, madera de pino y hojas de maíz."
+        accessories.price = 7.99
+        accessories.animal_type = "exótico"
+        accessories.pathologies = ""
+        accessories.url = ""
+        db.session.add(accessories)
+        db.session.commit()
     
+
+        accessories= Accessories()
+        accessories.name = "Bayer Vetriderm loción tópica antialérgica"
+        accessories.brand="Bayer Vetriderm"
+        accessories.description = "Gracias a la loción tópica Vetriderm, de Bayer, es posible reducir de manera efectiva la causa de las reacciones alérgicas a los animales domésticos. Simplemente, aplica la solución sobre un paño y, con ayuda de este, extiende el producto sobre el pelo de tu perro o gato; primero en la dirección del crecimiento del pelo y después en el sentido opuesto. De este modo, eliminarás las partículas que quedan en el pelaje como los epitelios o los restos de saliva o de orina, que pueden producir reacciones alérgicas."
+        accessories.price = 21.99
+        accessories.animal_type = "exótico"
+        accessories.pathologies = ""
+        accessories.url = "https://media.zooplus.com/bilder/7/400/73160_pla_vetriderm_350ml_hs_01_7.jpg"
+        db.session.add(accessories)
+        db.session.commit()
+        
     @app.cli.command("insert_data_pet")
     def insert_data_pet():
         pet= Pet()

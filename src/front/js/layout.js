@@ -43,7 +43,7 @@ const Layout = () => {
 // Nuevo componente para manejar el Navbar
 const PageWithNavbar = () => {
     const location = useLocation(); 
-    const hideNavbarRoutes = ["/perfilUsuario"];  // Rutas donde ocultamos el Navbar
+    const hideNavbarRoutes = ["/perfilUsuario","/loginSignup"];  // Rutas donde ocultamos el Navbar
 
     return (
         <>

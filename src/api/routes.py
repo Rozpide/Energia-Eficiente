@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Food, Pet, Accessories
+from api.models import db, User, Food, Pet, Accessories, Order
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select, and_, or_
@@ -540,4 +540,48 @@ def search_product():
         dict_accessories = []
     # concatenamos ambas listas obtenidas en las queries
     return jsonify(dict_foods + dict_accessories), 200
+
+# endpoint para carrito/pedido
+
+@api.route('/order/<int:user_id>', methods=['POST'])
+@jwt_required()
+def order(user_id):
+    data = request.get_json()
+
+    # queremos que frontend nos de una lista de Id's e.g. [0,1,4] para food y accessory por separado
+    selected_food = data["selected_food"]
+    selected_accessory = data["selected_accessory"]
+
+    if len(selected_food) == 0 and len(selected_accessory) == 0: 
+        return jsonify({"message":"not food and accessories selected"}), 404 
+    
+    # pasamos de lista de id a string separado por comas
+    string_selected_food = ""
+    string_selected_accessory = ""
+    # recorremos la lista y evitamos ponerle coma al lúltimo elemento
+    #idx para recorrer el array
+    # range (función de python que hace rango de un número a otro si sólo tiene un número va del 0 a ese número)
+    for idx in range(len(selected_food)): 
+        if len(selected_food)-1 == idx:
+            string_selected_food = string_selected_food + str(selected_food[idx])
+        else:
+            string_selected_food = string_selected_food + str(selected_food[idx])+","
+
+    for idx in range(len(selected_accessory)): 
+        if len(selected_accessory)-1 == idx:
+            string_selected_accessory= string_selected_accessory + str(selected_accessory[idx])
+        else:
+            string_selected_accessory= string_selected_accessory + str(selected_accessory[idx])+","
+    
+    new_order= Order(
+        user_id= user_id,
+        ordered_food= string_selected_food,
+        ordered_accessories= string_selected_accessory,
+        status= data["status"]
+        )
+    
+    db.session.add(new_order)
+    db.session.commit()
+    return jsonify(new_order.serialize()), 201
+
 
