@@ -1,7 +1,6 @@
 import React, { useState, useContext} from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Context } from "../store/appContext";
-import "../../styles/home.css";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
 
@@ -145,9 +144,11 @@ export const Register = () => {
                 required
               >
                 <option value="" disabled>Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value="male">MALE</option>
+                <option value="female">FEMALE</option>
+                <option value="other">NON_BINARY</option>
+                <option value="other">OTHER</option>
+                <option value="other">PREFER_NOT_TO_SAY</option>
               </select>
             </div>
             <button
