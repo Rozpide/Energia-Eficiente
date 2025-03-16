@@ -14,7 +14,7 @@ export const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    gender: '' // Añadir campo de género
+    gender: ''
   });
   
   const navigate = useNavigate();
