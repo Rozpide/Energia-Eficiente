@@ -160,6 +160,7 @@ export const RegistroMascota = () => {
                             <option value="urinarioOxalatos">Urinario Oxalatos</option>
                             <option value="escorbuto">Escorbuto</option>
                             <option value="obesidad">Obesidad</option>
+                            <option value="hipoalergénico">Hipoalergénico</option>
                         </select>
                     </div>
                     <button type="submit" className="btn btn-primary">Registrar Mascota</button>

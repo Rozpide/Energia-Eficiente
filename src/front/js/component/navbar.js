@@ -1,17 +1,21 @@
 import React, { useContext, useEffect } from "react";
 import logo from "/workspaces/PupperEatsAppreact-flask-hello-deprecated/src/front/img/Icono puppereats.png";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CiSearch } from "react-icons/ci";
 import { Context } from "../store/appContext";
 import { FaUserCircle, FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
 
 export const Navbar = () => {
     const { store, actions } = useContext(Context);
-    const { user } = store;
+    const { user, cart } = store; // Obtenemos el usuario del store
 
-    useEffect(() => {
-        console.log("Usuario en navbar:", user);
-    }, [user]);
+	useEffect(() => {
+		console.log("Usuario en navbar:", user);
+	}, [user, cart]);
+
+     // Contar la cantidad de productos en el carrito
+     const cartItemCount = cart.length; 
 
     return (
         <nav className="navbar navbar-expand-lg shadow-lg" style={{ 
@@ -52,13 +56,14 @@ export const Navbar = () => {
                     </ul>
                     <ul className="navbar-nav d-flex align-items-center gap-2">
                         {user ? (
+                            // Si el usuario está autenticado, mostramos Perfil y Cesta
                             <>
                                 <Link to="/perfilUsuario" className="text-dark text-decoration-none d-flex align-items-center">
                                     <FaUserCircle size={24} className="me-1" />
                                     <span className="fw-semibold">Perfil</span>
                                 </Link>
-                                <Link to="/cesta" className="btn btn-warning d-flex align-items-center">
-                                    <FaShoppingCart size={18} className="me-1" /> Cesta
+                                <Link to="/carrito" className="btn btn-warning d-flex align-items-center">
+                                    <FaShoppingCart size={18} className="me-1" /> Cesta {cartItemCount > 0 && `(${cartItemCount})`}
                                 </Link>
                                 <button className="btn btn-light text-muted border-0 d-flex align-items-center" onClick={actions.logout}>
                                     <FaSignOutAlt size={16} className="me-1" /> Salir
