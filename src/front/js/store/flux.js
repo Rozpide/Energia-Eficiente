@@ -251,29 +251,64 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			// Modificación de la función createOrder en getState
+			// createOrder: async (orderData) => {
+			// 	const myHeaders = new Headers();
+			// 	myHeaders.append("Content-Type", "application/json");
+			// 	myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
+
+			// 	const raw = JSON.stringify(orderData);
+
+			// 	const requestOptions = {
+			// 		method: "POST",
+			// 		headers: myHeaders,
+			// 		body: raw,
+			// 		redirect: "follow",
+			// 	};
+
+			// 	try {
+			// 		const id = JSON.parse(localStorage.getItem("user")).id;
+			// 		const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
+			// 		const result = await response.json();
+			// 		console.log(result);
+			// 		// Manejar respuesta de éxito o error
+					
+			// 		return result;
+			
+			// 	} catch (error) {
+			// 		console.error(error);
+			// 	}
+			// }
+
 			createOrder: async (orderData) => {
 				const myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
 				myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
-
+			
 				const raw = JSON.stringify(orderData);
-
+			
 				const requestOptions = {
 					method: "POST",
 					headers: myHeaders,
 					body: raw,
 					redirect: "follow",
 				};
-
+			
 				try {
 					const id = JSON.parse(localStorage.getItem("user")).id;
 					const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
+			
+					if (!response.ok) {
+						throw new Error("Error al crear la orden");
+					}
+			
 					const result = await response.json();
-					console.log(result);
-					// Manejar respuesta de éxito o error
-					return result;
+					console.log("Orden creada exitosamente:", result);
+			
+					// Asegúrate de que el backend devuelva un objeto con `success: true`
+					return { success: true, ...result };
 				} catch (error) {
-					console.error(error);
+					console.error("Error al enviar la orden:", error);
+					return { success: false, error: error.message };
 				}
 			}
 			,
