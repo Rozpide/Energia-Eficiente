@@ -90,23 +90,36 @@ def get_pet(pet_id):
 @api.route('/foods/suggestions/<int:pet_id>', methods=['GET'])
 @jwt_required()
 def get_pet_suggestions(pet_id):
-    pet = Pet.query.get(pet_id).serialize()
-    # Problema: Un animal puede tener varias patologias en su campo, habría que coger este campo y tratarlo,
+    pet = Pet.query.filter_by(id=pet_id).first()
+    print(pet)
+    if pet is None:
+        return jsonify({"msg": "Pet no exist"}), 404
+    # pet = Pet.query.get(pet_id).serialize()
+    # Problema: Un animal puede tener varias patologias en su campo, habría que co
+    # ger este campo y tratarlo,
     # separar las patologias en una lista y hacer la query para cada patologia.
     # Solucion simple: limitar a 1 patologia cada animal por ahora
-    #if para pet# anymal_type == perro, animal size    #si no no hace falta size
-    if pet["animal_type"] == "perro":
-        food_suggestions = db.session.execute(select(Food).where(and_(Food.animal_type==pet["animal_type"]),
-                                                             Food.size==pet["size"],
-                                                             Food.age==pet["age"],
-                                                             Food.pathologies==pet["pathologies"])).all()
+    # if para pet# anymal_type == perro, animal size   #si no no hace falta size
+    if pet.animal_type == "perro":
+       food_suggestions = db.session.execute(select(Food).where(and_(Food.animal_type==pet.animal_type),
+                                                            Food.size==pet.size,
+                                                            Food.age==pet.age,
+                                                            Food.pathologies==pet.pathologies)).all()
     else:
-        food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet["animal_type"]),
-                                                             Food.age==pet["age"],
-                                                             Food.pathologies==pet["pathologies"]).all()
+       food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet.animal_type),
+                                                            Food.age==pet.age,
+                                                            Food.pathologies==pet.pathologies).all()
     if not food_suggestions :
-        return "no suggestions found", 404
+       return "no suggestions found", 404
     return [food[0].serialize() for food in food_suggestions], 200
+    return jsonify("okey"), 200
+
+
+
+
+
+
+
 
 
 # #obtener sugerencias de comida según mascota
