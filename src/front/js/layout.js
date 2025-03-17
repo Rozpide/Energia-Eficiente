@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
@@ -24,6 +24,7 @@ import { CarritoPago } from "./pages/CarritoPago";
 //create your first component
 const Layout = () => {
     const basename = process.env.BASENAME || "";
+    const [activeCategory, setActiveCategory] = useState(null);
 
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL === "") return <BackendURL />;
 
@@ -32,7 +33,7 @@ const Layout = () => {
             <ScrollToTop>
                 <Routes>
                     {/* Colocamos useLocation dentro de Routes */}
-                    <Route path="*" element={<PageWithNavbar />} />
+                    <Route path="*" element={<PageWithNavbar activeCategory={activeCategory} setActiveCategory={setActiveCategory} />} />
                 </Routes>
                 <Footer />
             </ScrollToTop>
@@ -41,15 +42,15 @@ const Layout = () => {
 };
 
 // Nuevo componente para manejar el Navbar
-const PageWithNavbar = () => {
+const PageWithNavbar = ({ activeCategory, setActiveCategory }) => {
     const location = useLocation(); 
-    const hideNavbarRoutes = ["/perfilUsuario","/loginSignup"];  // Rutas donde ocultamos el Navbar
+    const hideNavbarRoutes = ["/perfilUsuario", "/loginSignup"];   // Rutas donde ocultamos el Navbar
 
     return (
         <>
-            {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
+            {!hideNavbarRoutes.includes(location.pathname)  && <Navbar setActiveCategory={setActiveCategory} />}
             <Routes>
-                <Route element={<Home />} path="/" />
+                <Route element={<Home activeCategory={activeCategory} />} path="/" />
                 <Route element={<VistaProducto />} path="/vista-producto/:id" />
                 <Route element={<LoginSignup />} path="/loginSignup" />
                 <Route element={<VistaMascota />} path="/pets/:id" />
