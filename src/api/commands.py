@@ -1,4 +1,5 @@
 
+
 import click
 from api.models import db, User, Food, Accessories, Pet
 from flask_bcrypt import Bcrypt 
@@ -47,7 +48,7 @@ def setup_commands(app):
         catfood.animal_type = "gato"
         catfood.age = "adulto"
         catfood.pathologies = "hipoalergénico"
-        catfood.url = ""
+        catfood.url = "https://era2vrmzk5n.exactdn.com/wp-content/uploads/2022/09/Pienso-15K-croqPEZ-Ayurveda-gato-kasaludintegral-1080x1080pix.jpg?strip=all&lossy=1&w=648&ssl=1"
         db.session.add(catfood)
         db.session.commit()
 
@@ -61,6 +62,7 @@ def setup_commands(app):
         catfood.animal_type = "gato"
         catfood.age = "adulto"
         catfood.pathologies = "diabético"
+        catfood.url = "https://bixoto.com/media/catalog/product/cache/2e45ba69d70625e0fc47dbc2d34862e1/M/Y/MYNKvuY-920-2042_webp.png"
         db.session.add(catfood)
         db.session.commit()
 
@@ -74,6 +76,7 @@ def setup_commands(app):
         catfood.animal_type = "gato"
         catfood.age = "cachorro"
         catfood.pathologies = ""
+        catfood.url = "https://www.tiendanimal.es/dw/image/v2/BDLQ_PRD/on/demandware.static/-/Sites-kiwoko-master-catalog/default/dw55de3cf2/images/ownat_prime_gf_kitten_OWN31463.jpg?sw=780&sh=780&sm=fit&q=85"
         db.session.add(catfood)
         db.session.commit()
 
@@ -87,6 +90,7 @@ def setup_commands(app):
         catfood.animal_type = "gato"
         catfood.age = "senior"
         catfood.pathologies = "renal"
+        catfood.url = "https://media.zooplus.com/bilder/2/400/279797_pla_natural_greatness_diet_vet_renal_oxalate_5kg_hs_01_2.jpg"
         db.session.add(catfood)
         db.session.commit()
 
@@ -100,6 +104,7 @@ def setup_commands(app):
         catfood.animal_type = "gato"
         catfood.age = "adulto"
         catfood.pathologies = "obesidad"
+        catfood.url = "https://www.tiendanimal.es/dw/image/v2/BDLQ_PRD/on/demandware.static/-/Sites-kiwoko-master-catalog/default/dwfc3b7ec1/images/pienso_gato_criadores_dietetic_obesity_CRD8967_M.jpg?sw=780&sh=780&sm=fit&q=85"
         db.session.add(catfood)
         db.session.commit()
         
@@ -109,16 +114,17 @@ def setup_commands(app):
     @app.cli.command("insert_data_dogfood")
     def insert_data_food():
         dogfood = Food()
-        dogfood.name = "Special Care hepatic/renal"
-        dogfood.brand="nfnatcane"
-        dogfood.description = "asd"
-        dogfood.ingredients = "ads"
-        dogfood.price = 1.
+        dogfood.name = " Veterinary Diet Renal pienso para perros"
+        dogfood.brand="Concept for Life "
+        dogfood.description = "Pienso dietético para perros adultos con insuficiencia renal crónica. Bajo en fósforo y proteína para reducir la formación de cálculos de oxalato y de urato. Con propiedades alcalinizantes de la orina"
+        dogfood.ingredients = "Arroz, 31,5 % maíz, grasa de ave, 4,7 % proteína de ave (rica en pollo, en parte deshidratada e hidrolizada), proteína de maíz, pulpa de remolacha deshidratada (desazucarada), gelatina (hidrolizada, HDP*), linaza, aceite de pescado, 1,5 % hígado de pollo (en parte deshidratado e hidrolizado, HDP*), aceite de girasol, carbonato de calcio, cloruro sódico, cloruro potásico, huevo (deshidratado), lignocelulosa, 0,3 % paredes celulares de levadura (ricas en manano-oligosacáridos y en beta-glucanos), 0,2 % citrato de potasio, inulina de achicoria, harina de algas (rica en DHA**)."
+        dogfood.price = 7.99
         dogfood.pathologies = "renal"
         dogfood.animal_type = "perro"
         dogfood.age = "senior"
         dogfood.size = "medium"
-        dogfood.weight = 12.
+        dogfood.weight = 1.
+        dogfood.url = "https://media.zooplus.com/bilder/9/400/cfl_dog_renal_1kg_1000x1000_9.jpg"
         db.session.add(dogfood)
         db.session.commit()
 
@@ -133,6 +139,7 @@ def setup_commands(app):
         dogfood.age = "cachorro"
         dogfood.size = "grande"
         dogfood.weight = 1.
+        dogfood.url = "https://www.tiendanimal.es/dw/image/v2/BDLQ_PRD/on/demandware.static/-/Sites-kiwoko-master-catalog/default/dw9b40881f/images/pienso_perros_ownat_care_digestive_OWN031569.jpg.jpg?sw=780&sh=780&sm=fit&q=85"
         db.session.add(dogfood)
         db.session.commit()
 
@@ -142,12 +149,13 @@ def setup_commands(app):
         dogfood.brand="Virbac W1 Veterinary HPM"
         dogfood.description = "El alimento dietético para perros tiene un bajo contenido energético y de azúcares totales. Es bajo en hidratos de carbono y se caracteriza por un índice glucémico bajo. En cambio, Virbac Veterinary HPM Dog Weight Loss & Diabetes W1 proporciona a su mascota abundante fibra bruta, que favorece una agradable sensación de saciedad. La receta no contiene trigo, gluten, soja ni carne de vacuno, por lo que es bien tolerada por muchos perros."
         dogfood.ingredients = "Proteínas deshidratadas de cerdo y de ave, fécula de patata, lignocelulosa, hidrolizado de proteínas de cerdo y de ave, cáscaras de judías, grasa animal, minerales, linaza, pulpa de remolacha deshidratada, fibra de psyllium"
-        dogfood.price = 12.
+        dogfood.price = 12.99
         dogfood.pathologies = "diabetes"
         dogfood.animal_type = "perro"
         dogfood.age = "adulto"
         dogfood.size = ""
-        dogfood.weight = 12.
+        dogfood.weight = 1.5
+        dogfood.url = "https://www.tiendanimal.es/dw/image/v2/BDLQ_PRD/on/demandware.static/-/Sites-kiwoko-master-catalog/default/dw6af74272/images/virbac_pienso_perros_hpm_weight_loss_diabetes_VIRAD360106.jpg?sw=780&sh=780&sm=fit&q=85"
         db.session.add(dogfood)
         db.session.commit()
 
@@ -177,6 +185,7 @@ def setup_commands(app):
         dogfood.age = "adulto"
         dogfood.size = "pequeño"
         dogfood.weight = 1.
+        dogfood.url = "https://media.zooplus.com/bilder/7/400/pla_163496_cfl_dog_sterilised_mini_1kg_7.jpg"
         db.session.add(dogfood)
         db.session.commit()
       
@@ -196,6 +205,7 @@ def setup_commands(app):
         exoticfood.animal_type = "exótico"
         exoticfood.age = "adulto"
         exoticfood.weight = 1.5
+        exoticfood.url = "https://media.zooplus.com/bilder/7/400/547507_pla_bunny_kaninchentraum_special_edition_harmony_1_5k_hs_01_7.jpg"
         db.session.add(exoticfood)
         db.session.commit()
 
@@ -209,6 +219,7 @@ def setup_commands(app):
         exoticfood.animal_type = "exótico"
         exoticfood.age = "senior"
         exoticfood.weight = 5.
+        exoticfood.url = "https://media.zooplus.com/bilder/0/400/73777_pla_beaphar_care_kaninchen_5kg_hs_1_2_0.jpg"
         db.session.add(exoticfood)
         db.session.commit()
 
@@ -222,6 +233,7 @@ def setup_commands(app):
         exoticfood.animal_type = "exótico"
         exoticfood.age = "cachorro"
         exoticfood.weight = 2.3
+        exoticfood.url = "https://d7rh5s3nxmpy4.cloudfront.net/CMP9365/8/18407_347074-D.jpg"
         db.session.add(exoticfood)
         db.session.commit()
         
@@ -235,6 +247,7 @@ def setup_commands(app):
         exoticfood.animal_type = "exótico"
         exoticfood.age = "senior"
         exoticfood.weight = 2.3
+        exoticfood.url = "https://media.zooplus.com/bilder/5/400/28140_pla_jrfarm_grainless_complete_zwergkaninchen_5.jpg"
         db.session.add(exoticfood)
         db.session.commit()
     
@@ -247,7 +260,7 @@ def setup_commands(app):
         accessories.price = 7.99
         accessories.animal_type = "perro"
         accessories.pathologies = ""
-        accessories.url = ""
+        accessories.url = "https://media.zooplus.com/bilder/4/400/518156_pla_tiaki_security_collar_s_fg_5107_4.jpg"
         db.session.add(accessories)
         db.session.commit()
 
@@ -258,7 +271,7 @@ def setup_commands(app):
         accessories.price = 35.99
         accessories.animal_type = "gato"
         accessories.pathologies = ""
-        accessories.url = ""
+        accessories.url = "https://media.zooplus.com/bilder/3/400/modern_living_kratzm_bel_f_r_katzen_zur_wandmontage_hs_01_3.jpg"
         db.session.add(accessories)
         db.session.commit()
 
@@ -269,7 +282,7 @@ def setup_commands(app):
         accessories.price = 199.99
         accessories.animal_type = "perro"
         accessories.pathologies = ""
-        accessories.url = ""
+        accessories.url = "https://www.ferplast.es/cdn/shop/files/1-0180017573_x620.jpg?v=1728917798"
         db.session.add(accessories)
         db.session.commit()
 
@@ -280,7 +293,7 @@ def setup_commands(app):
         accessories.price = 7.99
         accessories.animal_type = "exótico"
         accessories.pathologies = ""
-        accessories.url = ""
+        accessories.url = "https://media.zooplus.com/bilder/7/400/451140_pla_tiaki_intelligence_toy_carrot_patch_fg_9772_7.jpg"
         db.session.add(accessories)
         db.session.commit()
     
@@ -352,6 +365,13 @@ def setup_commands(app):
         pet.user_id = 1
         db.session.add(pet)
         db.session.commit()
+
+
+    
+
+    
+
+
 
 
     
