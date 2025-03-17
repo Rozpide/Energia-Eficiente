@@ -1,7 +1,7 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
-
+from datetime import datetime
 
 
 
@@ -16,6 +16,7 @@ class User(db.Model):
     name= db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
+    is_temporary_password = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -24,9 +25,29 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            "name": self.name
+            "name": self.name,
+            "is_temporary_password": self.is_temporary_password
             # do not serialize the password, its a security breach
         }
+
+class PasswordReset(db.Model):
+    __tablename__ = 'password_reset'
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), nullable=False)
+    token = db.Column(db.String(255), nullable=False, unique=True)
+    expires_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "token": self.token,
+            "expires_at": self.expires_at.strftime("%Y-%m-%d %H:%M:%S")
+        }
+
+    def __repr__(self):
+        return f'<PasswordReset {self.email}>'        
     
    
 class Food(db.Model):

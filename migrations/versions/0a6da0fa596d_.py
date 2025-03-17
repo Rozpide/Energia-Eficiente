@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 3388104734f6
+Revision ID: 0a6da0fa596d
 Revises: 
-Create Date: 2025-03-17 11:09:47.021713
+Create Date: 2025-03-17 14:41:02.841775
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3388104734f6'
+revision = '0a6da0fa596d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -44,11 +44,20 @@ def upgrade():
     sa.Column('url', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('password_reset',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('email', sa.String(length=120), nullable=False),
+    sa.Column('token', sa.String(length=255), nullable=False),
+    sa.Column('expires_at', sa.DateTime(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('token')
+    )
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=80), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password', sa.String(length=80), nullable=False),
+    sa.Column('is_temporary_password', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -82,6 +91,7 @@ def downgrade():
     op.drop_table('pet')
     op.drop_table('order')
     op.drop_table('user')
+    op.drop_table('password_reset')
     op.drop_table('foods')
     op.drop_table('accessories')
     # ### end Alembic commands ###

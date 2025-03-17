@@ -1,7 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, jsonify, url_for, Blueprint, current_app
 from api.models import db, User, Food, Pet, Accessories, Order
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -9,6 +9,9 @@ from sqlalchemy import select, and_, or_
 import json
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_bcrypt import Bcrypt 
+from flask_mail import Message
+import random, string
+
 
 api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
@@ -27,6 +30,34 @@ CORS(api)
 
 #     return jsonify(response_body), 200
 
+@api.route("/forgotpassword", methods=["POST"])
+def forgotpassword():
+    recover_email = request.json.get('email')
+
+    user = User.query.filter_by(email=recover_email).first()
+    if not user:
+        return jsonify({"msg": "El correo ingresado no existe en nuestros registros"}), 400
+
+    # Genera una nueva contraseña temporal (aleatoria)
+    recover_password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(12))
+
+    # Guardar la nueva contraseña cifrada (muy importante)
+    bcrypt = Bcrypt()
+    hashed_password = bcrypt.generate_password_hash(recover_password).decode('utf-8')
+    user.password = hashed_password
+    db.session.commit()
+
+    # Enviar la contraseña temporal al correo del usuario
+    from flask_mail import Message
+    msg = Message(
+        subject="Recuperación de contraseña",
+        sender=current_app.config["MAIL_USERNAME"],
+        recipients=[recover_email],
+        body=f"Tu nueva contraseña temporal es: {recover_password}. Por favor inicia sesión y cámbiala inmediatamente."
+    )
+    current_app.mail.send(msg)
+
+    return jsonify({"msg": "Se ha enviado una nueva contraseña a tu correo electrónico"}), 200
 
 @api.route('/')
 def sitemap():
