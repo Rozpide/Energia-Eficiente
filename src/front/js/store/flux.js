@@ -483,7 +483,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Error al eliminar usuario:", error);
 					alert("Hubo un error al eliminar la cuenta.");
 				}
-			}
+			},
+			// get sugerencia comidas
+			getFoodSuggestions: async (pet_id) => {
+				try {
+				  const resp = await fetch(`${process.env.BACKEND_URL}/api/foods/suggestions/${pet_id}`, {
+					method: "GET",
+					headers: {
+					  "Content-Type": "application/json",
+					  "Authorization": "Bearer " + localStorage.getItem("token")
+					}
+				  });
+				  if (!resp.ok) {
+					console.error("Error al obtener sugerencias de comida, status:", resp.status);
+					return [];
+				  }
+				  const data = await resp.json();
+				  return data;
+				} catch (error) {
+				  console.error("Error al obtener sugerencias de comida:", error);
+				  return [];
+				}
+			  },			  
 
 
 		}
