@@ -16,7 +16,7 @@ const handleAddToCart = () => {
   
   // Verifica si el usuario está registrado
   if (store.user) { // Asumiendo que `store.user` contiene información del usuario si está autenticado
-    actions.addToCart({ name, id, price }); // Añade el producto al carrito
+    actions.addToCart({ name, id, price, url }); // Añade el producto al carrito
   } else {
     navigate("/loginSignup"); // Redirige al login si no está autenticado
   }

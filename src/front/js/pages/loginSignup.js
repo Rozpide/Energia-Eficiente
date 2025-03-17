@@ -101,6 +101,8 @@ export const LoginSignup = () => {
                         <p onClick={() => setIsSignup(false)}>¿Ya tienes cuenta? <strong>Inicia sesión</strong></p>
                     </form>
                 )}
+                  <Link to="/">
+                  <p>Volver a la página principal</p></Link>
             </div>
         </div>
     );

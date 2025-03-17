@@ -18,6 +18,7 @@ import { VistaProducto } from "./pages/VistaProducto";
 import { LoginSignup } from "./pages/loginSignup";
 import { RegistroMascota } from "./pages/RegistroMascota";
 import { CarritoPago } from "./pages/CarritoPago";
+import { PasarelaPago } from "./pages/PasarelaPago";
 
 
 
@@ -57,6 +58,7 @@ const PageWithNavbar = () => {
                 <Route element={<Single />} path="/single/:theid" />
                 <Route element={<RegistroMascota />} path="/registro-mascota" />
                 <Route element={<CarritoPago />} path="/carrito" />
+                <Route element={<PasarelaPago />} path="/pasarela-de-pago/:id" />
                 <Route element={<h1>Not found!</h1>} path="*" />
             </Routes>
         </>
