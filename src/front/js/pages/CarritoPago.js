@@ -6,7 +6,7 @@ import { faPaypal } from '@fortawesome/free-brands-svg-icons';
 
 export const CarritoPago = () => {
     const { store, actions } = useContext(Context);
-    const navigate = useNavigate(); // Inicializa useNavigate
+    const navigate = useNavigate();
 
     const [newContact, setNewContact] = useState({
         nombre: "",
@@ -18,10 +18,8 @@ export const CarritoPago = () => {
         email: "",
     });
 
-    const productos = store.cart; // Usa los productos del store
-    console.log(store);
+    const productos = store.cart;
 
-    // Inicializa el carrito con una cantidad de 1 para cada producto
     const [carrito, setCarrito] = useState(
         productos.map(producto => ({ ...producto, cantidad: 1 }))
     );
@@ -33,8 +31,8 @@ export const CarritoPago = () => {
         });
     };
 
-    const handleFormatoChange = (productoId, cantidad) => {
-        const cantidadFinal = cantidad || 1; // Asegura que la cantidad sea al menos 1
+    const handleCantidadChange = (productoId, cantidad) => {
+        const cantidadFinal = Math.max(1, cantidad); // Asegura que la cantidad sea al menos 1
         setCarrito(carrito.map(item =>
             item.id === productoId ? { ...item, cantidad: cantidadFinal } : item
         ));
@@ -51,18 +49,18 @@ export const CarritoPago = () => {
 
     const checkout = (e) => {
         e.preventDefault();
-    
+
         const orderData = {
             selected_food: store.cart.map(item => item.id),
             selected_accessory: [],
             status: "carrito",
         };
-    
+
         actions.createOrder(orderData)
             .then(response => {
                 if (response.success) {
                     console.log("Orden creada exitosamente");
-    
+
                     // Cambiar a la pestaña de "Dirección de envío y pago"
                     const profileTabElement = document.getElementById('profile-tab');
                     if (profileTabElement) {
@@ -80,15 +78,23 @@ export const CarritoPago = () => {
             });
     };
 
- 
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Datos enviados:', newContact);
     };
 
+    const handleRemoveProduct = (productoId) => {
+        // Eliminar del estado local
+        const nuevoCarrito = carrito.filter(item => item.id !== productoId);
+        setCarrito(nuevoCarrito);
+
+        // Eliminar del estado global
+        actions.removeFromCart(productoId);
+    };
+
     useEffect(() => {
-        actions.createOrder();
-    }, []);
+        console.log("Carrito actualizado:", store.cart);
+    }, [store.cart]);
 
     return (
         <div className="container-fluid justify-content-center mt-1 p-3 text-dark">
@@ -107,44 +113,54 @@ export const CarritoPago = () => {
                         <div className="row col-md-6 flex-grow-1">
                             <h3 className="p-3">Productos en el carrito:</h3>
 
-                            {productos.map(producto => (
-                                <div className="col-md-8" key={producto.id}>
-                                    <div className="card mb-3 d-flex flex-column">
-                                        <div className="row card-prueba g-0 flex-fill">
-                                            <div className="col-md-2">
-                                                <img src={producto.url} alt="Producto" />
-                                            </div>
-
-                                            <div className="col-md-8">
-                                                <div className="card-body d-flex flex-column flex-grow-1">
-                                                    <h5 className="card-title"><strong>{producto.name}</strong></h5>
+                            {productos.length === 0 ? (
+                                <p>No hay productos en el carrito.</p>
+                            ) : (
+                                productos.map(producto => (
+                                    <div className="col-md-8" key={producto.id}>
+                                        <div className="card mb-3 d-flex flex-column">
+                                            <div className="row card-prueba g-0 flex-fill">
+                                                <div className="col-md-2">
+                                                    <img
+                                                        src={producto.url}
+                                                        alt="Producto"
+                                                        style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                                                    />
                                                 </div>
-
-                                                <div className="d-flex justify-content-between align-items-center m-3">
-                                                    <div>
-                                                        <p className="card-text mb-0">{producto.description}.</p>
-                                                        <h2 className="card-text text-sm-start">{producto.price}€</h2>
+                                                <div className="col-md-8">
+                                                    <div className="card-body d-flex flex-column flex-grow-1">
+                                                        <h5 className="card-title"><strong>{producto.name}</strong></h5>
                                                     </div>
-
-                                                    <div className="d-flex align-items-center" style={{ width: '100px' }}>
-                                                        <label htmlFor={`formatoProducto-${producto.id}`} className="form-label visually-hidden">Cantidad:</label>
-                                                        <select
-                                                            className="form-select form-select-sm"
-                                                            id={`formatoProducto-${producto.id}`}
-                                                            defaultValue="1" // Valor por defecto
-                                                            onChange={(e) => handleFormatoChange(producto.id, parseInt(e.target.value))}
-                                                        >
-                                                            <option value="1">1 udad.</option>
-                                                            <option value="2">2 uds.</option>
-                                                            <option value="3">3 uds.</option>
-                                                        </select>
+                                                    <div className="d-flex justify-content-between align-items-center m-3">
+                                                        <div>
+                                                            <h2 className="card-text text-sm-start">{producto.price}€</h2>
+                                                        </div>
+                                                        <div className="d-flex align-items-center" style={{ width: '100px' }}>
+                                                            <label htmlFor={`cantidad-${producto.id}`} className="form-label visually-hidden">Cantidad:</label>
+                                                            <select
+                                                                className="form-select form-select-sm"
+                                                                id={`cantidad-${producto.id}`}
+                                                                value={carrito.find(item => item.id === producto.id)?.cantidad || 1}
+                                                                onChange={(e) => handleCantidadChange(producto.id, parseInt(e.target.value))}
+                                                            >
+                                                                <option value="1">1 ud.</option>
+                                                                <option value="2">2 uds.</option>
+                                                                <option value="3">3 uds.</option>
+                                                            </select>
+                                                            <button
+                                                                className="btn btn-light btn-sm ms-auto"
+                                                                onClick={() => handleRemoveProduct(producto.id)}
+                                                            >
+                                                                <i className="fa-solid fa-trash"></i>
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
 
                         <div className="row carrito col-md-3 m-3 p-4 rounded border" style={{ width: "400px", height: "400px" }}>
@@ -161,126 +177,83 @@ export const CarritoPago = () => {
                             <p>IVA (21%): {(subtotal * 0.21).toFixed(2)}€</p>
                             <h4><strong>Total: {total.toFixed(2)}€</strong></h4>
 
-                            <button className="btn btn-primary" onClick={checkout}>
-                                comprar
+                            <button onClick={checkout} className="btn btn-primary">
+                                Confirmar y pagar
                             </button>
                         </div>
                     </div>
                 </div>
 
-               
                 <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabIndex="0">
-                <div className="container-fluid overflow-hidden my-3 w-50">
-                        <form className="form" onSubmit={handleSubmit}>
-                            <h2 className="text-start">Dirección y método de envío</h2>
-                            <div className="row mb-3">
-                                <div className="col-sm-6">
-                                    <label htmlFor="inputFullName1" className="col-form-label">Nombre</label>
-                                    <input type="text" className="form-control" id="inputFullName1" placeholder="Nombre" onChange={handleChange} name="nombre" value={newContact.nombre} />
-                                </div>
-                                <div className="col-sm-6">
-                                    <label htmlFor="inputFullName2" className="col-form-label">Apellidos</label>
-                                    <input type="text" className="form-control" id="inputFullName2" placeholder="Apellidos" onChange={handleChange} name="apellidos" value={newContact.apellidos} />
-                                </div>
-                            </div>
-                            <div className="row mb-3">
-                                <div className="col-sm-6">
-                                    <label htmlFor="inputPhone" className="col-form-label">Teléfono</label>
-                                    <input type="text" className="form-control" id="inputPhone" placeholder="Teléfono" onChange={handleChange} name="teléfono" value={newContact.teléfono} />
-                                </div>
-                                <div className="col-sm-6">
-                                    <label htmlFor="inputEmail" className="col-form-label">Email</label>
-                                    <input type="text" className="form-control" id="inputEmail" placeholder="Email" onChange={handleChange} name="email" value={newContact.email} />
-                                </div>
-                            </div>
-                            <div className="row mb-3">
-                                <div className="col-sm-12">
-                                    <label htmlFor="inputAddress" className="col-form-label">Dirección</label>
-                                    <input type="text" className="form-control" id="inputAddress" placeholder="Ingrese dirección" onChange={handleChange} name="dirección" value={newContact.dirección} />
-                                </div>
-                            </div>
-                            <div className="row mb-3">
-                                <div className="col-sm-6">
-                                    <label htmlFor="inputPostal" className="col-form-label">Código Postal</label>
-                                    <input type="text" className="form-control" id="inputPostal" placeholder="Código Postal" onChange={handleChange} name="códigoPostal" value={newContact.códigoPostal} />
-                                </div>
-                                <div className="col-sm-6">
-                                    <label htmlFor="inputCiudad" className="col-form-label">Ciudad</label>
-                                    <input type="text" className="form-control" id="inputCiudad" placeholder="Ciudad" onChange={handleChange} name="ciudad" value={newContact.ciudad} />
-                                </div>
-                            </div>
-                            <div className="row my-4">
-                                <div className="col-sm-6">
-                                    <div className="p-3 bg-success text-dark bg-opacity-25 rounded">
-                                        <input className="form-check-input" type="radio" name="envio" id="envioUrgente" value="urgente" />
-                                        <label className="form-check-label" htmlFor="envioUrgente">
-                                            <h5 className="m-0">Envío urgente 4,99€</h5>
-                                            <p>24/48 horas MRW</p>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div className="col-sm-6">
-                                    <div className="p-3 bg-success text-dark bg-opacity-25 rounded">
-                                        <input className="form-check-input" type="radio" name="envio" id="envioGratuito" value="gratuito" />
-                                        <label className="form-check-label" htmlFor="envioGratuito">
-                                            <h5 className="m-0">Envío gratuito</h5>
-                                            <p>Plazo de 3 a 4 días. Puntos de recogida Mondial Relay</p>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="d-flex justify-content-start gx-2">
-                                <button type="submit" className="btn btn-primary me-1">Guardar</button>
-                                <button type="button" className="btn btn-secondary" onClick={() => setNewContact({ nombre: "", apellidos: "", dirección: "", códigoPostal: "", provincia: "", teléfono: "", email: "" })}>Cancelar</button>
-                            </div>
-                        </form>
-
-                        <form>
-                            <h2 className="mt-4">Método de pago</h2>
-                            <div className="col-sm-8 p-3 mb-3 bg-success text-dark bg-opacity-25 rounded">
-                                <input className="form-check-input" type="radio" name="metodoPago" id="tarjetaCredito" value="tarjeta" />
-                                <label className="form-check-label" htmlFor="tarjetaCredito">
-                                    <h5 className="m-0">Tarjeta de crédito</h5>
-                                </label>
-                                <div className="row p-3 gx-6">
-                                    <div className="col-md-6">
-                                        <label htmlFor="inputCardNumber" className="form-label">Número de tarjeta</label>
-                                        <input type="text" className="form-control" id="inputCardNumber" placeholder="XXXXXXXXXXXX" />
-                                    </div>
-                                    <div className="col-md-3">
-                                        <label htmlFor="inputCvc" className="form-label">CVC:</label>
-                                        <input type="text" className="form-control" id="inputCvc" placeholder="0000" />
-                                    </div>
-                                    <div className="col-md-3">
-                                        <label htmlFor="inputExpiry" className="form-label">Caducidad:</label>
-                                        <input type="text" className="form-control" id="inputExpiry" placeholder="MM/AA" />
-                                    </div>
-                                    <div className="col-md-12">
-                                        <label htmlFor="inputFirstName" className="form-label">Títular de la tarjeta:</label>
-                                        <input type="text" className="form-control" id="inputFirstName" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="col-sm-8 p-3 mb-3 bg-success text-dark bg-opacity-25 rounded">
-                                <input className="form-check-input" type="radio" name="metodoPago" id="paypal" value="paypal" />
-                                <label className="form-check-label" htmlFor="paypal">
-                                    <h5 className="m-0">PayPal</h5>
-                                </label>
-                                <div className="d-flex justify-content-between align-items-center">
-                                    <p className="mb-0">Pago con mi cuenta de Paypal</p>
-                                    <FontAwesomeIcon icon={faPaypal} size="3x" />
-                                </div>
-                            </div>
-
-                            <div className="d-flex justify-content-start">
-                                <button type="submit" className="btn btn-primary me-1">Pagar</button>
-                                <button type="button" className="btn btn-secondary">Cancelar</button>
-                            </div>
-                        </form>
-                    </div>
+                <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabIndex="0">
+          <div className="container-fluid overflow-hidden my-3 w-50">
+            <form className="form" onSubmit={handleSubmit}>
+              <h2 className="text-start">Dirección y método de envío</h2>
+              <div className="row mb-3">
+                <div className="col-sm-6">
+                  <label htmlFor="inputFullName1" className="col-form-label">Nombre</label>
+                  <input type="text" className="form-control" id="inputFullName1" placeholder="Nombre" onChange={handleChange} name="nombre" value={newContact.nombre} />
                 </div>
-            </div>
+                <div className="col-sm-6">
+                  <label htmlFor="inputFullName2" className="col-form-label">Apellidos</label>
+                  <input type="text" className="form-control" id="inputFullName2" placeholder="Apellidos" onChange={handleChange} name="apellidos" value={newContact.apellidos} />
+                </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col-sm-6">
+                  <label htmlFor="inputPhone" className="col-form-label">Teléfono</label>
+                  <input type="text" className="form-control" id="inputPhone" placeholder="Teléfono" onChange={handleChange} name="teléfono" value={newContact.teléfono} />
+                </div>
+                <div className="col-sm-6">
+                  <label htmlFor="inputEmail" className="col-form-label">Email</label>
+                  <input type="text" className="form-control" id="inputEmail" placeholder="Email" onChange={handleChange} name="email" value={newContact.email} />
+                </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col-sm-12">
+                  <label htmlFor="inputAddress" className="col-form-label">Dirección</label>
+                  <input type="text" className="form-control" id="inputAddress" placeholder="Ingrese dirección" onChange={handleChange} name="dirección" value={newContact.dirección} />
+                </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col-sm-6">
+                  <label htmlFor="inputPostal" className="col-form-label">Código Postal</label>
+                  <input type="text" className="form-control" id="inputPostal" placeholder="Código Postal" onChange={handleChange} name="códigoPostal" value={newContact.códigoPostal} />
+                </div>
+                <div className="col-sm-6">
+                  <label htmlFor="inputCiudad" className="col-form-label">Ciudad</label>
+                  <input type="text" className="form-control" id="inputCiudad" placeholder="Ciudad" onChange={handleChange} name="ciudad" value={newContact.ciudad} />
+                </div>
+              </div>
+              <div className="row my-4">
+                <div className="col-sm-6">
+                  <div className="p-3 bg-success text-dark bg-opacity-25 rounded">
+                    <input className="form-check-input" type="radio" name="envio" id="envioUrgente" value="urgente" />
+                    <label className="form-check-label" htmlFor="envioUrgente">
+                      <h5 className="m-0">Envío urgente 4,99€</h5>
+                      <p>24/48 horas MRW</p>
+                    </label>
+                  </div>
+                </div>
+                <div className="col-sm-6">
+                  <div className="p-3 bg-success text-dark bg-opacity-25 rounded">
+                    <input className="form-check-input" type="radio" name="envio" id="envioGratuito" value="gratuito" />
+                    <label className="form-check-label" htmlFor="envioGratuito">
+                      <h5 className="m-0">Envío gratuito</h5>
+                      <p>Plazo de 3 a 4 días. Puntos de recogida Mondial Relay</p>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div className="d-flex justify-content-start gx-2">
+                <button type="submit" className="btn btn-primary me-1">Guardar</button>
+                <button type="button" className="btn btn-secondary" onClick={() => setNewContact({ nombre: "", apellidos: "", dirección: "", códigoPostal: "", provincia: "", teléfono: "", email: "" })}>Cancelar</button>
+              </div>
+            </form>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+    </div>
+  );
 };

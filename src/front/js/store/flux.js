@@ -20,7 +20,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			catFood: [],
 			exoticFood: [],
 			productos: [],
-			cart: []
+			cart: [],
+			detallesProductos: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -201,20 +202,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error('Error fetching cat food:', error);
 				}
 			}
-			,
+			// ,
 
+			// getAllFoods: async () =>{
+			// const myHeaders = new Headers();
+			// myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZshKSYoFOLJxckC2rKyB3dOYiphduuVGauXscSVDHJSbvJgLpRj2KSenjS4loYD-39cHkPc74ABsGZgCtQn9-EXx0NhR2J3RgLlI0MU7rJvY4DY7LwLR6EP0XbFAJSJdWgaDd33sUFSYk6fB04RyCVJJ13afixzEElcyku8FjPfz_OW89kqICedg_yAID42JHYhTFOq7qncpFQInaGXtlu2gGXKutLn5BPpvQ6NVacEefS69g0Hi72czK4MELyopZJwnF2KBkrxxIIjaQgajtf8xarI_uMPqH25RiYW61fZJxcx8uqBP7C71ruU6xns0GWHyYhp0B4PBnxl9WnF22zXcXW79I9pPMERKWwPiR8NtYxSse6CYkGKvDY-ZsRZdS_wOiALQYppvsg-jTDLiLcOZR3idSHjoYy-ZKnscUUOeELRk3IKTWrIews5TdZWyL3QbLh2uDAEjxJ0DrV8TQut2Xh3sd4ls3-HY1HEKs9uJTOsqNzEZDKA5vdr9iPoowd0Uw_qLBeADAtMyxb2IGbVXxeWlIXKxku4ug3i9gv_j2B5bpc3w1DygivsLiFRTdbgh9H54-WIFQ1Y4oUuE_dMIV6gOLTY2ln5JPm7htT4Om8s91j-RQaejkjyzLF17AXIuT3NWRiQDb5sXbKt-Vm97j1kf5O3ypsm2Eq1n-TNHEwccpHmNPoSRLHkRQxaHn4WBBpkR38ocsiICRQAHiztodn5d3ge1YvRq0W2Bwk7yBN-UlpRIHKn6eSGdQmsZUomI7T8mpcByC79Qv8V0Ap22TWXJKQiVFZwGIZWd1ZEz-VPspansl97euPeXeMKo_r9K-hcMmqDO6y0bf2_mPrkQWd2jZaxccTAMH7KIIXC7UcpCa5YUL0pHWpnMprebsvfP0PBXmYZ9kQB2wszruNYXOqy-QSYZkmQfpNymbNpnjEXmVmTtuxxF7t60W01dkf55aep5trg-2ot2jLh9Er2");
+
+			// const requestOptions = {
+			// method: "GET",
+			// headers: myHeaders,
+			// redirect: "follow"
+			// };
+
+			// try {
+			// const response = await fetch(`${process.env.BACKEND_URL}/api/foods`);
+			// const data = await response.json();
+			// setStore({ detallesProductos : data });
+			// console.log(data)
+			// } catch (error) {
+			// console.error(error);
+			// };
+			// }
+			,
 			getUser: async () => {
 				try {
 					const token = localStorage.getItem("token");
 					if (!token) throw new Error("No token found");
 
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/user`, {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/user`, {
 						headers: {
 							"Authorization": `Bearer ${token}`
 						}
 					});
 
-					if (!resp.ok) throw new Error("Error al obtener el usuario");
+					if (!response.ok) throw new Error("Error al obtener el usuario");
 
 					const data = await resp.json();
 					setStore({ user: data });
@@ -287,40 +308,49 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// 		console.error(error);
 			// 	}
 			// }
+			// ,
 
 			createOrder: async (orderData) => {
 				const myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
 				myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
-
+			  
 				const raw = JSON.stringify(orderData);
-
+			  
 				const requestOptions = {
-					method: "POST",
-					headers: myHeaders,
-					body: raw,
-					redirect: "follow",
+				  method: "POST",
+				  headers: myHeaders,
+				  body: raw,
+				  redirect: "follow",
 				};
-
+			  
 				try {
-					const id = JSON.parse(localStorage.getItem("user")).id;
-					const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
-
-					if (!response.ok) {
-						throw new Error("Error al crear la orden");
-					}
-
-					const result = await response.json();
-					console.log("Orden creada exitosamente:", result);
-
-					// Asegúrate de que el backend devuelva un objeto con `success: true`
-					return { success: true, ...result };
+				  const id = JSON.parse(localStorage.getItem("user")).id;
+				  const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
+			  
+				  if (!response.ok) {
+					throw new Error("Error al crear la orden");
+				  }
+			  
+				  const result = await response.json();
+				  console.log("Orden creada exitosamente:", result);
+			  
+				  // Asegúrate de que el backend devuelva un objeto con `success: true`
+				  return { success: true, ...result };
 				} catch (error) {
-					console.error("Error al enviar la orden:", error);
-					return { success: false, error: error.message };
+				  console.error("Error al enviar la orden:", error);
+				  return { success: false, error: error.message };
 				}
+			  },
+
+			  removeFromCart: (productoId) => {
+				setStore({
+					cart: store.cart.filter(item => item.id !== productoId),
+				});
 			}
 			,
+
+
 
 			createPet: async (newPet) => {
 				const myHeaders = new Headers();
@@ -361,6 +391,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			}
 			,
+			  // Función para eliminar un favorito directamente por su `uid`
+			//   removeFavorite: (id) => {
+			// 	const store = getStore(); // Obtiene el estado actual
+			// 	setStore({
+			// 	  cart: store.cart.filter((fav) => fav.id !== id), // Filtra y excluye el favorito con el UID dado
+			// 	});
+			//   }
+			//   ,
 
 
 			changeColor: (index, color) => {
