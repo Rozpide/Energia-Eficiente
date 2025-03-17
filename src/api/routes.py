@@ -90,23 +90,36 @@ def get_pet(pet_id):
 @api.route('/foods/suggestions/<int:pet_id>', methods=['GET'])
 @jwt_required()
 def get_pet_suggestions(pet_id):
-    pet = Pet.query.get(pet_id).serialize()
-    # Problema: Un animal puede tener varias patologias en su campo, habría que coger este campo y tratarlo,
+    pet = Pet.query.filter_by(id=pet_id).first()
+    print(pet)
+    if pet is None:
+        return jsonify({"msg": "Pet no exist"}), 404
+    # pet = Pet.query.get(pet_id).serialize()
+    # Problema: Un animal puede tener varias patologias en su campo, habría que co
+    # ger este campo y tratarlo,
     # separar las patologias en una lista y hacer la query para cada patologia.
     # Solucion simple: limitar a 1 patologia cada animal por ahora
-    #if para pet# anymal_type == perro, animal size    #si no no hace falta size
-    if pet["animal_type"] == "perro":
-        food_suggestions = db.session.execute(select(Food).where(and_(Food.animal_type==pet["animal_type"]),
-                                                             Food.size==pet["size"],
-                                                             Food.age==pet["age"],
-                                                             Food.pathologies==pet["pathologies"])).all()
+    # if para pet# anymal_type == perro, animal size   #si no no hace falta size
+    if pet.animal_type == "perro":
+       food_suggestions = db.session.execute(select(Food).where(and_(Food.animal_type==pet.animal_type),
+                                                            Food.size==pet.size,
+                                                            Food.age==pet.age,
+                                                            Food.pathologies==pet.pathologies)).all()
     else:
-        food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet["animal_type"]),
-                                                             Food.age==pet["age"],
-                                                             Food.pathologies==pet["pathologies"]).all()
+       food_suggestions = db.session.execute(select(Food).where(Food.animal_type==pet.animal_type),
+                                                            Food.age==pet.age,
+                                                            Food.pathologies==pet.pathologies).all()
     if not food_suggestions :
-        return "no suggestions found", 404
+       return "no suggestions found", 404
     return [food[0].serialize() for food in food_suggestions], 200
+    return jsonify("okey"), 200
+
+
+
+
+
+
+
 
 
 # #obtener sugerencias de comida según mascota
@@ -347,16 +360,16 @@ def create_pet():
     current_user_email = get_jwt_identity()
     user = User().query.filter_by(email=current_user_email).first()
 
-    if not user:
+    if not user: 
         return jsonify({"msg": "usuario no encontrado"}), 400
 
     new_pet = Pet(
         name=data["name"],
-        size= None,
-        breed= None,
+        size= data["size"],
+        breed= data["breed"],
         age=data["age"],
         animal_type=data["animal_type"],
-        pathologies= None,
+        pathologies= data["pathologies"],
         url=data.get("url"),  # Asegúrate de que se está obteniendo correctamente
         user_id=user.id
         )
@@ -424,7 +437,7 @@ def update_user():
     })
 
 
-@api.route('/pets/<int:pet_id>', methods=['PUT'])
+@api.route('/pet/<int:pet_id>', methods=['PUT'])
 @jwt_required()
 def new_pet(pet_id):
     data = request.get_json()
@@ -502,7 +515,7 @@ def delete_user():
 @jwt_required()
 def delete_pet(pet_id):
     
-    pet = Pet.query.get(pet_id).first()
+    pet = Pet.query.get(pet_id)
 
     # Eliminar la mascota de la base de datos
     db.session.delete(pet)
@@ -512,7 +525,6 @@ def delete_pet(pet_id):
     return jsonify({
         'message': f'Pet {pet.name} with id {pet.id} has been deleted successfully.'
     }), 200
-
 
 @api.route('/search', methods=['GET'])
 def search_product():

@@ -12,7 +12,7 @@ import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
-
+import { VistaMascota } from "./pages/vistaMascota";
 import { VistaProducto } from "./pages/VistaProducto";
 
 import { LoginSignup } from "./pages/loginSignup";
@@ -52,6 +52,7 @@ const PageWithNavbar = () => {
                 <Route element={<Home />} path="/" />
                 <Route element={<VistaProducto />} path="/vista-producto/:id" />
                 <Route element={<LoginSignup />} path="/loginSignup" />
+                <Route element={<VistaMascota />} path="/pets/:id" />
                 <Route element={<PerfilUsuario />} path="/perfilUsuario" />
                 <Route element={<Demo />} path="/demo" />
                 <Route element={<Single />} path="/single/:theid" />
