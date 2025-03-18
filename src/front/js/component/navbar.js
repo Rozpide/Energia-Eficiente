@@ -15,8 +15,9 @@ export const Navbar = () => {
 	}, [user, cart]);
 
      // Contar la cantidad de productos en el carrito
-     const cartItemCount = cart.length; 
-
+    //  const cartItemCount = cart.length; 
+     const totalUnidades = store.cart.reduce((total, producto) => total + (producto.cantidad || 1), 0)
+    // const totalUnidades = cart.reduce((total, producto) => total + (producto.cantidad || 1), 0);
     return (
         <nav className="navbar navbar-expand-lg shadow-lg" style={{ 
             background: "linear-gradient(180deg, #FBD989 5%, #F4C4A4 40%, #EC955B 95%)",
@@ -63,7 +64,8 @@ export const Navbar = () => {
                                     <span className="fw-semibold">Perfil</span>
                                 </Link>
                                 <Link to="/carrito" className="btn btn-warning d-flex align-items-center">
-                                    <FaShoppingCart size={18} className="me-1" /> Cesta {cartItemCount > 0 && `(${cartItemCount})`}
+                                    {/* <FaShoppingCart size={18} className="me-1" /> Cesta {cartItemCount > 0 && `(${cartItemCount})`} */}
+                                    <FaShoppingCart size={18} className="me-1" /> Cesta {totalUnidades > 0 && `(${totalUnidades})`}
                                 </Link>
                                 <button className="btn btn-light text-muted border-0 d-flex align-items-center" onClick={actions.logout}>
                                     <FaSignOutAlt size={16} className="me-1" /> Salir

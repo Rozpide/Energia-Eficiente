@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Context } from "../store/appContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaypal } from '@fortawesome/free-brands-svg-icons';
+
 
 export const CarritoPago = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-
+    const {totalAmount, currency} = useParams();
     const [newContact, setNewContact] = useState({
         nombre: "",
         apellidos: "",
@@ -17,7 +18,7 @@ export const CarritoPago = () => {
         teléfono: "",
         email: "",
     });
-
+    const eur = currency
     const productos = store.cart;
 
     const [carrito, setCarrito] = useState(
@@ -44,6 +45,7 @@ export const CarritoPago = () => {
         const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
         return { subtotal, total, totalUnidades };
     };
+    
 
     const { subtotal, total, totalUnidades } = calcularTotal();
 
@@ -77,39 +79,7 @@ export const CarritoPago = () => {
                 console.error("Error al enviar la orden:", error);
             });
     };
-    // const checkout = (e) => {
-    //     e.preventDefault();
-    
-    //     const orderData = {
-    //         selected_food: store.cart.map(item => item.id),
-    //         selected_accessory: [],
-    //         status: "carrito",
-    //     };
-    
-    //     actions.createOrder(orderData)
-    //         .then(response => {
-    //             if (response.success) {
-    //                 console.log("Orden creada exitosamente");
-    
-    //                 // Cambiar a la pestaña de "Dirección de envío y pago"
-    //                 setTimeout(() => {
-    //                     const profileTabElement = document.getElementById('profile-tab');
-    //                     if (profileTabElement) {
-    //                         const profileTab = new window.bootstrap.Tab(profileTabElement);
-    //                         profileTab.show(); // Activa la pestaña
-    //                     } else {
-    //                         console.error("No se encontró el elemento con id 'profile-tab'");
-    //                     }
-    //                 }, 100); // Espera 100ms antes de intentar activar la pestaña
-    //             } else {
-    //                 console.error("Error al crear la orden:", response);
-    //             }
-    //         })
-    //         .catch(error => {
-    //             console.error("Error al enviar la orden:", error);
-    //         });
-    // };
-
+   
     const cancelOrder = (e) => {
         // 1. Restablecer los valores de newContact
         setNewContact({
@@ -125,7 +95,7 @@ export const CarritoPago = () => {
         // 2. Activar la pestaña "home-tab-pane"
         const homeTabElement = document.getElementById('home-tab-pane');
         if (homeTabElement) {
-            // Obtener el elemento del tab que activa la pestaña
+            // elemento del tab que activa la pestaña
             const homeTabTrigger = document.querySelector('[data-bs-target="#home-tab-pane"]');
             if (homeTabTrigger) {
                 const homeTab = new window.bootstrap.Tab(homeTabTrigger);
@@ -145,17 +115,52 @@ export const CarritoPago = () => {
         console.log('Datos enviados:', newContact);
     };
 
-    const handleRemoveProduct = (productoId) => {
-        // Eliminar del estado local
-        const nuevoCarrito = carrito.filter(item => item.id !== productoId);
-        setCarrito(nuevoCarrito);
+    // const handleRemoveProduct = (productoId) => {
+    //     // Eliminar del estado local
+    //     const nuevoCarrito = carrito.filter(item => item.id !== productoId);
+    //     setCarrito(nuevoCarrito);
 
-        // Eliminar del estado global
-        actions.removeFromCart(productoId);
+    //     // Eliminar del estado global
+    //     actions.removeFromCart(productoId);
+    // };
+
+
+    const handleRemoveProduct = (productoId) => {
+        const productoEnCarrito = carrito.find(item => item.id === productoId);
+         if (productoEnCarrito) {
+            if (productoEnCarrito.cantidad > 1) {
+                // Si hay más de una unidad, reducir la cantidad en 1
+                const nuevoCarrito = carrito.map(item =>
+                    item.id === productoId ? { ...item, cantidad: item.cantidad - 1 } : item
+                );
+                setCarrito(nuevoCarrito);
+                const nuevoStoreCart = store.cart.map(item =>
+                    item.id === productoId ? { ...item, cantidad: item.cantidad - 1 } : item
+                );
+                actions.setCart(nuevoStoreCart);
+            } else {
+                // Si solo hay una unidad, eliminar el producto del carrito
+                const nuevoCarrito = carrito.filter(item => item.id !== productoId);
+                setCarrito(nuevoCarrito);
+                const nuevoStoreCart = store.cart.filter(item => item.id !== productoId);
+                actions.setCart(nuevoStoreCart);
+            }
+        }
     };
 
+    const checkoutPay = (e) => {
+        e.preventDefault();
+        const totalRedondeado = Math.round(total * 100) / 100; // Redondea a 2 decimales
+        navigate(`/checkout/${totalRedondeado}/eur`);
+    };
+
+    // useEffect(() => {
+    //     console.log("Carrito actualizado:", store.cart);
+    // }, [store.cart]);
+
     useEffect(() => {
-        console.log("Carrito actualizado:", store.cart);
+        // Sincronizar el estado local (carrito) con el estado global (store.cart)
+        setCarrito(store.cart.map(producto => ({ ...producto, cantidad: producto.cantidad || 1 })));
     }, [store.cart]);
 
     return (
@@ -209,6 +214,13 @@ export const CarritoPago = () => {
                                                                 <option value="1">1 ud.</option>
                                                                 <option value="2">2 uds.</option>
                                                                 <option value="3">3 uds.</option>
+                                                                <option value="4">4 uds.</option>
+                                                                <option value="5">5 uds.</option>
+                                                                <option value="6">6 uds.</option>
+                                                                <option value="7">7 uds.</option>
+                                                                <option value="8">8 uds.</option>
+                                                                <option value="9">9 uds.</option>
+                                                                <option value="10">10 uds.</option>
                                                             </select>
                                                             <button
                                                                 className="btn btn-light btn-sm ms-auto"
@@ -228,17 +240,17 @@ export const CarritoPago = () => {
 
                         <div className="row carrito col-md-3 m-3 p-4 rounded border" style={{ width: "400px", height: "400px" }}>
                             <h3 className="p-3">Resumen del carrito</h3>
-                            <ul>
-                                {carrito.map(item => (
-                                    <li key={item.id}>
-                                        {item.name} - {item.cantidad} unidades
-                                    </li>
-                                ))}
-                            </ul>
-                            <p>Total de productos: {totalUnidades}</p>
-                            <p>Subtotal: {subtotal}€</p>
-                            <p>IVA (21%): {(subtotal * 0.21).toFixed(2)}€</p>
-                            <h4><strong>Total: {total.toFixed(2)}€</strong></h4>
+                                <ul>
+                                    {carrito.map(item => (
+                                        <li key={item.id}>
+                                            {item.name} - {item.cantidad} unidades
+                                        </li>
+                                    ))}
+                                </ul>
+                                <p>Total de productos: {totalUnidades}</p>
+                                <p>Subtotal: {subtotal.toFixed(2)}€</p>
+                                <p>IVA (21%): {(subtotal * 0.21).toFixed(2)}€</p>
+                                <h4><strong>Total: {total.toFixed(2)}€</strong></h4>
 
                             <button className="btn btn-primary"  onClick={checkout}>
                                 Confirmar y pagar
@@ -311,7 +323,8 @@ export const CarritoPago = () => {
               <div className="d-flex justify-content-start gx-2">
                 
                 <button type="button" className="btn btn-secondary" onClick={cancelOrder}>Cancelar</button>
-                <button type="submit" className="btn btn-primary me-1">Confirmar y pagar</button>
+                <button type="submit" className="btn btn-primary me-1" onClick={checkoutPay}>Confirmar y pagar</button>
+                {/* <Link to=(`/checkout/${totalAmount}/${currency}`) type="submit" className="btn btn-primary me-1">Confirmar y pagar</Link> */}
               </div>
             </form>
           </div>

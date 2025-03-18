@@ -288,51 +288,31 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+            createPet: async (newPet) => {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`)
+                const raw = JSON.stringify(newPet);
 
+                const requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw
+                };
 
-
-
-            getMessage: async () => {
                 try {
-                    // fetching data from the backend
-                    const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
-                    const data = await resp.json()
-                    setStore({ message: data.message })
-                    // don't forget to return something, that is how the async resolves
-                    return data;
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/pets`, requestOptions);
+                    if (!response.ok) {
+                        throw new Error(`Error al añadir mascota: ${response.statusText}`);
+                    }
+                    const result = await response.json();
+                    console.log(result);
+                    return ({ success: true })
                 } catch (error) {
-                    console.log("Error loading message from backend", error)
+                    console.error(error);
                 }
-            },
-            // Modificación de la función createOrder en getState
-            // createOrder: async (orderData) => {
-            //  const myHeaders = new Headers();
-            //  myHeaders.append("Content-Type", "application/json");
-            //  myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
-
-            //  const raw = JSON.stringify(orderData);
-
-            //  const requestOptions = {
-            //      method: "POST",
-            //      headers: myHeaders,
-            //      body: raw,
-            //      redirect: "follow",
-            //  };
-
-            //  try {
-            //      const id = JSON.parse(localStorage.getItem("user")).id;
-            //      const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
-            //      const result = await response.json();
-            //      console.log(result);
-            //      // Manejar respuesta de éxito o error
-
-            //      return result;
-
-            //  } catch (error) {
-            //      console.error(error);
-            //  }
-            // }
-            // ,
+            }
+            ,
 
             createOrder: async (orderData) => {
                 const myHeaders = new Headers();
@@ -369,52 +349,98 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             removeFromCart: (productoId) => {
                 setStore({
-                    cart: store.cart.filter(item => item.id !== productoId),
+                    cart: getStore.cart.filter(item => item.id !== productoId),
                 });
             }
             ,
 
+            //Seteo para eliminar producto del carrito
+            setCart: (newCart) => {
+                setStore({
+                    ...getStore,
+                    cart: newCart, // Actualiza el carrito en el estado global
+                });
+            },
 
-
-            createPet: async (newPet) => {
-                const myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
-                myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`)
-                const raw = JSON.stringify(newPet);
-
-                const requestOptions = {
-                    method: "POST",
-                    headers: myHeaders,
-                    body: raw
-                };
-
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/pets`, requestOptions);
-                    if (!response.ok) {
-                        throw new Error(`Error al añadir mascota: ${response.statusText}`);
-                    }
-                    const result = await response.json();
-                    console.log(result);
-                    return ({ success: true })
-                } catch (error) {
-                    console.error(error);
-                }
-            }
-            ,
-
-            // Función para agregar
-            addToCart: (item) => {
+              addToCart: (item) => {
                 const store = getStore(); // Obtiene el estado actual
-
+            
                 if (item) { // Verifica que el item no sea null o undefined
-                    setStore({
-                        cart: [...store.cart, item], // Añade el producto al carrito
-                    });
+                    const productoExistente = store.cart.find(producto => producto.id === item.id);
+            
+                    if (productoExistente) {
+                        // Si el producto ya está en el carrito, incrementa su cantidad
+                        const nuevoCarrito = store.cart.map(producto =>
+                            producto.id === item.id ? { ...producto, cantidad: (producto.cantidad || 1) + 1 } : producto
+                        );
+                        setStore({ cart: nuevoCarrito });
+                    } else {
+                        // Si el producto no está en el carrito, lo añade con cantidad 1
+                        setStore({ cart: [...store.cart, { ...item, cantidad: 1 }] });
+                    }
                 } else {
                     console.error("No se puede añadir el producto: el item es inválido.");
                 }
             }
             ,
+            // addToCart: (item) => {
+            //     const store = getStore(); // Obtiene el estado actual
+            
+            //     if (item) { // Verifica que el item no sea null o undefined
+            //         const productoExistente = store.cart.find(producto => producto.id === item.id);
+            
+            //         if (productoExistente) {
+            //             // Si el producto ya está en el carrito, incrementa su cantidad
+            //             const nuevoCarrito = store.cart.map(producto =>
+            //                 producto.id === item.id ? { ...producto, cantidad: (producto.cantidad || 1) + 1 } : producto
+            //             );
+            //             setStore({ cart: nuevoCarrito });
+            //         } else {
+            //             // Si el producto no está en el carrito, lo añade con cantidad 1
+            //             setStore({ cart: [...store.cart, { ...item, cantidad: 1 }] });
+            //         }
+            //     } else {
+            //         console.error("No se puede añadir el producto: el item es inválido.");
+            //     }
+            // },
+
+            // // Función para agregar
+            // addToCart: (item) => {
+            //     const store = getStore(); // Obtiene el estado actual
+
+            //     if (item) { // Verifica que el item no sea null o undefined
+            //         setStore({
+            //             cart: [...store.cart, item], // Añade el producto al carrito
+            //         });
+            //     } else {
+            //         console.error("No se puede añadir el producto: el item es inválido.");
+            //     }
+            // }
+            
+            // ,
+             addToCart: (item) => {
+            const store = getStore(); // Obtiene el estado actual
+
+            if (item) { // Verifica que el item no sea null o undefined
+                const productoExistente = store.cart.find(producto => producto.id === item.id);
+
+                if (productoExistente) {
+                    // Si el producto ya está en el carrito, incrementa su cantidad
+                    const nuevoCarrito = store.cart.map(producto =>
+                        producto.id === item.id ? { ...producto, cantidad: (producto.cantidad || 1) + 1 } : producto
+                    );
+                    setStore({ cart: nuevoCarrito });
+                } else {
+                    // Si el producto no está en el carrito, lo añade con cantidad 1
+                    setStore({ cart: [...store.cart, { ...item, cantidad: 1 }] });
+                }
+
+                // Verifica el estado del carrito después de la actualización
+                console.log(getStore().cart);
+            } else {
+                console.error("No se puede añadir el producto: el item es inválido.");
+            }
+        },
 
             // Función para eliminar un favorito directamente por su `uid`
             //   removeFavorite: (id) => {
@@ -424,7 +450,18 @@ const getState = ({ getStore, getActions, setStore }) => {
             //  });
             //   }
             //   ,
-
+            getMessage: async () => {
+                try {
+                    // fetching data from the backend
+                    const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
+                    const data = await resp.json()
+                    setStore({ message: data.message })
+                    // don't forget to return something, that is how the async resolves
+                    return data;
+                } catch (error) {
+                    console.log("Error loading message from backend", error)
+                }
+            },
 
             changeColor: (index, color) => {
                 //get the store

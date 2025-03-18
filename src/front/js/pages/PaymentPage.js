@@ -15,26 +15,29 @@ import { CheckoutForm } from "../component/CheckoutForm";
      const [loading, setLoading] = useState(true);
  
      useEffect(() => {
-         if (!totalAmount || !currency) return;
- 
-         setLoading(true);
- 
-         fetch(`${process.env.BACKEND_URL}/api/create-payment`, {
-             method: "POST",
-             headers: { "Content-Type": "application/json" },
-             body: JSON.stringify({ amount: totalAmount * 100, currency: currency }),
-         })
-             .then(res => res.json())
-             .then(data => {
-                 if (data.clientSecret) {
-                     setClientSecret(data.clientSecret);
-                 } else {
-                     console.error("Error: clientSecret no recibido", data);
-                 }
-             })
-             .catch(error => console.error("Error en la petición:", error))
-             .finally(() => setLoading(false));
-     }, [totalAmount, currency]);
+        if (!totalAmount || !currency) return;
+    
+        setLoading(true);
+    
+        // Convertir el totalAmount a un número y redondearlo
+        const amountInCents = Math.round(parseFloat(totalAmount) * 100);
+    
+        fetch(`${process.env.BACKEND_URL}/api/create-payment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount: amountInCents, currency: currency }),
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.clientSecret) {
+                    setClientSecret(data.clientSecret);
+                } else {
+                    console.error("Error: clientSecret no recibido", data);
+                }
+            })
+            .catch(error => console.error("Error en la petición:", error))
+            .finally(() => setLoading(false));
+    }, [totalAmount, currency]);
  
      if (loading) return <p>Generando pago...</p>;
      if (!clientSecret) return <p>Error: No se pudo obtener el clientSecret</p>; // 🔥 Manejo de error

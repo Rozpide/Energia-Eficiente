@@ -121,9 +121,9 @@ export const RegistroMascota = () => {
                             required
                         >
                             <option value="">Selecciona una opción</option>
-                            <option value="razaPequeña">Pequeño (0-10kg)</option>
-                            <option value="razaMediana">Mediano (10-25kg)</option>
-                            <option value="razaGrande">Grande (+25Kg)</option>
+                            <option value="pequeño">Pequeño (0-10kg)</option>
+                            <option value="mediano">Mediano (10-25kg)</option>
+                            <option value="grande">Grande (+25Kg)</option>
                         </select>
                     </div>
                     <div className="mb-3">
@@ -154,6 +154,7 @@ export const RegistroMascota = () => {
                             required
                         >
                             <option value="">Selecciona una opción</option>
+                            <option value="ninguna">Ninguna</option>
                             <option value="diabetico">Diabetes</option>
                             <option value="renal">Insuficiencia renal</option>
                             <option value="urinarioStruvita">Urinario Struvita</option>

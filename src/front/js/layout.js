@@ -20,7 +20,7 @@ import { RegistroMascota } from "./pages/RegistroMascota";
 import { CarritoPago } from "./pages/CarritoPago";
 import { StripePromise } from "./pages/PaymentPage";
 import { PaymentPage } from "./pages/PaymentPage";
-
+import AlertComponent from "./pages/AlertComponent";
 
 
 
@@ -61,6 +61,7 @@ const PageWithNavbar = () => {
                 <Route element={<RegistroMascota />} path="/registro-mascota" />
                 <Route element={<CarritoPago />} path="/carrito" />
                 <Route path="/checkout/:totalAmount/:currency" element={<PaymentPage />} />
+                <Route element={<AlertComponent />} path="/confirmacion-pedido" /> 
 
                 <Route element={<h1>Not found!</h1>} path="*" />
             </Routes>
