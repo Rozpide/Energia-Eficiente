@@ -6,7 +6,7 @@ import "../../styles/home.css";
 export const LoginSignup = () => {
     const { actions, store } = useContext(Context);
     const navigate = useNavigate();
-    
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -20,7 +20,7 @@ export const LoginSignup = () => {
         setLoading(true);
         setError('');
         setSuccessMessage('');
-    
+
         try {
             const dataUser = { name, email, password };
             if (isSignup) {
@@ -28,7 +28,7 @@ export const LoginSignup = () => {
                 setSuccessMessage('¡Registro exitoso! Redirigiendo a inicio de sesión...');
                 setTimeout(() => {
                     setIsSignup(false);
-                }, 3000);
+                },);
             } else {
                 await actions.login(email, password, navigate);
             }
@@ -41,7 +41,7 @@ export const LoginSignup = () => {
             setLoading(false);
         }
     };
-    
+
     return (
         <div className="registration-view-container" style={{ background: "linear-gradient(to bottom, #FCE5CD, #FFFFFF)" }}>
             <div className="form-container">
@@ -67,6 +67,14 @@ export const LoginSignup = () => {
                         </button>
                         {error && <p className="error-message">{error}</p>}
                         <p onClick={() => setIsSignup(true)}>¿No tienes cuenta? <strong>Regístrate</strong></p>
+                        
+                        {/* NUEVO: Enlace para recuperación de contraseña */}
+                        <p>
+                            ¿Olvidaste tu contraseña? <Link to="/RecuperacionContraseña">Recupérala aquí</Link>
+                        </p>
+                        <p>
+                            <Link to="/">Volver</Link>
+                        </p>
                     </form>
                 )}
                 {isSignup && (
