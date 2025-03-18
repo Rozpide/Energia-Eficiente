@@ -19,6 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			dogFood: [],
 			catFood: [],
 			exoticFood: [],
+			accessories: [],
 			productos:[],
 			cart:[],
 			pets: []
@@ -203,6 +204,31 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			}
 			,
+
+			getAccessories: async () => {
+				const myHeaders = new Headers();
+				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZuqp5-e7T1vVCCdEQ0C1wStd1vPjajnZKjnPSA5Hq6rqD8KnBNHzrxCrSBqwnlunA0rkm36DsRzpvbpKLHVNklCfX8GBsMZKstrANOENBUzsSi1PBxW5_TibtPeRePzgNe5pBHuYx5F-1zm7-FoplLOZKZUFeRu1ua1DgiPeOiqvYSnKMQISiWoLb64DlQlSfXIGkFzVDFsFNPJ5lN-NHmI9dQ4O8b8EtoLAvXug1GQ5WkthHTcarTf_lXY5fcoEJbvhObGkUw7LC07jfKn2BTk27bZGx_F2kXNKq2N32CJ_46MMiulhV3sVpuuBUenZ-P7eLMcyMYuz6LcVrybPlrmHBiCnIbgcmgn-jnL-P3rcWL49L8RpPU84Ul4CaOZTFZ7eFCUqa1m1YKjX21YEdJlEm8fyYpFYcFp_9mGziKaxChcel7DevH4J4NV-E1mEUnQP-wDBMVq1IH0wdb4_HSnZ8aBhyyb8GvuEuLIhlH4soY8xtKNlaM73kynXCEhJ2OH-eKM6XIkWQHVIENwRoWzjj8G-8jQcJjz1Clyo9lMuFB98AWfsJgqe_PO7PgIw_Ms8_hRKyGG_aej9UuBo8rS-u4vTGaj5v_1vp6_PrZ-qEp8iyGGK_0OERl5OH0S3_mcXOd1wQcpFQ76RR6qtXqju2G8WkN9e3xC9XvP3SWVDIc5195fVj_1gRGLUCC20Uu5uPC0yzuE2X_TrcjKq0-SeWiyVIphc1T7AoJ2PvAu74js-66UPPcjXqoQvGXCzwrwhPdzXAp8n6sVwGcfRthrk2AOD4U8XJz68aBA5aRx77sqsMKKFIbCRXjRfOcAoa214qR5Oz7-nnKj1dII9Rx_g9ZD7SS_Mjm5Sk3M_Mr0zZNDzN7YWd_j3WhN9Gvr1MOeU6aFKssi2wzLgyNAVHNaXxjKms7cV1bDDwVzfYcHa6L-oLvvPk1FRmoRsD4J_3I7TgE1iO2LOtWD4ZLYilAcmmiHh3OPqNpQrKkl5uK2zg");
+
+				const requestOptions = {
+					method: "GET",
+					headers: myHeaders,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/accessories", requestOptions);
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+
+					const data = await response.json();
+					setStore({ accessories: data });
+				} catch (error) {
+					console.error('Error fetching accessories:', error);
+				}
+			}
+			,
+
 
 			getUser: async () => {
 				try {
