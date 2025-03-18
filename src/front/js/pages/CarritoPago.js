@@ -77,6 +77,68 @@ export const CarritoPago = () => {
                 console.error("Error al enviar la orden:", error);
             });
     };
+    // const checkout = (e) => {
+    //     e.preventDefault();
+    
+    //     const orderData = {
+    //         selected_food: store.cart.map(item => item.id),
+    //         selected_accessory: [],
+    //         status: "carrito",
+    //     };
+    
+    //     actions.createOrder(orderData)
+    //         .then(response => {
+    //             if (response.success) {
+    //                 console.log("Orden creada exitosamente");
+    
+    //                 // Cambiar a la pestaña de "Dirección de envío y pago"
+    //                 setTimeout(() => {
+    //                     const profileTabElement = document.getElementById('profile-tab');
+    //                     if (profileTabElement) {
+    //                         const profileTab = new window.bootstrap.Tab(profileTabElement);
+    //                         profileTab.show(); // Activa la pestaña
+    //                     } else {
+    //                         console.error("No se encontró el elemento con id 'profile-tab'");
+    //                     }
+    //                 }, 100); // Espera 100ms antes de intentar activar la pestaña
+    //             } else {
+    //                 console.error("Error al crear la orden:", response);
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error("Error al enviar la orden:", error);
+    //         });
+    // };
+
+    const cancelOrder = (e) => {
+        // 1. Restablecer los valores de newContact
+        setNewContact({
+            nombre: "",
+            apellidos: "",
+            dirección: "",
+            códigoPostal: "",
+            provincia: "",
+            teléfono: "",
+            email: ""
+        });
+    
+        // 2. Activar la pestaña "home-tab-pane"
+        const homeTabElement = document.getElementById('home-tab-pane');
+        if (homeTabElement) {
+            // Obtener el elemento del tab que activa la pestaña
+            const homeTabTrigger = document.querySelector('[data-bs-target="#home-tab-pane"]');
+            if (homeTabTrigger) {
+                const homeTab = new window.bootstrap.Tab(homeTabTrigger);
+                homeTab.show(); // Activar la pestaña
+            } else {
+                console.error("No se encontró el elemento que activa la pestaña 'home-tab-pane'");
+            }
+        } else {
+            console.error("No se encontró el elemento con id 'home-tab-pane'");
+        }
+    };
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -98,6 +160,7 @@ export const CarritoPago = () => {
 
     return (
         <div className="container-fluid justify-content-center mt-1 p-3 text-dark">
+
             <ul className="nav nav-tabs justify-content-center" id="myTab" role="tablist">
                 <li className="nav-item" role="presentation">
                     <a className="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">1. Carrito de compra</a>
@@ -177,14 +240,14 @@ export const CarritoPago = () => {
                             <p>IVA (21%): {(subtotal * 0.21).toFixed(2)}€</p>
                             <h4><strong>Total: {total.toFixed(2)}€</strong></h4>
 
-                            <button onClick={checkout} className="btn btn-primary">
+                            <button className="btn btn-primary"  onClick={checkout}>
                                 Confirmar y pagar
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabIndex="0">
+               
                 <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabIndex="0">
           <div className="container-fluid overflow-hidden my-3 w-50">
             <form className="form" onSubmit={handleSubmit}>
@@ -202,11 +265,11 @@ export const CarritoPago = () => {
               <div className="row mb-3">
                 <div className="col-sm-6">
                   <label htmlFor="inputPhone" className="col-form-label">Teléfono</label>
-                  <input type="text" className="form-control" id="inputPhone" placeholder="Teléfono" onChange={handleChange} name="teléfono" value={newContact.teléfono} />
+                  <input type="number" className="form-control" id="inputPhone" placeholder="Teléfono" onChange={handleChange} name="teléfono" value={newContact.teléfono} />
                 </div>
                 <div className="col-sm-6">
                   <label htmlFor="inputEmail" className="col-form-label">Email</label>
-                  <input type="text" className="form-control" id="inputEmail" placeholder="Email" onChange={handleChange} name="email" value={newContact.email} />
+                  <input type="email" className="form-control" id="inputEmail" placeholder="Email" onChange={handleChange} name="email" value={newContact.email} />
                 </div>
               </div>
               <div className="row mb-3">
@@ -218,7 +281,7 @@ export const CarritoPago = () => {
               <div className="row mb-3">
                 <div className="col-sm-6">
                   <label htmlFor="inputPostal" className="col-form-label">Código Postal</label>
-                  <input type="text" className="form-control" id="inputPostal" placeholder="Código Postal" onChange={handleChange} name="códigoPostal" value={newContact.códigoPostal} />
+                  <input type="number" className="form-control" id="inputPostal" placeholder="Código Postal" onChange={handleChange} name="códigoPostal" value={newContact.códigoPostal} />
                 </div>
                 <div className="col-sm-6">
                   <label htmlFor="inputCiudad" className="col-form-label">Ciudad</label>
@@ -246,14 +309,15 @@ export const CarritoPago = () => {
                 </div>
               </div>
               <div className="d-flex justify-content-start gx-2">
-                <button type="submit" className="btn btn-primary me-1">Guardar</button>
-                <button type="button" className="btn btn-secondary" onClick={() => setNewContact({ nombre: "", apellidos: "", dirección: "", códigoPostal: "", provincia: "", teléfono: "", email: "" })}>Cancelar</button>
+                
+                <button type="button" className="btn btn-secondary" onClick={cancelOrder}>Cancelar</button>
+                <button type="submit" className="btn btn-primary me-1">Confirmar y pagar</button>
               </div>
             </form>
           </div>
         </div>
       </div>
     </div>
-    </div>
+   
   );
 };
