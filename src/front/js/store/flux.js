@@ -17,10 +17,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             ],
             dogFood: [],
-            catFood: [],
-            exoticFood: [],
-            accessories: [],
-            cart: []
+			catFood: [],
+			exoticFood: [],
+			accessories: [],
+			productos:[],
+			cart:[],
+			pets: []
         },
         actions: {
             // Use getActions to call a function within a fuction
@@ -151,8 +153,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             }
 
 
-
-
+            
+            
             ,
             getCatFood: async () => {
 
@@ -227,25 +229,6 @@ const getState = ({ getStore, getActions, setStore }) => {
             }
             ,
 
-            // getAllFoods: async () =>{
-            // const myHeaders = new Headers();
-            // myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZshKSYoFOLJxckC2rKyB3dOYiphduuVGauXscSVDHJSbvJgLpRj2KSenjS4loYD-39cHkPc74ABsGZgCtQn9-EXx0NhR2J3RgLlI0MU7rJvY4DY7LwLR6EP0XbFAJSJdWgaDd33sUFSYk6fB04RyCVJJ13afixzEElcyku8FjPfz_OW89kqICedg_yAID42JHYhTFOq7qncpFQInaGXtlu2gGXKutLn5BPpvQ6NVacEefS69g0Hi72czK4MELyopZJwnF2KBkrxxIIjaQgajtf8xarI_uMPqH25RiYW61fZJxcx8uqBP7C71ruU6xns0GWHyYhp0B4PBnxl9WnF22zXcXW79I9pPMERKWwPiR8NtYxSse6CYkGKvDY-ZsRZdS_wOiALQYppvsg-jTDLiLcOZR3idSHjoYy-ZKnscUUOeELRk3IKTWrIews5TdZWyL3QbLh2uDAEjxJ0DrV8TQut2Xh3sd4ls3-HY1HEKs9uJTOsqNzEZDKA5vdr9iPoowd0Uw_qLBeADAtMyxb2IGbVXxeWlIXKxku4ug3i9gv_j2B5bpc3w1DygivsLiFRTdbgh9H54-WIFQ1Y4oUuE_dMIV6gOLTY2ln5JPm7htT4Om8s91j-RQaejkjyzLF17AXIuT3NWRiQDb5sXbKt-Vm97j1kf5O3ypsm2Eq1n-TNHEwccpHmNPoSRLHkRQxaHn4WBBpkR38ocsiICRQAHiztodn5d3ge1YvRq0W2Bwk7yBN-UlpRIHKn6eSGdQmsZUomI7T8mpcByC79Qv8V0Ap22TWXJKQiVFZwGIZWd1ZEz-VPspansl97euPeXeMKo_r9K-hcMmqDO6y0bf2_mPrkQWd2jZaxccTAMH7KIIXC7UcpCa5YUL0pHWpnMprebsvfP0PBXmYZ9kQB2wszruNYXOqy-QSYZkmQfpNymbNpnjEXmVmTtuxxF7t60W01dkf55aep5trg-2ot2jLh9Er2");
-
-            // const requestOptions = {
-            // method: "GET",
-            // headers: myHeaders,
-            // redirect: "follow"
-            // };
-
-            // try {
-            // const response = await fetch(`${process.env.BACKEND_URL}/api/foods`);
-            // const data = await response.json();
-            // setStore({ detallesProductos : data });
-            // console.log(data)
-            // } catch (error) {
-            // console.error(error);
-            // };
-            // }
 
             getUser: async () => {
                 try {
@@ -269,8 +252,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 } catch (error) {
                     console.log("Error al obtener usuario", error);
                 }
-            }
-            ,
+            },
 
             getPets: async (userId) => {
                 try {
@@ -288,31 +270,50 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            createPet: async (newPet) => {
-                const myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
-                myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`)
-                const raw = JSON.stringify(newPet);
 
-                const requestOptions = {
-                    method: "POST",
-                    headers: myHeaders,
-                    body: raw
-                };
 
+
+
+            getMessage: async () => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/pets`, requestOptions);
-                    if (!response.ok) {
-                        throw new Error(`Error al añadir mascota: ${response.statusText}`);
-                    }
-                    const result = await response.json();
-                    console.log(result);
-                    return ({ success: true })
+                    // fetching data from the backend
+                    const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
+                    const data = await resp.json()
+                    setStore({ message: data.message })
+                    // don't forget to return something, that is how the async resolves
+                    return data;
                 } catch (error) {
-                    console.error(error);
+                    console.log("Error loading message from backend", error)
                 }
-            }
-            ,
+            },
+            // Modificación de la función createOrder en getState
+			// createOrder: async (orderData) => {
+			// 	const myHeaders = new Headers();
+			// 	myHeaders.append("Content-Type", "application/json");
+			// 	myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
+
+			// 	const raw = JSON.stringify(orderData);
+
+			// 	const requestOptions = {
+			// 		method: "POST",
+			// 		headers: myHeaders,
+			// 		body: raw,
+			// 		redirect: "follow",
+			// 	};
+
+			// 	try {
+			// 		const id = JSON.parse(localStorage.getItem("user")).id;
+			// 		const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
+			// 		const result = await response.json();
+			// 		console.log(result);
+			// 		// Manejar respuesta de éxito o error
+
+			// 		return result;
+
+			// 	} catch (error) {
+			// 		console.error(error);
+			// 	}
+			// }
 
             createOrder: async (orderData) => {
                 const myHeaders = new Headers();
@@ -345,22 +346,35 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error al enviar la orden:", error);
                     return { success: false, error: error.message };
                 }
-            },
-
-            removeFromCart: (productoId) => {
-                setStore({
-                    cart: getStore.cart.filter(item => item.id !== productoId),
-                });
             }
             ,
 
-            //Seteo para eliminar producto del carrito
-            setCart: (newCart) => {
-                setStore({
-                    ...getStore,
-                    cart: newCart, // Actualiza el carrito en el estado global
-                });
-            },
+            createPet: async (newPet) => {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`)
+                const raw = JSON.stringify(newPet);
+
+                const requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw
+                };
+
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/pets`, requestOptions);
+                    if (!response.ok) {
+                        throw new Error(`Error al añadir mascota: ${response.statusText}`);
+                    }
+                    const result = await response.json();
+                    console.log(result);
+                    return ({ success: true })
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+            ,
+
 
               addToCart: (item) => {
                 const store = getStore(); // Obtiene el estado actual
@@ -383,64 +397,60 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             }
             ,
-            // addToCart: (item) => {
-            //     const store = getStore(); // Obtiene el estado actual
             
-            //     if (item) { // Verifica que el item no sea null o undefined
-            //         const productoExistente = store.cart.find(producto => producto.id === item.id);
-            
-            //         if (productoExistente) {
-            //             // Si el producto ya está en el carrito, incrementa su cantidad
-            //             const nuevoCarrito = store.cart.map(producto =>
-            //                 producto.id === item.id ? { ...producto, cantidad: (producto.cantidad || 1) + 1 } : producto
-            //             );
-            //             setStore({ cart: nuevoCarrito });
-            //         } else {
-            //             // Si el producto no está en el carrito, lo añade con cantidad 1
-            //             setStore({ cart: [...store.cart, { ...item, cantidad: 1 }] });
-            //         }
-            //     } else {
-            //         console.error("No se puede añadir el producto: el item es inválido.");
-            //     }
-            // },
-
-            // // Función para agregar
-            // addToCart: (item) => {
-            //     const store = getStore(); // Obtiene el estado actual
-
-            //     if (item) { // Verifica que el item no sea null o undefined
-            //         setStore({
-            //             cart: [...store.cart, item], // Añade el producto al carrito
-            //         });
-            //     } else {
-            //         console.error("No se puede añadir el producto: el item es inválido.");
-            //     }
-            // }
-            
-            // ,
-             addToCart: (item) => {
-            const store = getStore(); // Obtiene el estado actual
-
-            if (item) { // Verifica que el item no sea null o undefined
-                const productoExistente = store.cart.find(producto => producto.id === item.id);
-
-                if (productoExistente) {
-                    // Si el producto ya está en el carrito, incrementa su cantidad
-                    const nuevoCarrito = store.cart.map(producto =>
-                        producto.id === item.id ? { ...producto, cantidad: (producto.cantidad || 1) + 1 } : producto
-                    );
-                    setStore({ cart: nuevoCarrito });
-                } else {
-                    // Si el producto no está en el carrito, lo añade con cantidad 1
-                    setStore({ cart: [...store.cart, { ...item, cantidad: 1 }] });
+            deletePet: async (id) => {
+                const token = localStorage.getItem("token");
+                const resp = await fetch(`${process.env.BACKEND_URL}/api/pet/${id}`, {
+                  method: "DELETE",
+                  headers: {
+                    "Authorization": `Bearer ${token}`
+                  }
+                });
+              
+                if (!resp.ok) {
+                  throw new Error("Error al eliminar mascota");
                 }
-
-                // Verifica el estado del carrito después de la actualización
-                console.log(getStore().cart);
-            } else {
-                console.error("No se puede añadir el producto: el item es inválido.");
-            }
-        },
+              
+                // Actualiza el store: filtra la mascota eliminada
+                const store = getStore(); // Obtén el estado actual
+                setStore({
+                  ...store,
+                  pets: store.pets.filter(pet => pet.id !== id)
+                });
+              
+                alert("Mascota eliminada exitosamente");
+                return true;
+              },
+              
+              editPet: async (id, petData) => {
+                const token = localStorage.getItem("token");
+                const resp = await fetch(`${process.env.BACKEND_URL}/api/pet/${id}`, {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                  },
+                  body: JSON.stringify(petData)
+                });
+              
+                if (!resp.ok) {
+                  throw new Error("Error al editar mascota");
+                }
+              
+                // Se asume que el endpoint retorna un JSON con la mascota actualizada en la propiedad "pet"
+                const data = await resp.json();
+              
+                // Actualiza el store: reemplaza la mascota actualizada en el array de mascotas
+                const store = getStore();
+                setStore({
+                  ...store,
+                  pets: store.pets.map(pet => pet.id === id ? data.pet : pet)
+                });
+              
+                alert("Mascota editada exitosamente");
+                return true;
+              },
+    
 
             // Función para eliminar un favorito directamente por su `uid`
             //   removeFavorite: (id) => {
@@ -450,18 +460,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             //  });
             //   }
             //   ,
-            getMessage: async () => {
-                try {
-                    // fetching data from the backend
-                    const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
-                    const data = await resp.json()
-                    setStore({ message: data.message })
-                    // don't forget to return something, that is how the async resolves
-                    return data;
-                } catch (error) {
-                    console.log("Error loading message from backend", error)
-                }
-            },
+            
 
             changeColor: (index, color) => {
                 //get the store
@@ -532,7 +531,24 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error al eliminar usuario:", error);
                     alert("Hubo un error al eliminar la cuenta.");
                 }
+            },
+
+            
+
+            removeFromCart: (productoId) => {
+                setStore({
+                    cart: getStore.cart.filter(item => item.id !== productoId),
+                });
             }
+            ,
+
+            //Seteo para eliminar producto del carrito
+            setCart: (newCart) => {
+                setStore({
+                    ...getStore,
+                    cart: newCart, // Actualiza el carrito en el estado global
+                });
+            },
 
 
         }
