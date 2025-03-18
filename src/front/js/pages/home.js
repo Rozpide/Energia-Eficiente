@@ -58,6 +58,15 @@ export const Home = ({ activeCategory }) => {
 								))}
 							</div>
 						</div>
+						<div className="sección accesorios m-5 p-4 rounded" style={{ backgroundColor: "#E0F7E7", boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)" }}>
+							<h3 className="text-success border-bottom pb-2">Acesorios top para tu mascota</h3>
+						<div className="row">
+							{store.accessories.map((accessories, index) => (
+								<Card key={index} {...accessories} />
+						
+							))}
+						</div>	
+						</div>
 					</>
 				)}
 
@@ -95,22 +104,18 @@ export const Home = ({ activeCategory }) => {
 					</div>
 				)}
 
-				{/* <div className="sección accesorios m-5 p-4 rounded" style={{ backgroundColor: "#E0F7E7", boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)" }}>
-				<h3 className="text-success border-bottom pb-2">Acesorios top para tu mascota</h3>
-				<div className="row">
-					{store.accessories.map((accessories, index) => (
-						<Card 
-							name={accessories.name} 
-							category={"accessories"} 
-							id={accessories.id} 
-							description={accessories.description}
-							price={accessories.price}
-							url={accessories.url}
-							key={index}
-						/>
-					))}
+				{activeCategory === "accesories" && (
+				<div className="sección accesorios m-5 p-4 rounded" style={{ backgroundColor: "#E0F7E7", boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)" }}>
+					<h3 className="text-success border-bottom pb-2">Acesorios top para tu mascota</h3>
+					<div className="row">
+						{store.accessories.map((accessories, index) => (
+						<Card key={index} {...accessories} />
+				
+						))}
+					</div>	
 				</div>
-			</div> */}
+				)}
+
 			</div>
 		</>
 	);

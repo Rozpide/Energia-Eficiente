@@ -45,6 +45,9 @@ export const Navbar = ({ setActiveCategory }) => {  // Recibimos setActiveCatego
                         <li className="nav-item m-2">
                             <button className="nav-link fw-semibold btn btn-link text-dark" onClick={() => setActiveCategory("exoticFood")}>Exóticos</button>
                         </li>
+                        <li className="nav-item m-2">
+                            <button className="nav-link fw-semibold btn btn-link text-dark" onClick={() => setActiveCategory("accesories")}>Accesorios</button>
+                        </li>
                     </ul>
 
                     <ul className="navbar-nav d-flex align-items-center gap-2">

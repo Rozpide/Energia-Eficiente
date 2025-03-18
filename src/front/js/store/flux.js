@@ -19,6 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			dogFood: [],
 			catFood: [],
 			exoticFood: [],
+			accessories: [],
 			productos:[],
 			cart:[],
 			pets: []
