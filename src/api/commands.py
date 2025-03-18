@@ -153,7 +153,7 @@ def setup_commands(app):
         dogfood.pathologies = "diabetes"
         dogfood.animal_type = "perro"
         dogfood.age = "adulto"
-        dogfood.size = ""
+        dogfood.size = "medio"
         dogfood.weight = 1.5
         dogfood.url = "https://www.tiendanimal.es/dw/image/v2/BDLQ_PRD/on/demandware.static/-/Sites-kiwoko-master-catalog/default/dw6af74272/images/virbac_pienso_perros_hpm_weight_loss_diabetes_VIRAD360106.jpg?sw=780&sh=780&sm=fit&q=85"
         db.session.add(dogfood)

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
+import { Context } from "./store/appContext";
 
 import { Home } from "./pages/home";
 import { PerfilUsuario} from "./pages/perfilUsuario";
@@ -28,6 +29,32 @@ import AlertComponent from "./pages/AlertComponent";
 const Layout = () => {
     const basename = process.env.BASENAME || "";
     const [activeCategory, setActiveCategory] = useState(null);
+    const { actions } = useContext(Context); // Obtenemos acciones del contexto
+
+    useEffect(() => {
+        actions.loadUserFromStorage();
+        actions.loadCartFromStorage();
+
+        // Detectar actividad del usuario y reiniciar el temporizador
+        const resetInactivityTimer = () => {
+            clearTimeout(window.inactivityTimer);
+            window.inactivityTimer = setTimeout(() => {
+                console.log("Usuario inactivo, cerrando sesión...");
+                actions.logout();
+            }, 30 * 60 * 1000);  // 🔹 Cerrar sesión tras 30 min de inactividad
+        };
+
+        document.addEventListener("mousemove", resetInactivityTimer);
+        document.addEventListener("keydown", resetInactivityTimer);
+        document.addEventListener("click", resetInactivityTimer);
+
+        return () => {
+            document.removeEventListener("mousemove", resetInactivityTimer);
+            document.removeEventListener("keydown", resetInactivityTimer);
+            document.removeEventListener("click", resetInactivityTimer);
+        };
+    }, []);
+
 
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL === "") return <BackendURL />;
 

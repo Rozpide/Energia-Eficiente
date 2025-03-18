@@ -1,9 +1,11 @@
+import { jwtDecode } from "jwt-decode";
 const getState = ({ getStore, getActions, setStore }) => {
     return {
         store: {
             user: null,
             token: null,
             message: null,
+            refreshTimer: null,
             demo: [
                 {
                     title: "FIRST",
@@ -17,12 +19,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             ],
             dogFood: [],
-			catFood: [],
-			exoticFood: [],
-			accessories: [],
-			productos:[],
-			cart:[],
-			pets: []
+            catFood: [],
+            exoticFood: [],
+            accessories: [],
+            productos: [],
+            cart: [],
+            pets: []
         },
         actions: {
             // Use getActions to call a function within a fuction
@@ -34,36 +36,29 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/login`, {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
+                        headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email, password })
                     });
-
-                    if (!resp.ok) {
-                        throw new Error("Error al iniciar sesión");
-                    }
-
+            
+                    if (!resp.ok) throw new Error("Error al iniciar sesión");
+            
                     const data = await resp.json();
-                    console.log("Inicio de sesión exitoso:", data);
-
                     const token = data.token;
-                    if (!token) {
-                        throw new Error("No se recibió el token");
-                    }
-
-                    localStorage.setItem("token", token);
-                    localStorage.setItem("user", JSON.stringify(data.user)); // 🔹 Guarda el usuario
-                    setStore({ token });
-
-                    const actions = getActions();
-                    actions.getUser();
+                    if (!token) throw new Error("No se recibió el token");
+            
+                    sessionStorage.setItem("token", token); // 🔹 Guardar en sessionStorage
+                    sessionStorage.setItem("user", JSON.stringify(data.user));
+            
+                    setStore({ token, user: data.user });
                     navigate("/");
                 } catch (error) {
-                    console.log("Error al iniciar sesión", error);
+                    console.error("Error al iniciar sesión", error);
                     alert("Error al iniciar sesión");
                 }
             },
+            
+
+
             signup: async (dataUser, navigate) => {
                 try {
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
@@ -106,28 +101,101 @@ const getState = ({ getStore, getActions, setStore }) => {
                         }
                     });
 
-                    if (!resp.ok) throw new Error("Error al obtener el usuario");
+                    if (!resp.ok) {
+                        throw new Error("Error al obtener el usuario");
+                    }
 
                     const data = await resp.json();
                     setStore({ user: data });
+
+                    // Obtener las mascotas del usuario
+                    getActions().getPets(data.id);
+
                 } catch (error) {
-                    console.log("Error al obtener usuario", error);
+                    console.error("Error al obtener usuario:", error);
+                    getActions().logout(); // 🔹 Si hay un error, cerrar sesión automáticamente
                 }
             },
+
+            // Cerrar sesión si el usuario está inactivo
             logout: () => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("user"); // 🔹 Eliminar usuario de localStorage
-                setStore({ token: null, user: null, pets: [] });
+                console.log("Cerrando sesión por inactividad o token expirado...");
+                sessionStorage.removeItem("token");
+                sessionStorage.removeItem("user");
+                clearTimeout(getStore().refreshTimer);
+                setStore({ token: null, user: null, refreshTimer: null });
+                window.location.href = "/";
             },
 
-            loadUserFromStorage: () => {
-                const token = localStorage.getItem("token"); //Cargar usuario
-                const user = localStorage.getItem("user");
+
+
+            loadUserFromStorage: async () => {
+                const token = sessionStorage.getItem("token"); // 🔹 Recuperar desde sessionStorage
+                const user = sessionStorage.getItem("user");
 
                 if (token && user) {
-                    setStore({ token, user: JSON.parse(user) });
+                    try {
+                        // Validar si el token sigue siendo válido
+                        const resp = await fetch(`${process.env.BACKEND_URL}/api/user`, {
+                            headers: {
+                                "Authorization": `Bearer ${token}`
+                            }
+                        });
+
+                        if (!resp.ok) {
+                            throw new Error("Token inválido o expirado");
+                        }
+
+                        setStore({ token, user: JSON.parse(user) });
+                    } catch (error) {
+                        console.error("Error validando el token:", error);
+                        getActions().logout(); // Si el token no es válido, cerrar sesión
+                    }
+                } else {
+                    console.log("No hay usuario autenticado, pero no redirigimos aún.");
                 }
             },
+
+
+            // Programar la renovación del token
+            scheduleTokenRefresh: (timeUntilRefresh) => {
+                if (timeUntilRefresh > 0) {
+                    console.log(`Renovación del token programada en ${timeUntilRefresh / 1000} segundos`);
+                    const refreshTimer = setTimeout(() => {
+                        console.log("Intentando renovar el token...");
+                        getActions().refreshToken();
+                    }, timeUntilRefresh);
+
+                    setStore({ refreshTimer });
+                }
+            },
+
+            // Simular renovación del token
+            refreshToken: async () => {
+                const token = sessionStorage.getItem("token");
+                if (!token) return getActions().logout();
+
+                try {
+                    // Aquí podrías hacer una solicitud al backend para renovar el token
+                    // Pero en este caso, simplemente estamos extendiendo su validez en el frontend.
+                    const newToken = token; // 🔹 Aquí normalmente pedirías uno nuevo al backend.
+
+                    sessionStorage.setItem("token", newToken);
+                    setStore({ token: newToken });
+
+                    // Volver a programar la renovación
+                    const decoded = jwtDecode(newToken);
+                    const expirationTime = decoded.exp * 1000;
+                    const currentTime = Date.now();
+                    getActions().scheduleTokenRefresh(expirationTime - currentTime - 60000);
+
+                } catch (error) {
+                    console.error("Error renovando el token:", error);
+                    getActions().logout();
+                }
+            },
+
+
             //TRAER ALIMENTO POR GRUPOS
             getDogFood: async () => {
                 const myHeaders = new Headers();
@@ -153,8 +221,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             }
 
 
-            
-            
+
+
             ,
             getCatFood: async () => {
 
@@ -287,33 +355,33 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
             // Modificación de la función createOrder en getState
-			// createOrder: async (orderData) => {
-			// 	const myHeaders = new Headers();
-			// 	myHeaders.append("Content-Type", "application/json");
-			// 	myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
+            // createOrder: async (orderData) => {
+            // 	const myHeaders = new Headers();
+            // 	myHeaders.append("Content-Type", "application/json");
+            // 	myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
 
-			// 	const raw = JSON.stringify(orderData);
+            // 	const raw = JSON.stringify(orderData);
 
-			// 	const requestOptions = {
-			// 		method: "POST",
-			// 		headers: myHeaders,
-			// 		body: raw,
-			// 		redirect: "follow",
-			// 	};
+            // 	const requestOptions = {
+            // 		method: "POST",
+            // 		headers: myHeaders,
+            // 		body: raw,
+            // 		redirect: "follow",
+            // 	};
 
-			// 	try {
-			// 		const id = JSON.parse(localStorage.getItem("user")).id;
-			// 		const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
-			// 		const result = await response.json();
-			// 		console.log(result);
-			// 		// Manejar respuesta de éxito o error
+            // 	try {
+            // 		const id = JSON.parse(localStorage.getItem("user")).id;
+            // 		const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
+            // 		const result = await response.json();
+            // 		console.log(result);
+            // 		// Manejar respuesta de éxito o error
 
-			// 		return result;
+            // 		return result;
 
-			// 	} catch (error) {
-			// 		console.error(error);
-			// 	}
-			// }
+            // 	} catch (error) {
+            // 		console.error(error);
+            // 	}
+            // }
 
             createOrder: async (orderData) => {
                 const myHeaders = new Headers();
@@ -376,12 +444,12 @@ const getState = ({ getStore, getActions, setStore }) => {
             ,
 
 
-              addToCart: (item) => {
+            addToCart: (item) => {
                 const store = getStore(); // Obtiene el estado actual
-            
+
                 if (item) { // Verifica que el item no sea null o undefined
                     const productoExistente = store.cart.find(producto => producto.id === item.id);
-            
+
                     if (productoExistente) {
                         // Si el producto ya está en el carrito, incrementa su cantidad
                         const nuevoCarrito = store.cart.map(producto =>
@@ -397,60 +465,60 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             }
             ,
-            
+
             deletePet: async (id) => {
                 const token = localStorage.getItem("token");
                 const resp = await fetch(`${process.env.BACKEND_URL}/api/pet/${id}`, {
-                  method: "DELETE",
-                  headers: {
-                    "Authorization": `Bearer ${token}`
-                  }
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
                 });
-              
+
                 if (!resp.ok) {
-                  throw new Error("Error al eliminar mascota");
+                    throw new Error("Error al eliminar mascota");
                 }
-              
+
                 // Actualiza el store: filtra la mascota eliminada
                 const store = getStore(); // Obtén el estado actual
                 setStore({
-                  ...store,
-                  pets: store.pets.filter(pet => pet.id !== id)
+                    ...store,
+                    pets: store.pets.filter(pet => pet.id !== id)
                 });
-              
+
                 alert("Mascota eliminada exitosamente");
                 return true;
-              },
-              
-              editPet: async (id, petData) => {
+            },
+
+            editPet: async (id, petData) => {
                 const token = localStorage.getItem("token");
                 const resp = await fetch(`${process.env.BACKEND_URL}/api/pet/${id}`, {
-                  method: "PUT",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                  },
-                  body: JSON.stringify(petData)
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(petData)
                 });
-              
+
                 if (!resp.ok) {
-                  throw new Error("Error al editar mascota");
+                    throw new Error("Error al editar mascota");
                 }
-              
+
                 // Se asume que el endpoint retorna un JSON con la mascota actualizada en la propiedad "pet"
                 const data = await resp.json();
-              
+
                 // Actualiza el store: reemplaza la mascota actualizada en el array de mascotas
                 const store = getStore();
                 setStore({
-                  ...store,
-                  pets: store.pets.map(pet => pet.id === id ? data.pet : pet)
+                    ...store,
+                    pets: store.pets.map(pet => pet.id === id ? data.pet : pet)
                 });
-              
+
                 alert("Mascota editada exitosamente");
                 return true;
-              },
-    
+            },
+
 
             // Función para eliminar un favorito directamente por su `uid`
             //   removeFavorite: (id) => {
@@ -460,7 +528,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             //  });
             //   }
             //   ,
-            
+
 
             changeColor: (index, color) => {
                 //get the store
@@ -533,7 +601,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            
+
 
             removeFromCart: (productoId) => {
                 setStore({
@@ -548,6 +616,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                     ...getStore,
                     cart: newCart, // Actualiza el carrito en el estado global
                 });
+            },
+
+            loadCartFromStorage: () => {
+                const cart = sessionStorage.getItem("cart");
+                if (cart) {
+                    setStore({ cart: JSON.parse(cart) });
+                }
             },
 
 

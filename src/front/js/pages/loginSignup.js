@@ -72,9 +72,6 @@ export const LoginSignup = () => {
                         <p>
                             ¿Olvidaste tu contraseña? <Link to="/RecuperacionContraseña">Recupérala aquí</Link>
                         </p>
-                        <p>
-                            <Link to="/">Volver</Link>
-                        </p>
                     </form>
                 )}
                 {isSignup && (
