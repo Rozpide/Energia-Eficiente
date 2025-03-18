@@ -30,13 +30,8 @@ export const PerfilUsuario = () => {
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <Link to="/" className="navbar-brand d-flex align-items-center">
-                              <img src={logo} alt="Logo" style={{ 
-                                  height: "60px", 
-                                  border: "3px solid #000", 
-                                  borderRadius: "10px", 
-                                  padding: "3px" 
-                              }} />
+          <Link to="/" className="navbar-brand d-flex align-items-center" onClick={() => setActiveCategory(null)}>
+                              <img src={logo} alt="Logo" style={{ height: "60px", border: "3px solid #000", borderRadius: "10px", padding: "3px" }} />
                               <span className="fw-bold text-dark" style={{ fontSize: "1.5rem", marginLeft: "10px" }}>Pupper Eats</span>
                           </Link>
           <button className="btn btn-warning me-2">🛒 Carrito</button>

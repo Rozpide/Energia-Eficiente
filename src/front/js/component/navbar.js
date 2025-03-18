@@ -6,36 +6,27 @@ import { CiSearch } from "react-icons/ci";
 import { Context } from "../store/appContext";
 import { FaUserCircle, FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
 
-export const Navbar = () => {
+export const Navbar = ({ setActiveCategory }) => {  // Recibimos setActiveCategory como prop
     const { store, actions } = useContext(Context);
-    const { user, cart } = store; // Obtenemos el usuario del store
+    const { user, cart } = store;
+    const cartItemCount = cart.length;
 
-	useEffect(() => {
-		console.log("Usuario en navbar:", user);
-	}, [user, cart]);
-
-     // Contar la cantidad de productos en el carrito
-     const cartItemCount = cart.length; 
+    if (typeof setActiveCategory !== "function") {
+        console.error("⚠️ Error: setActiveCategory no es una función en Navbar.js.");
+        return null; // Evitamos que falle si `setActiveCategory` no es válida
+    }
 
     return (
         <nav className="navbar navbar-expand-lg shadow-lg" style={{ 
             background: "linear-gradient(180deg, #FBD989 5%, #F4C4A4 40%, #EC955B 95%)",
             padding: "15px 30px",
-            borderRadius: "0px"
         }}>
             <div className="container-fluid">
-                <Link to="/" className="navbar-brand d-flex align-items-center">
-                    <img src={logo} alt="Logo" style={{ 
-                        height: "60px", 
-                        border: "3px solid #000", 
-                        borderRadius: "10px", 
-                        padding: "3px" 
-                    }} />
+                <Link to="/" className="navbar-brand d-flex align-items-center" onClick={() => setActiveCategory(null)}>
+                    <img src={logo} alt="Logo" style={{ height: "60px", border: "3px solid #000", borderRadius: "10px", padding: "3px" }} />
                     <span className="fw-bold text-dark" style={{ fontSize: "1.5rem", marginLeft: "10px" }}>Pupper Eats</span>
                 </Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
+
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <form className="d-flex me-auto" role="search">
                         <input className="form-control me-2" type="search" placeholder="Buscar comida..." aria-label="Search" style={{ borderRadius: "8px", height: "30px", width: "250px", fontSize: "1.1rem" }} />
@@ -43,20 +34,24 @@ export const Navbar = () => {
                             <CiSearch size={12} />
                         </button>
                     </form>
+
                     <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
                         <li className="nav-item m-2">
-                            <a className="nav-link fw-semibold" href="#">Caninos</a>
+                            <button className="nav-link fw-semibold btn btn-link text-dark" onClick={() => setActiveCategory("dogFood")}>Caninos</button>
                         </li>
                         <li className="nav-item m-2">
-                            <a className="nav-link fw-semibold" href="#">Felinos</a>
+                            <button className="nav-link fw-semibold btn btn-link text-dark" onClick={() => setActiveCategory("catFood")}>Felinos</button>
                         </li>
                         <li className="nav-item m-2">
-                            <a className="nav-link fw-semibold" href="#">Exóticos</a>
+                            <button className="nav-link fw-semibold btn btn-link text-dark" onClick={() => setActiveCategory("exoticFood")}>Exóticos</button>
+                        </li>
+                        <li className="nav-item m-2">
+                            <button className="nav-link fw-semibold btn btn-link text-dark" onClick={() => setActiveCategory("accesories")}>Accesorios</button>
                         </li>
                     </ul>
+
                     <ul className="navbar-nav d-flex align-items-center gap-2">
                         {user ? (
-                            // Si el usuario está autenticado, mostramos Perfil y Cesta
                             <>
                                 <Link to="/perfilUsuario" className="text-dark text-decoration-none d-flex align-items-center">
                                     <FaUserCircle size={24} className="me-1" />

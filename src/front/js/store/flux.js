@@ -1,9 +1,11 @@
+import { jwtDecode } from "jwt-decode";
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			user: null,
 			token: null,
 			message: null,
+			refreshTimer: null,
 			demo: [
 				{
 					title: "FIRST",
@@ -19,6 +21,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			dogFood: [],
 			catFood: [],
 			exoticFood: [],
+			accessories: [],
 			productos:[],
 			cart:[],
 			pets: []
@@ -33,36 +36,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/login`, {
 						method: "POST",
-						headers: {
-							"Content-Type": "application/json"
-						},
+						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({ email, password })
 					});
-
-					if (!resp.ok) {
-						throw new Error("Error al iniciar sesión");
-					}
-
+			
+					if (!resp.ok) throw new Error("Error al iniciar sesión");
+			
 					const data = await resp.json();
-					console.log("Inicio de sesión exitoso:", data);
-
-					const token = data.token;
-					if (!token) {
-						throw new Error("No se recibió el token");
-					}
-
-					localStorage.setItem("token", token);
-					localStorage.setItem("user", JSON.stringify(data.user)); // 🔹 Guarda el usuario
-					setStore({ token });
-
-					const actions = getActions();
-					actions.getUser();
+					sessionStorage.setItem("token", data.token);
+					sessionStorage.setItem("user", JSON.stringify(data.user));
+			
+					setStore({ token: data.token, user: data.user });
 					navigate("/");
+			
+					// Programar la renovación del token
+					const decoded = jwtDecode(data.token);
+					const expirationTime = decoded.exp * 1000;
+					const currentTime = Date.now();
+					getActions().scheduleTokenRefresh(expirationTime - currentTime - 60000);
+			
 				} catch (error) {
 					console.log("Error al iniciar sesión", error);
 					alert("Error al iniciar sesión");
 				}
 			},
+			
+			
 			signup: async (dataUser, navigate) => {
 				try {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
@@ -121,23 +120,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			
-			logout: () => {
-				localStorage.removeItem("token");
-				localStorage.removeItem("user");
-				setStore({ token: null, user: null, pets: [] });
-				window.location.href = "/"; // 🔹 Redirigir al home al cerrar sesión
-			},
+			// Cerrar sesión si el usuario está inactivo
+            logout: () => {
+                console.log("Cerrando sesión por inactividad o token expirado...");
+                sessionStorage.removeItem("token");
+                sessionStorage.removeItem("user");
+                clearTimeout(getStore().refreshTimer);
+                setStore({ token: null, user: null, refreshTimer: null });
+                window.location.href = "/";
+            },
+			
 			
 
 			loadUserFromStorage: async () => {
-				const token = localStorage.getItem("token");
-				const user = localStorage.getItem("user");
+				const token = sessionStorage.getItem("token"); // 🔹 Recuperar desde sessionStorage
+				const user = sessionStorage.getItem("user");
 			
 				if (token && user) {
-					// Verificar si el token sigue siendo válido
 					try {
-						const resp = await fetch(`${process.env.BACKEND_URL}/api/validate-token`, {
-							method: "POST",
+						// Validar si el token sigue siendo válido
+						const resp = await fetch(`${process.env.BACKEND_URL}/api/user`, {
 							headers: {
 								"Authorization": `Bearer ${token}`
 							}
@@ -148,15 +150,54 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 			
 						setStore({ token, user: JSON.parse(user) });
-			
-						// Una vez validado, obtener el usuario
-						getActions().getUser();
 					} catch (error) {
 						console.error("Error validando el token:", error);
 						getActions().logout(); // Si el token no es válido, cerrar sesión
 					}
+				} else {
+					console.log("No hay usuario autenticado, pero no redirigimos aún.");
 				}
 			},
+			
+
+			// Programar la renovación del token
+            scheduleTokenRefresh: (timeUntilRefresh) => {
+                if (timeUntilRefresh > 0) {
+                    console.log(`Renovación del token programada en ${timeUntilRefresh / 1000} segundos`);
+                    const refreshTimer = setTimeout(() => {
+                        console.log("Intentando renovar el token...");
+                        getActions().refreshToken();
+                    }, timeUntilRefresh);
+
+                    setStore({ refreshTimer });
+                }
+            },
+
+			// Simular renovación del token
+            refreshToken: async () => {
+                const token = sessionStorage.getItem("token");
+                if (!token) return getActions().logout();
+
+                try {
+                    // Aquí podrías hacer una solicitud al backend para renovar el token
+                    // Pero en este caso, simplemente estamos extendiendo su validez en el frontend.
+                    const newToken = token; // 🔹 Aquí normalmente pedirías uno nuevo al backend.
+
+                    sessionStorage.setItem("token", newToken);
+                    setStore({ token: newToken });
+
+                    // Volver a programar la renovación
+                    const decoded = jwtDecode(newToken);
+                    const expirationTime = decoded.exp * 1000;
+                    const currentTime = Date.now();
+                    getActions().scheduleTokenRefresh(expirationTime - currentTime - 60000);
+
+                } catch (error) {
+                    console.error("Error renovando el token:", error);
+                    getActions().logout();
+                }
+            },
+			
 			
 			//TRAER ALIMENTO POR GRUPOS
 			getDogFood: async () => {
@@ -234,6 +275,31 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			}
 			,
+
+			getAccessories: async () => {
+				const myHeaders = new Headers();
+				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZuqp5-e7T1vVCCdEQ0C1wStd1vPjajnZKjnPSA5Hq6rqD8KnBNHzrxCrSBqwnlunA0rkm36DsRzpvbpKLHVNklCfX8GBsMZKstrANOENBUzsSi1PBxW5_TibtPeRePzgNe5pBHuYx5F-1zm7-FoplLOZKZUFeRu1ua1DgiPeOiqvYSnKMQISiWoLb64DlQlSfXIGkFzVDFsFNPJ5lN-NHmI9dQ4O8b8EtoLAvXug1GQ5WkthHTcarTf_lXY5fcoEJbvhObGkUw7LC07jfKn2BTk27bZGx_F2kXNKq2N32CJ_46MMiulhV3sVpuuBUenZ-P7eLMcyMYuz6LcVrybPlrmHBiCnIbgcmgn-jnL-P3rcWL49L8RpPU84Ul4CaOZTFZ7eFCUqa1m1YKjX21YEdJlEm8fyYpFYcFp_9mGziKaxChcel7DevH4J4NV-E1mEUnQP-wDBMVq1IH0wdb4_HSnZ8aBhyyb8GvuEuLIhlH4soY8xtKNlaM73kynXCEhJ2OH-eKM6XIkWQHVIENwRoWzjj8G-8jQcJjz1Clyo9lMuFB98AWfsJgqe_PO7PgIw_Ms8_hRKyGG_aej9UuBo8rS-u4vTGaj5v_1vp6_PrZ-qEp8iyGGK_0OERl5OH0S3_mcXOd1wQcpFQ76RR6qtXqju2G8WkN9e3xC9XvP3SWVDIc5195fVj_1gRGLUCC20Uu5uPC0yzuE2X_TrcjKq0-SeWiyVIphc1T7AoJ2PvAu74js-66UPPcjXqoQvGXCzwrwhPdzXAp8n6sVwGcfRthrk2AOD4U8XJz68aBA5aRx77sqsMKKFIbCRXjRfOcAoa214qR5Oz7-nnKj1dII9Rx_g9ZD7SS_Mjm5Sk3M_Mr0zZNDzN7YWd_j3WhN9Gvr1MOeU6aFKssi2wzLgyNAVHNaXxjKms7cV1bDDwVzfYcHa6L-oLvvPk1FRmoRsD4J_3I7TgE1iO2LOtWD4ZLYilAcmmiHh3OPqNpQrKkl5uK2zg");
+
+				const requestOptions = {
+					method: "GET",
+					headers: myHeaders,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/accessories", requestOptions);
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+
+					const data = await response.json();
+					setStore({ accessories: data });
+				} catch (error) {
+					console.error('Error fetching accessories:', error);
+				}
+			}
+			,
+
 
 			getUser: async () => {
 				try {
