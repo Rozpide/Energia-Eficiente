@@ -57,8 +57,9 @@ export const VistaMascota = () => {
         setFoodSuggestions(data);
       });
     }
-  }, [petDetails, id, actions]);
+  }, [petDetails, id]);
 
+  useEffect(() =>{console.log(foodSuggestions)},[foodSuggestions])
   useEffect(() => {
     if (!loading && petDetails === null) {
       navigate("/not-found");
@@ -187,9 +188,9 @@ export const VistaMascota = () => {
                 onChange={(e) => setEditedPet({ ...editedPet, size: e.target.value })}
               >
                 <option value="">Selecciona una opción</option>
-                <option value="razaPequeña">Pequeño (0-10kg)</option>
-                <option value="razaMediana">Mediano (10-25kg)</option>
-                <option value="razaGrande">Grande (+25Kg)</option>
+                <option value="pequeña">Pequeño (0-10kg)</option>
+                <option value="medio">Mediano (10-25kg)</option>
+                <option value="grande">Grande (+25Kg)</option>
               </Form.Select>
             </Form.Group>
 
@@ -214,10 +215,8 @@ export const VistaMascota = () => {
               >
                 <option value="">Selecciona una opción</option>
                 <option value="ninguna">Sin patologias</option>
-                <option value="diabetico">Diabetes</option>
+                <option value="diabetes">Diabetes</option>
                 <option value="renal">Insuficiencia renal</option>
-                <option value="urinarioStruvita">Urinario Struvita</option>
-                <option value="urinarioOxalatos">Urinario Oxalatos</option>
                 <option value="escorbuto">Escorbuto</option>
                 <option value="obesidad">Obesidad</option>
                 <option value="hipoalergénico">Hipoalergénico</option>

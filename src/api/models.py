@@ -62,17 +62,6 @@ class Food(db.Model):
     animal_type = db.Column(db.String(50), nullable=False)
     size = db.Column(db.String(30), nullable=True)
     pathologies = db.Column(db.Text, nullable=True)
-    # is_hypoallergenic = db.Column(db.Boolean, default=False)
-    # is_gluten_free = db.Column(db.Boolean, default=False)
-    # protein_source = db.Column(db.String(100), nullable=False)
-    # fat_content = db.Column(db.Float, nullable=True)
-    # omega3_content = db.Column(db.Float, nullable=True)
-    # taurine_content = db.Column(db.Float, nullable=True)
-    # suitable_for_senior = db.Column(db.Boolean, default=False)
-    # suitable_for_sterilized = db.Column(db.Boolean, default=False)
-    # croquette_shape = db.Column(db.String(50), nullable=True)
-    # weight_kg = db.Column(db.Float, nullable=False)
-    # price_eur = db.Column(db.Float, nullable=False)
     url = db.Column(db.String(255), nullable=True)
 
     def __repr__(self):
@@ -83,6 +72,7 @@ class Food(db.Model):
             "id": self.id,
             "name": self.name,
             "brand": self.brand,
+            "age": self.age,
             "description": self.description,
             "ingredients": self.ingredients,
             "weight": self.weight, #peso en kilos
