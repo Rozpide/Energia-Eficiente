@@ -1,9 +1,11 @@
+import { jwtDecode } from "jwt-decode";
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			user: null,
 			token: null,
 			message: null,
+			refreshTimer: null,
 			demo: [
 				{
 					title: "FIRST",
@@ -34,36 +36,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/login`, {
 						method: "POST",
-						headers: {
-							"Content-Type": "application/json"
-						},
+						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({ email, password })
 					});
-
-					if (!resp.ok) {
-						throw new Error("Error al iniciar sesión");
-					}
-
+			
+					if (!resp.ok) throw new Error("Error al iniciar sesión");
+			
 					const data = await resp.json();
-					console.log("Inicio de sesión exitoso:", data);
-
-					const token = data.token;
-					if (!token) {
-						throw new Error("No se recibió el token");
-					}
-
-					localStorage.setItem("token", token);
-					localStorage.setItem("user", JSON.stringify(data.user)); // 🔹 Guarda el usuario
-					setStore({ token });
-
-					const actions = getActions();
-					actions.getUser();
+					sessionStorage.setItem("token", data.token);
+					sessionStorage.setItem("user", JSON.stringify(data.user));
+			
+					setStore({ token: data.token, user: data.user });
 					navigate("/");
+			
+					// Programar la renovación del token
+					const decoded = jwtDecode(data.token);
+					const expirationTime = decoded.exp * 1000;
+					const currentTime = Date.now();
+					getActions().scheduleTokenRefresh(expirationTime - currentTime - 60000);
+			
 				} catch (error) {
 					console.log("Error al iniciar sesión", error);
 					alert("Error al iniciar sesión");
 				}
 			},
+			
+			
 			signup: async (dataUser, navigate) => {
 				try {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
@@ -99,35 +97,108 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const token = localStorage.getItem("token");
 					if (!token) throw new Error("No token found");
-
+			
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/user`, {
 						headers: {
 							"Authorization": `Bearer ${token}`
 						}
 					});
-
-					if (!resp.ok) throw new Error("Error al obtener el usuario");
-
+			
+					if (!resp.ok) {
+						throw new Error("Error al obtener el usuario");
+					}
+			
 					const data = await resp.json();
 					setStore({ user: data });
+			
+					// Obtener las mascotas del usuario
+					getActions().getPets(data.id);
+			
 				} catch (error) {
-					console.log("Error al obtener usuario", error);
+					console.error("Error al obtener usuario:", error);
+					getActions().logout(); // 🔹 Si hay un error, cerrar sesión automáticamente
 				}
 			},
-			logout: () => {
-				localStorage.removeItem("token");
-				localStorage.removeItem("user"); // 🔹 Eliminar usuario de localStorage
-				setStore({ token: null, user: null, pets: [] });
-			},
+			
+			// Cerrar sesión si el usuario está inactivo
+            logout: () => {
+                console.log("Cerrando sesión por inactividad o token expirado...");
+                sessionStorage.removeItem("token");
+                sessionStorage.removeItem("user");
+                clearTimeout(getStore().refreshTimer);
+                setStore({ token: null, user: null, refreshTimer: null });
+                window.location.href = "/";
+            },
+			
+			
 
-			loadUserFromStorage: () => {
-				const token = localStorage.getItem("token"); //Cargar usuario
-				const user = localStorage.getItem("user");
-
+			loadUserFromStorage: async () => {
+				const token = sessionStorage.getItem("token"); // 🔹 Recuperar desde sessionStorage
+				const user = sessionStorage.getItem("user");
+			
 				if (token && user) {
-					setStore({ token, user: JSON.parse(user) });
+					try {
+						// Validar si el token sigue siendo válido
+						const resp = await fetch(`${process.env.BACKEND_URL}/api/user`, {
+							headers: {
+								"Authorization": `Bearer ${token}`
+							}
+						});
+			
+						if (!resp.ok) {
+							throw new Error("Token inválido o expirado");
+						}
+			
+						setStore({ token, user: JSON.parse(user) });
+					} catch (error) {
+						console.error("Error validando el token:", error);
+						getActions().logout(); // Si el token no es válido, cerrar sesión
+					}
+				} else {
+					console.log("No hay usuario autenticado, pero no redirigimos aún.");
 				}
 			},
+			
+
+			// Programar la renovación del token
+            scheduleTokenRefresh: (timeUntilRefresh) => {
+                if (timeUntilRefresh > 0) {
+                    console.log(`Renovación del token programada en ${timeUntilRefresh / 1000} segundos`);
+                    const refreshTimer = setTimeout(() => {
+                        console.log("Intentando renovar el token...");
+                        getActions().refreshToken();
+                    }, timeUntilRefresh);
+
+                    setStore({ refreshTimer });
+                }
+            },
+
+			// Simular renovación del token
+            refreshToken: async () => {
+                const token = sessionStorage.getItem("token");
+                if (!token) return getActions().logout();
+
+                try {
+                    // Aquí podrías hacer una solicitud al backend para renovar el token
+                    // Pero en este caso, simplemente estamos extendiendo su validez en el frontend.
+                    const newToken = token; // 🔹 Aquí normalmente pedirías uno nuevo al backend.
+
+                    sessionStorage.setItem("token", newToken);
+                    setStore({ token: newToken });
+
+                    // Volver a programar la renovación
+                    const decoded = jwtDecode(newToken);
+                    const expirationTime = decoded.exp * 1000;
+                    const currentTime = Date.now();
+                    getActions().scheduleTokenRefresh(expirationTime - currentTime - 60000);
+
+                } catch (error) {
+                    console.error("Error renovando el token:", error);
+                    getActions().logout();
+                }
+            },
+			
+			
 			//TRAER ALIMENTO POR GRUPOS
 			getDogFood: async () => {
 				const myHeaders = new Headers();
