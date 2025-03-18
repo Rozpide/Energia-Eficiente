@@ -98,35 +98,66 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const token = localStorage.getItem("token");
 					if (!token) throw new Error("No token found");
-
+			
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/user`, {
 						headers: {
 							"Authorization": `Bearer ${token}`
 						}
 					});
-
-					if (!resp.ok) throw new Error("Error al obtener el usuario");
-
+			
+					if (!resp.ok) {
+						throw new Error("Error al obtener el usuario");
+					}
+			
 					const data = await resp.json();
 					setStore({ user: data });
+			
+					// Obtener las mascotas del usuario
+					getActions().getPets(data.id);
+			
 				} catch (error) {
-					console.log("Error al obtener usuario", error);
+					console.error("Error al obtener usuario:", error);
+					getActions().logout(); // 🔹 Si hay un error, cerrar sesión automáticamente
 				}
 			},
+			
 			logout: () => {
 				localStorage.removeItem("token");
-				localStorage.removeItem("user"); // 🔹 Eliminar usuario de localStorage
+				localStorage.removeItem("user");
 				setStore({ token: null, user: null, pets: [] });
+				window.location.href = "/"; // 🔹 Redirigir al home al cerrar sesión
 			},
+			
 
-			loadUserFromStorage: () => {
-				const token = localStorage.getItem("token"); //Cargar usuario
+			loadUserFromStorage: async () => {
+				const token = localStorage.getItem("token");
 				const user = localStorage.getItem("user");
-
+			
 				if (token && user) {
-					setStore({ token, user: JSON.parse(user) });
+					// Verificar si el token sigue siendo válido
+					try {
+						const resp = await fetch(`${process.env.BACKEND_URL}/api/validate-token`, {
+							method: "POST",
+							headers: {
+								"Authorization": `Bearer ${token}`
+							}
+						});
+			
+						if (!resp.ok) {
+							throw new Error("Token inválido o expirado");
+						}
+			
+						setStore({ token, user: JSON.parse(user) });
+			
+						// Una vez validado, obtener el usuario
+						getActions().getUser();
+					} catch (error) {
+						console.error("Error validando el token:", error);
+						getActions().logout(); // Si el token no es válido, cerrar sesión
+					}
 				}
 			},
+			
 			//TRAER ALIMENTO POR GRUPOS
 			getDogFood: async () => {
 				const myHeaders = new Headers();
