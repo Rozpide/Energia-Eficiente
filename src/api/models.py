@@ -72,6 +72,7 @@ class Food(db.Model):
             "id": self.id,
             "name": self.name,
             "brand": self.brand,
+            "age": self.age,
             "description": self.description,
             "ingredients": self.ingredients,
             "weight": self.weight, #peso en kilos

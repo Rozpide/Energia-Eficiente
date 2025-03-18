@@ -94,7 +94,7 @@ export const RegistroMascota = () => {
                             <option value="">Selecciona una especie</option>
                             <option value="perro">Canina</option>
                             <option value="gato">Felina</option>
-                            <option value="exótico">Exótico</option>
+                            <option value="exotico">Exótico</option>
                         </select>
                     </div>
 
@@ -121,8 +121,8 @@ export const RegistroMascota = () => {
                             required
                         >
                             <option value="">Selecciona una opción</option>
-                            <option value="pequeño">Pequeño (0-10kg)</option>
-                            <option value="mediano">Mediano (10-25kg)</option>
+                            <option value="pequeña">Pequeño (0-10kg)</option>
+                            <option value="medio">Mediano (10-25kg)</option>
                             <option value="grande">Grande (+25Kg)</option>
                         </select>
                     </div>
@@ -154,14 +154,12 @@ export const RegistroMascota = () => {
                             required
                         >
                             <option value="">Selecciona una opción</option>
-                            <option value="ninguna">Ninguna</option>
-                            <option value="diabetico">Diabetes</option>
+                            <option value="ninguna">Sin Patologías</option>
+                            <option value="diabetes">Diabetes</option>
                             <option value="renal">Insuficiencia renal</option>
-                            <option value="urinarioStruvita">Urinario Struvita</option>
-                            <option value="urinarioOxalatos">Urinario Oxalatos</option>
                             <option value="escorbuto">Escorbuto</option>
                             <option value="obesidad">Obesidad</option>
-                            <option value="hipoalergénico">Hipoalergénico</option>
+                            <option value="hipoalergenico">Hipoalergénico</option>
                         </select>
                     </div>
                     <button type="submit" className="btn btn-primary">Registrar Mascota</button>
