@@ -39,7 +39,7 @@ export const PerfilUsuario = () => {
                               }} />
                               <span className="fw-bold text-dark" style={{ fontSize: "1.5rem", marginLeft: "10px" }}>Pupper Eats</span>
                           </Link>
-          <button className="btn btn-warning me-2">🛒 Carrito</button>
+                          <button className="btn btn-warning me-2" onClick={() => navigate("/carrito")}>🛒 Carrito</button>
           <button className="btn btn-outline-secondary" onClick={actions.logout}>Cerrar sesión</button>
         </div>
       </div>

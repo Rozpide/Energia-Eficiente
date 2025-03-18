@@ -9,13 +9,32 @@ from sqlalchemy import select, and_, or_
 import json
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_bcrypt import Bcrypt 
+import stripe
 
 api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
 
+# Configura tu clave secreta de Stripe
+stripe.api_key = "sk_test_51R3GSLPowRpDmMbeD74L6GGIHz1FSWCfbrchq2LGRqIIJP1E0Rr11pu4nLqjSKqkO4ZtSrH23LcSkcCusMKELFT700pP7sFDoQ"  # Reemplaza con tu clave secreta de Stripe
+
 
 # Allow CORS requests to this API
 CORS(api)
+
+
+
+@api.route('/create-payment', methods=['POST'])
+def create_payment():
+    response_body = {}
+    try:
+        data = request.json
+        intent = stripe.PaymentIntent.create(amount=data['amount'],
+                                             currency=data['currency'],
+                                             automatic_payment_methods={'enabled': True})
+        response_body['client_secret'] = intent['client_secret']
+        return jsonify({'clientSecret': intent['client_secret']}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 403
 
 
 # @api.route('/hello', methods=['POST', 'GET'])
@@ -584,5 +603,4 @@ def order(user_id):
     db.session.add(new_order)
     db.session.commit()
     return jsonify(new_order.serialize()), 201
-
 
