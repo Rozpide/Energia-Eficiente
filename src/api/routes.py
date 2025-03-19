@@ -17,8 +17,6 @@ from unidecode import unidecode
 
 api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
-stripe.api_key = 'sk_test_51R3GSLPowRpDmMbeD74L6GGIHz1FSWCfbrchq2LGRqIIJP1E0Rr11pu4nLqjSKqkO4ZtSrH23LcSkcCusMKELFT700pP7sFDoQ'
-
 # Configura tu clave secreta de Stripe
 stripe.api_key = "sk_test_51R3GSLPowRpDmMbeD74L6GGIHz1FSWCfbrchq2LGRqIIJP1E0Rr11pu4nLqjSKqkO4ZtSrH23LcSkcCusMKELFT700pP7sFDoQ"  # Reemplaza con tu clave secreta de Stripe
 
