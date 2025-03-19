@@ -1,5 +1,6 @@
 
 
+
 import click
 from api.models import db, User, Food, Accessories, Pet
 from flask_bcrypt import Bcrypt 
@@ -381,4 +382,3 @@ def setup_commands(app):
     
 
     
-

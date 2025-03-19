@@ -49,7 +49,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     sessionStorage.setItem("token", token); // 🔹 Guardar en sessionStorage
                     sessionStorage.setItem("user", JSON.stringify(data.user));
             
-                    setStore({ token, user: data.user });
+                    setStore({ token:data.token, user: data.user });
                     navigate("/");
                 } catch (error) {
                     console.error("Error al iniciar sesión", error);
@@ -601,7 +601,26 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-
+            getFoodSuggestions: async (pet_id) => {
+				try {
+				  const resp = await fetch(`${process.env.BACKEND_URL}/api/foods/suggestions/${pet_id}`, {
+					method: "GET",
+					headers: {
+					  "Content-Type": "application/json",
+					  "Authorization": "Bearer " + sessionStorage.getItem("token")
+					}
+				  });
+				  if (!resp.ok) {
+					console.error("Error al obtener sugerencias de comida, status:", resp.status);
+					return [];
+				  }
+				  const data = await resp.json();
+				  return data;
+				} catch (error) {
+				  console.error("Error al obtener sugerencias de comida:", error);
+				  return [];
+				}
+			  },		
 
             removeFromCart: (productoId) => {
                 setStore({
