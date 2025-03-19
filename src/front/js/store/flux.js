@@ -81,7 +81,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         throw new Error("No se recibió el token");
                     }
 
-                    localStorage.setItem("token", token);
+                    sessionStorage.setItem("token", token);
                     setStore({ token });
 
                     const actions = getActions();
@@ -92,7 +92,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
             getUser: async () => {
                 try {
-                    const token = localStorage.getItem("token");
+                    const token = sessionStorage.getItem("token");
                     if (!token) throw new Error("No token found");
 
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/user`, {
@@ -300,7 +300,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             getUser: async () => {
                 try {
-                    const token = localStorage.getItem("token");
+                    const token = sessionStorage.getItem("token");
                     if (!token) throw new Error("No token found");
 
                     const response = await fetch(`${process.env.BACKEND_URL}/api/user`, {
@@ -358,7 +358,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             // createOrder: async (orderData) => {
             // 	const myHeaders = new Headers();
             // 	myHeaders.append("Content-Type", "application/json");
-            // 	myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
+            // 	myHeaders.append("Authorization", `Bearer ${sessionStorage.getItem("token")}`);
 
             // 	const raw = JSON.stringify(orderData);
 
@@ -370,7 +370,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             // 	};
 
             // 	try {
-            // 		const id = JSON.parse(localStorage.getItem("user")).id;
+            // 		const id = JSON.parse(sessionStorage.getItem("user")).id;
             // 		const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
             // 		const result = await response.json();
             // 		console.log(result);
@@ -386,7 +386,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             createOrder: async (orderData) => {
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json");
-                myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
+                myHeaders.append("Authorization", `Bearer ${sessionStorage.getItem("token")}`);
 
                 const raw = JSON.stringify(orderData);
 
@@ -398,7 +398,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 try {
-                    const id = JSON.parse(localStorage.getItem("user")).id;
+                    const id = JSON.parse(sessionStorage.getItem("user")).id;
                     const response = await fetch(`${process.env.BACKEND_URL}/api/order/${id}`, requestOptions);
 
                     if (!response.ok) {
@@ -420,7 +420,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             createPet: async (newPet) => {
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json");
-                myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`)
+                myHeaders.append("Authorization", `Bearer ${sessionStorage.getItem("token")}`)
                 const raw = JSON.stringify(newPet);
 
                 const requestOptions = {
@@ -467,7 +467,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             ,
 
             deletePet: async (id) => {
-                const token = localStorage.getItem("token");
+                const token = sessionStorage.getItem("token");
                 const resp = await fetch(`${process.env.BACKEND_URL}/api/pet/${id}`, {
                     method: "DELETE",
                     headers: {
@@ -491,7 +491,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             editPet: async (id, petData) => {
-                const token = localStorage.getItem("token");
+                const token = sessionStorage.getItem("token");
                 const resp = await fetch(`${process.env.BACKEND_URL}/api/pet/${id}`, {
                     method: "PUT",
                     headers: {
@@ -547,7 +547,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             updateUser: async (userData) => {
                 try {
-                    const token = localStorage.getItem("token");
+                    const token = sessionStorage.getItem("token");
                     if (!token) throw new Error("No token found");
 
                     const response = await fetch(`${process.env.BACKEND_URL}/api/users`, {
@@ -575,7 +575,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             deleteUser: async () => {
                 try {
-                    const token = localStorage.getItem("token");
+                    const token = sessionStorage.getItem("token");
                     if (!token) throw new Error("No token found");
 
                     const response = await fetch(`${process.env.BACKEND_URL}/api/user`, {
@@ -589,7 +589,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         throw new Error("Error al eliminar la cuenta");
                     }
 
-                    localStorage.removeItem("token"); // Elimina el token de autenticación
+                    sessionStorage.removeItem("token"); // Elimina el token de autenticación
                     setStore({ user: null, token: null }); // Borra el usuario del estado global
                     alert("Cuenta eliminada correctamente");
 

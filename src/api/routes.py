@@ -222,7 +222,7 @@ def get_all_dog_food():
 
 @api.route('/foods/exotic', methods=['GET'])
 def get_all_exotic_food():
-    food_exotic = db.session.query(Food).filter(Food.animal_type.ilike("%exótico%")).all()
+    food_exotic = db.session.query(Food).filter(Food.animal_type.ilike("%exotico%")).all()
 
 
     print("Datos obtenidos:", food_exotic)
