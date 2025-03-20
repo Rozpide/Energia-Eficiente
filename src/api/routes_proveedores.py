@@ -55,19 +55,23 @@ def eliminar_proveedor(proveedor_id):
     except Exception as e:
         return jsonify({"error": f"Ocurrió un error: {str(e)}"}), 500
 
-@proveedores_bp.route('/proveedores/<int:proveedor_id>', methods=['DELETE'])
-def eliminar_proveedor(proveedor_id):
+@proveedores_bp.route('/proveedores/<int:proveedor_id>', methods=['PUT','PATCH'])
+def actualizar_proveedor(proveedor_id):
     """
-    Eliminar un proveedor por su ID.
+    Actualizar los datos de un proveedor por su ID.
     """
-    try:
-        proveedor = Proveedor.query.get(proveedor_id)
-        if not proveedor:
-            return jsonify({"error": "Proveedor no encontrado"}), 404
+    proveedor = Proveedor.query.get(proveedor_id)
+    if not proveedor:
+        return jsonify({"error": "Proveedor no encontrado"}), 404
 
-        db.session.delete(proveedor)
-        db.session.commit()
-        return jsonify({"message": "Proveedor eliminado correctamente"}), 200
-    except Exception as e:
-        return jsonify({"error": f"Ocurrió un error: {str(e)}"}), 500
+    data = request.get_json()
+    if "nombre_proveedor" in data:
+        proveedor.nombre_proveedor = data["nombre_proveedor"]
+    if "contacto" in data:
+        proveedor.contacto = data["contacto"]
+    if "website" in data:
+        proveedor.website = data["website"]
+
+    db.session.commit()
+    return jsonify(proveedor.serialize()), 200
 

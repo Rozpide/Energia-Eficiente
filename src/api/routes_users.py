@@ -43,7 +43,7 @@ def crear_usuario():
     return jsonify(nuevo_usuario.serialize()), 201
 
 
-@users_bp.route('/users/<int:user_id>', methods=['PATCH'])
+@users_bp.route('/users/<int:user_id>', methods=['PATCH','PUT'])
 def actualizar_usuario(user_id):
     """
     Actualizar los datos de un usuario por su ID.
@@ -61,36 +61,6 @@ def actualizar_usuario(user_id):
         usuario.is_active = data["is_active"]
     if "name" in data:
         usuario.name = data["name"]
-
-    db.session.commit()
-    return jsonify(usuario.serialize()), 200
-
-@users_bp.route('/users/<int:user_id>', methods=['DELETE'])
-def eliminar_usuario(user_id):
-    usuario = User.query.get(user_id)
-    if not usuario:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    db.session.delete(usuario)
-    db.session.commit()
-    return jsonify({"message": "Usuario eliminado correctamente"}), 200
-
-
-@users_bp.route('/users/<int:user_id>', methods=['PATCH'])
-def actualizar_usuario(user_id):
-    usuario = User.query.get(user_id)
-    if not usuario:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    data = request.get_json()
-    if "email" in data:
-        usuario.email = data["email"]
-    if "password" in data:
-        usuario.password = data["password"]
-    if "name" in data:
-        usuario.name = data["name"]
-    if "is_active" in data:
-        usuario.is_active = data["is_active"]
 
     db.session.commit()
     return jsonify(usuario.serialize()), 200
