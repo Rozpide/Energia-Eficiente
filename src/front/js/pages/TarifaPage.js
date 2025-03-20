@@ -3,93 +3,90 @@ import TarifaElectricaList from "../component/TarifaElectricaList";
 
 const TarifaPage = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado para control de acceso
+    const [proveedorId, setProveedorId] = useState(""); // Almacena el ID del proveedor autenticado
+    const [password, setPassword] = useState(""); // Almacena la contraseña del proveedor autenticado
     const [showLoginModal, setShowLoginModal] = useState(false); // Estado para mostrar el modal
     const [loginForm, setLoginForm] = useState({ proveedorId: "", password: "" });
 
-    const handleLoginChange = event => {
+    const handleLoginChange = (event) => {
         const { name, value } = event.target;
         setLoginForm({ ...loginForm, [name]: value });
     };
 
     const handleLogin = () => {
-        fetch("http://localhost:5000/api/login_proveedor", {
+        fetch(`${process.env.BACKEND_URL}/api/login_proveedor`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(loginForm),
         })
-            .then(response => {
+            .then((response) => {
                 if (!response.ok) {
                     throw new Error("ID o contraseña inválidos");
                 }
                 return response.json();
             })
-            .then(data => {
+            .then(() => {
+                setProveedorId(loginForm.proveedorId);
+                setPassword(loginForm.password);
                 setIsAuthenticated(true); // Login exitoso
                 setShowLoginModal(false); // Cerrar modal
-                alert("Acceso otorgado al formulario de tarifas.");
+                alert("Inicio de sesión exitoso. Ahora puedes gestionar tarifas.");
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Error al iniciar sesión:", error);
                 alert("ID o contraseña incorrectos.");
             });
+    };
+
+    const handleLogout = () => {
+        setProveedorId(""); // Limpiar ID del proveedor
+        setPassword(""); // Limpiar contraseña
+        setIsAuthenticated(false); // Cerrar sesión
+        alert("Sesión cerrada.");
     };
 
     return (
         <div style={{ padding: "20px" }}>
             <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Gestión de Tarifas Eléctricas</h1>
 
-            {/* Listado de tarifas eléctricas */}
-            <TarifaElectricaList />
-
-            {/* Botón para iniciar sesión */}
-            <div style={{ marginTop: "20px" }}>
-                <button
-                    onClick={() => setShowLoginModal(true)}
-                    style={{
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#007BFF",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                    }}
-                >
-                    Acceso Proveedores
-                </button>
-            </div>
-
-            {/* Formulario para añadir tarifa (bloqueado inicialmente) */}
-            {isAuthenticated && (
-                <form style={{ marginTop: "20px" }}>
-                    <h3>Añadir Tarifa</h3>
-                    <input
-                        type="text"
-                        name="nombre_tarifa"
-                        placeholder="Nombre de la Tarifa"
-                        required
-                        style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                    />
-                    <input
-                        type="number"
-                        name="precio_kw_hora"
-                        placeholder="Precio Kw/h"
-                        required
-                        style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                    />
+            {/* Login y Logout */}
+            {!isAuthenticated ? (
+                <>
+                    {/* Botón para mostrar modal de login */}
                     <button
-                        type="submit"
+                        onClick={() => setShowLoginModal(true)}
                         style={{
                             padding: "0.5rem 1rem",
-                            backgroundColor: "#4CAF50",
+                            backgroundColor: "#007BFF",
                             color: "white",
                             border: "none",
                             borderRadius: "5px",
                             cursor: "pointer",
                         }}
                     >
-                        Añadir Tarifa
+                        Acceso Proveedores
                     </button>
-                </form>
+                </>
+            ) : (
+                <>
+                    <p>
+                        Bienvenido, proveedor <strong>{proveedorId}</strong>
+                    </p>
+                    <button
+                        onClick={handleLogout}
+                        style={{
+                            marginBottom: "20px",
+                            padding: "0.5rem 1rem",
+                            backgroundColor: "#f44336",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Cerrar sesión
+                    </button>
+                </>
             )}
 
             {/* Modal de login */}
@@ -143,6 +140,11 @@ const TarifaPage = () => {
                         </button>
                     </div>
                 </div>
+            )}
+
+            {/* Listado de tarifas */}
+            {isAuthenticated && (
+                <TarifaElectricaList proveedorId={proveedorId} password={password} />
             )}
         </div>
     );

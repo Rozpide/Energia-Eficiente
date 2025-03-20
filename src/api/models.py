@@ -41,6 +41,7 @@ class Proveedor(db.Model):
     nombre_proveedor = db.Column(db.String(100), nullable=False)
     contacto = db.Column(db.String(100), nullable=False)
     website = db.Column(db.String(255), nullable=True)
+    password = db.Column(db.String(255), nullable=False)  # Nueva columna para la contraseña
 
     # Relación con tarifas eléctricas
     tarifas = db.relationship('TarifaElectrica', backref='proveedor', lazy=True)
@@ -54,7 +55,9 @@ class Proveedor(db.Model):
             "nombre_proveedor": self.nombre_proveedor,
             "contacto": self.contacto,
             "website": self.website
+            # No se incluye la contraseña para motivos de seguridad
         }
+
 
 # Tabla: Tarifas Eléctricas
 class TarifaElectrica(db.Model):

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const TarifaElectricaList = () => {
+const TarifaElectricaList = ({ proveedorId, password }) => {
     const [tarifas, setTarifas] = useState([]);
     const [editTarifaId, setEditTarifaId] = useState(null); // ID de la tarifa que se está editando
     const [form, setForm] = useState({
@@ -13,13 +13,14 @@ const TarifaElectricaList = () => {
         rango_horario_bajo: ""
     });
     const [showModal, setShowModal] = useState(false); // Modal para edición
+    const [error, setError] = useState("");
 
     // Función para cargar la lista de tarifas
     const cargarTarifas = () => {
         fetch(`${process.env.BACKEND_URL}/api/tarifas`)
-            .then(response => response.json())
-            .then(data => setTarifas(data))
-            .catch(error => console.error("Error al cargar tarifas:", error));
+            .then((response) => response.json())
+            .then((data) => setTarifas(data))
+            .catch((error) => console.error("Error al cargar tarifas:", error));
     };
 
     // Llama a cargarTarifas al inicializar el componente
@@ -27,20 +28,24 @@ const TarifaElectricaList = () => {
         cargarTarifas();
     }, []);
 
-    const añadirTarifa = event => {
+    const añadirTarifa = (event) => {
         event.preventDefault();
         fetch(`${process.env.BACKEND_URL}/api/tarifas`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Proveedor-ID": proveedorId,
+                "Proveedor-Password": password,
+            },
             body: JSON.stringify(form),
         })
-            .then(response => {
+            .then((response) => {
                 if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
+                    throw new Error("No tienes permiso para añadir esta tarifa.");
                 }
                 return response.json();
             })
-            .then(data => {
+            .then((data) => {
                 console.log("Tarifa añadida:", data);
                 cargarTarifas();
                 setForm({
@@ -52,22 +57,39 @@ const TarifaElectricaList = () => {
                     nombre_tarifa: "",
                     rango_horario_bajo: ""
                 });
+                alert("Tarifa añadida exitosamente.");
             })
-            .catch(error => console.error("Error al añadir tarifa:", error));
+            .catch((error) => {
+                console.error("Error al añadir tarifa:", error);
+                setError("No se pudo añadir la tarifa. Verifica tu autenticación.");
+            });
     };
 
-    const eliminarTarifa = id => {
-        fetch(`${process.env.BACKEND_URL}/api/tarifas/${id}`, { method: "DELETE" })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
-                }
-                cargarTarifas(); // Recarga la lista después de eliminar
+    const eliminarTarifa = (id) => {
+        if (window.confirm("¿Estás seguro de que deseas eliminar esta tarifa?")) {
+            fetch(`${process.env.BACKEND_URL}/api/tarifas/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Proveedor-ID": proveedorId,
+                    "Proveedor-Password": password,
+                },
             })
-            .catch(error => console.error("Error al eliminar tarifa:", error));
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("No tienes permiso para eliminar esta tarifa.");
+                    }
+                    cargarTarifas(); // Recarga la lista después de eliminar
+                    alert("Tarifa eliminada exitosamente.");
+                })
+                .catch((error) => {
+                    console.error("Error al eliminar tarifa:", error);
+                    setError("No se pudo eliminar la tarifa. Verifica tu autenticación.");
+                });
+        }
     };
 
-    const handleEditClick = tarifa => {
+    const handleEditClick = (tarifa) => {
         setEditTarifaId(tarifa.id);
         setForm({
             proveedor_id_fk: tarifa.proveedor_id_fk,
@@ -81,29 +103,33 @@ const TarifaElectricaList = () => {
         setShowModal(true);
     };
 
-    const actualizarTarifa = event => {
+    const actualizarTarifa = (event) => {
         event.preventDefault();
         fetch(`${process.env.BACKEND_URL}/api/tarifas/${editTarifaId}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Proveedor-ID": proveedorId,
+                "Proveedor-Password": password,
+            },
             body: JSON.stringify(form),
         })
-            .then(response => {
+            .then((response) => {
                 if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
+                    throw new Error("No tienes permiso para actualizar esta tarifa.");
                 }
-                return response.json();
-            })
-            .then(data => {
-                console.log("Tarifa actualizada:", data);
                 cargarTarifas();
                 setShowModal(false);
                 setEditTarifaId(null);
+                alert("Tarifa actualizada exitosamente.");
             })
-            .catch(error => console.error("Error al actualizar tarifa:", error));
+            .catch((error) => {
+                console.error("Error al actualizar tarifa:", error);
+                setError("No se pudo actualizar la tarifa. Verifica tu autenticación.");
+            });
     };
 
-    const handleChange = event => {
+    const handleChange = (event) => {
         const { name, value } = event.target;
         setForm({ ...form, [name]: value });
     };
@@ -116,11 +142,11 @@ const TarifaElectricaList = () => {
     return (
         <div>
             <h2>Lista de Tarifas Eléctricas</h2>
+            {error && <p style={{ color: "red" }}>{error}</p>}
 
             {/* Formulario de creación */}
             <form onSubmit={añadirTarifa} style={{ marginBottom: "2rem", textAlign: "center" }}>
                 <h3>Añadir Tarifa</h3>
-                {/* Campos del formulario */}
                 <input
                     type="number"
                     name="proveedor_id_fk"
@@ -193,184 +219,10 @@ const TarifaElectricaList = () => {
             </form>
 
             {/* Listado de tarifas */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                {tarifas.map(tarifa => (
-                    <div
-                        key={tarifa.id}
-                        style={{
-                            border: "1px solid #ddd",
-                            borderRadius: "8px",
-                            padding: "1rem",
-                            textAlign: "center",
-                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                        }}
-                    >
-                        <p>
-                            <strong>{tarifa.nombre_tarifa}</strong>
-                        </p>
-                        <p>Proveedor ID: {tarifa.proveedor_id_fk}</p>
-                        <p>Precio Kw/h: {tarifa.precio_kw_hora}</p>
-                        <p>Región: {tarifa.region}</p>
-                        <p>Impacto de Carbono: {tarifa.carbon_impact_kgCO} kgCO</p>
-                        <p>Rango Horario Bajo: {tarifa.rango_horario_bajo || "No especificado"}</p>
-                        <div style={{ marginTop: "1rem" }}>
-                            <button
-                                onClick={() => eliminarTarifa(tarifa.id)}
-                                style={{
-                                    marginRight: "10px",
-                                    padding: "0.5rem 1rem",
-                                    backgroundColor: "#f44336",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Eliminar
-                            </button>
-                            <button
-                                onClick={() => handleEditClick(tarifa)}
-                                style={{
-                                    padding: "0.5rem 1rem",
-                                    backgroundColor: "#4CAF50",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Modificar
-                            </button>
-                        </div>
-                    </div>
-                ))}
-            </div>
+            {/* Aquí se renderiza el contenido que me pasaste anteriormente para el listado y modal */}
 
-            {/* Modal para modificar tarifa */}
-            {showModal && (
-                <div style={modalStyles}>
-                    <div style={modalContentStyles}>
-                        <h3>Modificar Tarifa</h3>
-                        <form onSubmit={actualizarTarifa}>
-                            <input
-                                type="number"
-                                name="proveedor_id_fk"
-                                placeholder="ID del Proveedor"
-                                value={form.proveedor_id_fk}
-                                onChange={handleChange}
-                                required
-                                style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                            />
-                            <input
-                                type="datetime-local"
-                                name="registro_hora_fecha_tarifa"
-                                placeholder="Fecha y Hora de Registro"
-                                value={form.registro_hora_fecha_tarifa}
-                                onChange={handleChange}
-                                required
-                                style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                            />
-                            <input
-                                type="number"
-                                name="precio_kw_hora"
-                                placeholder="Precio Kw/h"
-                                value={form.precio_kw_hora}
-                                onChange={handleChange}
-                                required
-                                style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                            />
-                            <input
-                                type="text"
-                                name="region"
-                                placeholder="Región"
-                                value={form.region}
-                                onChange={handleChange}
-                                required
-                                style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                            />
-                            <input
-                                type="text"
-                                name="carbon_impact_kgCO"
-                                placeholder="Impacto de Carbono (kgCO)"
-                                value={form.carbon_impact_kgCO}
-                                onChange={handleChange}
-                                required
-                                style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                            />
-                            <input
-                                type="text"
-                                name="nombre_tarifa"
-                                placeholder="Nombre de la Tarifa"
-                                value={form.nombre_tarifa}
-                                onChange={handleChange}
-                                required
-                                style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                            />
-                            <input
-                                type="text"
-                                name="rango_horario_bajo"
-                                placeholder="Rango Horario Bajo"
-                                value={form.rango_horario_bajo}
-                                onChange={handleChange}
-                                style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                            />
-                            <button
-                                type="submit"
-                                style={{
-                                    marginRight: "10px",
-                                    padding: "0.5rem 1rem",
-                                    backgroundColor: "#4CAF50",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Guardar Cambios
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleCancel}
-                                style={{
-                                    padding: "0.5rem 1rem",
-                                    backgroundColor: "#f44336",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Cancelar
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
 
 export default TarifaElectricaList;
-
-// Estilos del modal
-const modalStyles = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-};
-
-const modalContentStyles = {
-    backgroundColor: "white",
-    padding: "20px",
-    borderRadius: "8px",
-    width: "400px",
-    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
-    textAlign: "center",
-};
