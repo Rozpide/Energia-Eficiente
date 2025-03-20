@@ -3,6 +3,19 @@ from api.models import db, Proveedor
 
 proveedores_bp = Blueprint('proveedores_bp', __name__)
 
+@proveedores_bp.route('/login_proveedor', methods=['POST'])
+def login_proveedor():
+    data = request.get_json()
+    proveedor_id = data.get('proveedorId')
+    password = data.get('password')
+
+    proveedor = Proveedor.query.filter_by(id=proveedor_id).first()
+    if not proveedor or proveedor.contacto != password:
+        return jsonify({"error": "ID o contraseña inválidos"}), 401
+
+    return jsonify({"message": "Login exitoso", "proveedor_id": proveedor.id}), 200
+
+
 @proveedores_bp.route('/proveedores', methods=['GET'])
 def obtener_proveedores():
     """

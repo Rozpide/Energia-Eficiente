@@ -12,6 +12,7 @@ from api.models import db
 from api.routes import api
 from api.routes_proveedores import proveedores_bp  # Importa el Blueprint
 from api.routes_users import users_bp
+from api.routes_tarifa_electrica import tarifa_electrica_bp  # Importar el blueprint de tarifas eléctricas
 from api.admin import setup_admin
 from api.commands import setup_commands
 
@@ -46,6 +47,7 @@ setup_commands(app)
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(users_bp, url_prefix='/api')
 app.register_blueprint(proveedores_bp, url_prefix='/api')
+app.register_blueprint(tarifa_electrica_bp, url_prefix='/api/tarifas')
 # Handle/serialize errors like a JSON object
 
 
