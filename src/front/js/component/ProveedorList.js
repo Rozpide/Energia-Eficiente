@@ -3,13 +3,17 @@ import React, { useState, useEffect } from "react";
 const ProveedorList = () => {
   const [proveedores, setProveedores] = useState([]);
   const [editProveedorId, setEditProveedorId] = useState(null); // ID del proveedor que se está editando
+  const [deleteProveedorId, setDeleteProveedorId] = useState(null); // ID del proveedor que se va a eliminar
   const [form, setForm] = useState({
     nombre_proveedor: "",
     contacto: "",
     website: "",
   });
+  const [authForm, setAuthForm] = useState({ email: "", password: "" }); // Formulario de autenticación
+  const [authModal, setAuthModal] = useState(false); // Modal para autenticación
+  const [authAction, setAuthAction] = useState(null); // Acción pendiente tras autenticación (editar/eliminar)
   const [showModal, setShowModal] = useState(false); // Modal para edición
-  const [warningModal, setWarningModal] = useState(false); // Modal para advertencia de relaciones
+  const [warningModal, setWarningModal] = useState(false); // Modal para advertencia
   const [warningMessage, setWarningMessage] = useState(""); // Mensaje de advertencia
 
   // Función para cargar la lista de proveedores
@@ -45,14 +49,22 @@ const ProveedorList = () => {
       })
       .catch((error) => console.error("Error al añadir proveedor:", error));
   };
+  const handleChange = (event) => {
+    const { name, value } = event.target; // Extrae el nombre y el valor del campo
+    setForm((prevForm) => ({
+        ...prevForm, // Mantiene los valores previos del formulario
+        [name]: value, // Actualiza solo el campo que corresponde al evento
+    }));
+};
 
-  const eliminarProveedor = (id) => {
-    fetch(`${process.env.BACKEND_URL}/api/proveedores/${id}`, {
+  const eliminarProveedor = () => {
+    if (!deleteProveedorId) return;
+    fetch(`${process.env.BACKEND_URL}/api/proveedores/${deleteProveedorId}`, {
       method: "DELETE",
+      headers: { "Proveedor-Email": authForm.email, "Proveedor-Password": authForm.password }, // Añadimos los datos de autenticación
     })
       .then((response) => {
         if (!response.ok) {
-          // Capturamos el mensaje específico del backend
           return response.json().then((err) => {
             const relatedElements =
               err.error.split(": ")[1] || "elementos relacionados";
@@ -61,12 +73,13 @@ const ProveedorList = () => {
             );
           });
         }
-        cargarProveedores(); // Recarga la lista después de eliminar
+        cargarProveedores();
+        setDeleteProveedorId(null); // Limpia el proveedor seleccionado
       })
       .catch((error) => {
         console.error("Error al eliminar proveedor:", error);
-        setWarningMessage(error.message); // Establece el mensaje dinámico
-        setWarningModal(true); // Muestra el modal de advertencia
+        setWarningMessage(error.message);
+        setWarningModal(true);
       });
   };
 
@@ -77,7 +90,14 @@ const ProveedorList = () => {
       contacto: proveedor.contacto,
       website: proveedor.website || "",
     });
-    setShowModal(true);
+    setAuthAction("edit"); // Define la acción pendiente
+    setAuthModal(true); // Abre el modal de autenticación
+  };
+
+  const handleDeleteClick = (id) => {
+    setDeleteProveedorId(id);
+    setAuthAction("delete"); // Define la acción pendiente
+    setAuthModal(true); // Abre el modal de autenticación
   };
 
   const actualizarProveedor = (event) => {
@@ -102,9 +122,37 @@ const ProveedorList = () => {
       .catch((error) => console.error("Error al actualizar proveedor:", error));
   };
 
-  const handleChange = (event) => {
+  const autenticarProveedor = (event) => {
+    event.preventDefault();
+    fetch(`${process.env.BACKEND_URL}/api/proveedores/autenticar`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(authForm),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Autenticación fallida. Verifique sus credenciales.");
+        }
+        return response.json();
+      })
+      .then(() => {
+        setAuthModal(false); // Cierra el modal de autenticación
+        if (authAction === "edit") {
+          setShowModal(true); // Abre el modal de edición
+        } else if (authAction === "delete") {
+          eliminarProveedor(); // Ejecuta la acción de eliminación
+        }
+        setAuthAction(null); // Limpia la acción pendiente
+      })
+      .catch((error) => {
+        console.error("Error al autenticar proveedor:", error);
+        alert(error.message);
+      });
+  };
+
+  const handleAuthChange = (event) => {
     const { name, value } = event.target;
-    setForm({ ...form, [name]: value });
+    setAuthForm({ ...authForm, [name]: value });
   };
 
   const handleCancel = () => {
@@ -113,60 +161,12 @@ const ProveedorList = () => {
   };
 
   const closeWarningModal = () => {
-    setWarningModal(false); // Cierra el modal de advertencia
+    setWarningModal(false);
   };
 
   return (
     <div>
       <h2>Lista de Proveedores</h2>
-
-      {/* Formulario de creación de proveedor */}
-      <form
-        onSubmit={añadirProveedor}
-        style={{ marginBottom: "2rem", textAlign: "center" }}
-      >
-        <h3>Añadir Proveedor</h3>
-        <input
-          type="text"
-          name="nombre_proveedor"
-          placeholder="Nombre del Proveedor"
-          value={form.nombre_proveedor}
-          onChange={handleChange}
-          required
-          style={{ marginRight: "10px", padding: "0.5rem", width: "20%" }}
-        />
-        <input
-          type="text"
-          name="contacto"
-          placeholder="Contacto"
-          value={form.contacto}
-          onChange={handleChange}
-          required
-          style={{ marginRight: "10px", padding: "0.5rem", width: "20%" }}
-        />
-        <input
-          type="url"
-          name="website"
-          placeholder="Sitio Web"
-          value={form.website}
-          onChange={handleChange}
-          style={{ marginRight: "10px", padding: "0.5rem", width: "20%" }}
-        />
-        <button
-          type="submit"
-          style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Crear Proveedor
-        </button>
-      </form>
-
       {/* Listado de proveedores */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         {proveedores.map((proveedor) => (
@@ -186,7 +186,7 @@ const ProveedorList = () => {
             </p>
             <div style={{ marginTop: "1rem" }}>
               <button
-                onClick={() => eliminarProveedor(proveedor.id)}
+                onClick={() => handleDeleteClick(proveedor.id)}
                 style={{
                   marginRight: "10px",
                   padding: "0.5rem 1rem",
@@ -217,30 +217,72 @@ const ProveedorList = () => {
         ))}
       </div>
 
-      {/* Modal para advertencia */}
-      {warningModal && (
+      {/* Modal de autenticación */}
+      {authModal && (
         <div style={modalStyles}>
           <div style={modalContentStyles}>
-            <h3>No se puede eliminar el proveedor</h3>
-            <p>{warningMessage}</p> {/* Mensaje dinámico desde el backend */}
-            <button
-              onClick={() => setWarningModal(false)}
-              style={{
-                padding: "0.5rem 1rem",
-                backgroundColor: "#f44336",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Cerrar
-            </button>
+            <h3>Autenticación Requerida</h3>
+            <form onSubmit={autenticarProveedor}>
+              <input
+                type="email"
+                name="email"
+                placeholder="Correo Electrónico"
+                value={authForm.email}
+                onChange={handleAuthChange}
+                required
+                style={{
+                  marginBottom: "10px",
+                  padding: "0.5rem",
+                  width: "100%",
+                }}
+              />
+                            <input
+                type="password"
+                name="password"
+                placeholder="Contraseña"
+                value={authForm.password}
+                onChange={handleAuthChange}
+                required
+                style={{
+                  marginBottom: "10px",
+                  padding: "0.5rem",
+                  width: "100%",
+                }}
+              />
+              <button
+                type="submit"
+                style={{
+                  marginRight: "10px",
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "#4CAF50",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                Autenticar
+              </button>
+              <button
+                type="button"
+                onClick={() => setAuthModal(false)}
+                style={{
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "#f44336",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                Cancelar
+              </button>
+            </form>
           </div>
         </div>
       )}
 
-      {/* Modal para modificar proveedor */}
+      {/* Modal para editar proveedor */}
       {showModal && (
         <div style={modalStyles}>
           <div style={modalContentStyles}>
@@ -313,6 +355,29 @@ const ProveedorList = () => {
                 Cancelar
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de advertencia */}
+      {warningModal && (
+        <div style={modalStyles}>
+          <div style={modalContentStyles}>
+            <h3>Advertencia</h3>
+            <p>{warningMessage}</p>
+            <button
+              onClick={closeWarningModal}
+              style={{
+                padding: "0.5rem 1rem",
+                backgroundColor: "#f44336",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}

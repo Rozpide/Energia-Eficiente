@@ -5,8 +5,10 @@ const ProveedorForm = () => {
         nombre_proveedor: "",
         contacto: "",
         website: "",
-        password: "", // Nuevo campo
+        password: "", // Campo para contraseña
     });
+    const [loading, setLoading] = useState(false); // Indicador de carga
+    const [errorMessage, setErrorMessage] = useState(""); // Mensaje de error
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -15,6 +17,8 @@ const ProveedorForm = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        setLoading(true); // Inicia el estado de carga
+        setErrorMessage(""); // Limpia cualquier mensaje de error previo
 
         fetch(`${process.env.BACKEND_URL}/api/proveedores`, {
             method: "POST",
@@ -22,8 +26,11 @@ const ProveedorForm = () => {
             body: JSON.stringify(form),
         })
             .then((response) => {
+                setLoading(false); // Finaliza el estado de carga
                 if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
+                    return response.json().then((data) => {
+                        throw new Error(data.error || `Error HTTP: ${response.status}`);
+                    });
                 }
                 return response.json();
             })
@@ -39,15 +46,16 @@ const ProveedorForm = () => {
                 });
             })
             .catch((error) => {
+                setLoading(false); // Finaliza el estado de carga en caso de error
                 console.error("Error al crear proveedor:", error);
-                alert("Error al crear proveedor. Por favor, verifica los datos e inténtalo nuevamente.");
+                setErrorMessage(error.message); // Muestra el mensaje de error
             });
     };
 
     return (
         <div>
             <h2>Crear Proveedor</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} style={{ textAlign: "center" }}>
                 <input
                     type="text"
                     name="nombre_proveedor"
@@ -55,14 +63,16 @@ const ProveedorForm = () => {
                     value={form.nombre_proveedor}
                     onChange={handleChange}
                     required
+                    style={{ marginBottom: "10px", padding: "0.5rem", width: "80%" }}
                 />
                 <input
-                    type="text"
+                    type="email" // Validación de correo automático
                     name="contacto"
-                    placeholder="Contacto"
+                    placeholder="Correo Electrónico"
                     value={form.contacto}
                     onChange={handleChange}
                     required
+                    style={{ marginBottom: "10px", padding: "0.5rem", width: "80%" }}
                 />
                 <input
                     type="url"
@@ -70,6 +80,7 @@ const ProveedorForm = () => {
                     placeholder="Sitio Web"
                     value={form.website}
                     onChange={handleChange}
+                    style={{ marginBottom: "10px", padding: "0.5rem", width: "80%" }}
                 />
                 <input
                     type="password"
@@ -78,22 +89,36 @@ const ProveedorForm = () => {
                     value={form.password}
                     onChange={handleChange}
                     required
+                    autoComplete="new-password" // Mejora de seguridad
+                    style={{ marginBottom: "10px", padding: "0.5rem", width: "80%" }}
                 />
                 <button
                     type="submit"
+                    disabled={loading} // Deshabilita el botón mientras se procesa la solicitud
                     style={{
                         padding: "0.5rem 1rem",
                         marginTop: "10px",
-                        backgroundColor: "#4CAF50",
+                        backgroundColor: loading ? "#ccc" : "#4CAF50",
                         color: "white",
                         border: "none",
                         borderRadius: "5px",
-                        cursor: "pointer",
+                        cursor: loading ? "not-allowed" : "pointer",
                     }}
                 >
-                    Crear Proveedor
+                    {loading ? "Creando..." : "Crear Proveedor"}
                 </button>
             </form>
+            {errorMessage && (
+                <div
+                    style={{
+                        marginTop: "10px",
+                        color: "red",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {errorMessage}
+                </div>
+            )}
         </div>
     );
 };
