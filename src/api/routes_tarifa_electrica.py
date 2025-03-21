@@ -24,22 +24,26 @@ def create_tarifa():
     Crear una nueva tarifa eléctrica (solo proveedores autenticados).
     """
     data = request.get_json()
+
+    # Captura de credenciales desde el cuerpo o las cabeceras
     proveedor_id = data.get('proveedor_id_fk')
-    password = request.headers.get('Proveedor-Password')  # Captura la contraseña de las cabeceras
+    password = data.get('password') or request.headers.get('Proveedor-Password')
 
-    # Verificar si las cabeceras requeridas están presentes
+    # Validación de credenciales
     if not proveedor_id or not password:
-        return jsonify({"error": "Proveedor-ID y Proveedor-Password son obligatorios"}), 400
-
-    # Verificar si el proveedor está autenticado
-    proveedor = Proveedor.query.get(proveedor_id)
-    if not proveedor or not check_password_hash(proveedor.password, password):
-        return jsonify({"error": "Autenticación fallida"}), 403
+        return jsonify({"error": "Proveedor-ID y contraseña son obligatorios"}), 400
 
     try:
+        # Verificar si el proveedor existe y está autenticado
+        proveedor = Proveedor.query.get(proveedor_id)
+        if not proveedor:
+            return jsonify({"error": "Proveedor no encontrado"}), 404
+        if not check_password_hash(proveedor.password, password):
+            return jsonify({"error": "Autenticación fallida: Contraseña incorrecta"}), 403
+
         # Crear una nueva tarifa eléctrica
         nueva_tarifa = TarifaElectrica(
-            proveedor_id_fk=proveedor_id,
+            proveedor_id_fk=data['proveedor_id'],
             registro_hora_fecha_tarifa=data['registro_hora_fecha_tarifa'],
             precio_kw_hora=data['precio_kw_hora'],
             region=data['region'],
@@ -69,10 +73,12 @@ def update_tarifa(tarifa_id):
     proveedor_id = data.get('proveedor_id_fk')
     password = data.get('password')
 
-    # Verificar si el proveedor está autenticado
+    # Verificar si el proveedor existe y está autenticado
     proveedor = Proveedor.query.get(proveedor_id)
-    if not proveedor or not check_password_hash(proveedor.password, password):
-        return jsonify({"error": "Autenticación fallida"}), 403
+    if not proveedor:
+        return jsonify({"error": "Proveedor no encontrado"}), 404
+    if not check_password_hash(proveedor.password, password):
+        return jsonify({"error": "Autenticación fallida: Contraseña incorrecta"}), 403
 
     # Verificar si el proveedor es propietario de la tarifa
     if tarifa.proveedor_id_fk != int(proveedor_id):
@@ -104,13 +110,16 @@ def delete_tarifa(tarifa_id):
     if not tarifa:
         return jsonify({"error": "Tarifa no encontrada"}), 404
 
-    proveedor_id = request.headers.get('Proveedor-ID')
-    password = request.headers.get('Proveedor-Password')
+    data = request.get_json()
+    proveedor_id = data.get('proveedor_id_fk') or request.headers.get('Proveedor-ID')
+    password = data.get('password') or request.headers.get('Proveedor-Password')
 
-    # Verificar si el proveedor está autenticado
+    # Verificar si el proveedor existe y está autenticado
     proveedor = Proveedor.query.get(proveedor_id)
-    if not proveedor or not check_password_hash(proveedor.password, password):
-        return jsonify({"error": "Autenticación fallida"}), 403
+    if not proveedor:
+        return jsonify({"error": "Proveedor no encontrado"}), 404
+    if not check_password_hash(proveedor.password, password):
+        return jsonify({"error": "Autenticación fallida: Contraseña incorrecta"}), 403
 
     # Verificar si el proveedor es propietario de la tarifa
     if tarifa.proveedor_id_fk != int(proveedor_id):

@@ -30,40 +30,48 @@ const TarifaElectricaList = ({ proveedorId, password }) => {
 
     const añadirTarifa = (event) => {
         event.preventDefault();
+      
+        // Validación de campos del formulario
+        if (!form.proveedor_id_fk || !form.registro_hora_fecha_tarifa || !form.precio_kw_hora) {
+          alert("Por favor, completa todos los campos obligatorios.");
+          return;
+        }
+      
         fetch(`${process.env.BACKEND_URL}/api/tarifas`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Proveedor-ID": proveedorId,
-                "Proveedor-Password": password,
-            },
-            body: JSON.stringify(form),
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Proveedor-ID": proveedorId, // ID del proveedor autenticado
+            "Proveedor-Password": password // Contraseña del proveedor autenticado
+          },
+          body: JSON.stringify(form), // Incluimos los datos del formulario
         })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("No tienes permiso para añadir esta tarifa.");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log("Tarifa añadida:", data);
-                cargarTarifas();
-                setForm({
-                    proveedor_id_fk: "",
-                    registro_hora_fecha_tarifa: "",
-                    precio_kw_hora: "",
-                    region: "",
-                    carbon_impact_kgCO: "",
-                    nombre_tarifa: "",
-                    rango_horario_bajo: ""
-                });
-                alert("Tarifa añadida exitosamente.");
-            })
-            .catch((error) => {
-                console.error("Error al añadir tarifa:", error);
-                setError("No se pudo añadir la tarifa. Verifica tu autenticación.");
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("No tienes permiso para añadir esta tarifa.");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Tarifa añadida correctamente:", data);
+            cargarTarifas(); // Recargar la lista de tarifas tras añadir una nueva
+            setForm({
+              proveedor_id_fk: "",
+              registro_hora_fecha_tarifa: "",
+              precio_kw_hora: "",
+              region: "",
+              carbon_impact_kgCO: "",
+              nombre_tarifa: "",
+              rango_horario_bajo: "",
             });
-    };
+            alert("Tarifa añadida exitosamente.");
+          })
+          .catch((error) => {
+            console.error("Error al añadir tarifa:", error);
+            setError("No se pudo añadir la tarifa. Verifica tu autenticación.");
+          });
+      };
+      
 
     const eliminarTarifa = (id) => {
         if (window.confirm("¿Estás seguro de que deseas eliminar esta tarifa?")) {

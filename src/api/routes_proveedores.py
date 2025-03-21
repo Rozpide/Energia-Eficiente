@@ -28,23 +28,21 @@ def autenticar_proveedor():
 # Login de proveedor (por ID y contraseña, conserva la funcionalidad original)
 @proveedores_bp.route('/login_proveedor', methods=['POST'])
 def login_proveedor():
-    try:
-        data = request.get_json()
-        proveedor_id = data.get('proveedorId')
-        password = data.get('password')
+    data = request.get_json()  # Obtener los datos enviados en el cuerpo de la solicitud
+    email = data.get('email')  # Extraer el correo electrónico
+    password = data.get('password')  # Extraer la contraseña
 
-        # Validar que los campos obligatorios estén presentes
-        if not proveedor_id or not password:
-            return jsonify({"error": "ID y contraseña son obligatorios"}), 400
+    # Verificar si los campos están presentes
+    if not email or not password:
+        return jsonify({"error": "Correo y contraseña son obligatorios"}), 400
 
-        # Verificar si el proveedor existe
-        proveedor = Proveedor.query.filter_by(id=proveedor_id).first()
-        if not proveedor or not check_password_hash(proveedor.password, password):
-            return jsonify({"error": "ID o contraseña inválidos"}), 401
+    # Buscar al proveedor por correo electrónico
+    proveedor = Proveedor.query.filter_by(contacto=email).first()
+    if not proveedor or not check_password_hash(proveedor.password, password):
+        return jsonify({"error": "Correo o contraseña inválidos"}), 401
 
-        return jsonify({"message": "Login exitoso", "proveedor_id": proveedor.id}), 200
-    except Exception as e:
-        return jsonify({"error": f"Error al realizar login: {str(e)}"}), 500
+    # Autenticación exitosa
+    return jsonify({"message": "Login exitoso", "proveedor_id": proveedor.id}), 200
 
 # Obtener todos los proveedores
 @proveedores_bp.route('/proveedores', methods=['GET'])

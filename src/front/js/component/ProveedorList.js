@@ -52,16 +52,22 @@ const ProveedorList = () => {
   const handleChange = (event) => {
     const { name, value } = event.target; // Extrae el nombre y el valor del campo
     setForm((prevForm) => ({
-        ...prevForm, // Mantiene los valores previos del formulario
-        [name]: value, // Actualiza solo el campo que corresponde al evento
+      ...prevForm, // Mantiene los valores previos del formulario
+      [name]: value, // Actualiza solo el campo que corresponde al evento
     }));
-};
+  };
 
   const eliminarProveedor = () => {
     if (!deleteProveedorId) return;
+
+    // Cambiar lógica para enviar datos de autenticación en el cuerpo
     fetch(`${process.env.BACKEND_URL}/api/proveedores/${deleteProveedorId}`, {
       method: "DELETE",
-      headers: { "Proveedor-Email": authForm.email, "Proveedor-Password": authForm.password }, // Añadimos los datos de autenticación
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: authForm.email, // Correo del proveedor
+        password: authForm.password, // Contraseña del proveedor
+      }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -73,15 +79,16 @@ const ProveedorList = () => {
             );
           });
         }
-        cargarProveedores();
+        cargarProveedores(); // Actualiza la lista tras eliminar
         setDeleteProveedorId(null); // Limpia el proveedor seleccionado
       })
       .catch((error) => {
         console.error("Error al eliminar proveedor:", error);
-        setWarningMessage(error.message);
-        setWarningModal(true);
+        setWarningMessage(error.message); // Mensaje de error para el usuario
+        setWarningModal(true); // Muestra el modal de advertencia
       });
   };
+
 
   const handleEditClick = (proveedor) => {
     setEditProveedorId(proveedor.id);
@@ -230,19 +237,21 @@ const ProveedorList = () => {
                 value={authForm.email}
                 onChange={handleAuthChange}
                 required
+                autocomplete="username"
                 style={{
                   marginBottom: "10px",
                   padding: "0.5rem",
                   width: "100%",
                 }}
               />
-                            <input
+              <input
                 type="password"
                 name="password"
                 placeholder="Contraseña"
                 value={authForm.password}
                 onChange={handleAuthChange}
                 required
+                autocomplete="current-password"
                 style={{
                   marginBottom: "10px",
                   padding: "0.5rem",
@@ -295,6 +304,7 @@ const ProveedorList = () => {
                 value={form.nombre_proveedor}
                 onChange={handleChange}
                 required
+                
                 style={{
                   marginBottom: "10px",
                   padding: "0.5rem",
