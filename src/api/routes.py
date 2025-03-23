@@ -24,9 +24,6 @@ def handle_hello():
     return jsonify(response_body), 200
 
 
-
-api = Blueprint('api', __name__)
-
 # Allow CORS requests to this API
 CORS(api)
 

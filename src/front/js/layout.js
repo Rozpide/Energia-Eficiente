@@ -10,6 +10,8 @@ import UserPage from "./pages/UserPage"; // Página de usuarios
 import ProveedorPage from "./pages/ProveedorPage"; // Página de proveedores
 import TarifaPage from "./pages/TarifaPage"; // Página de tarifas
 import injectContext from "./store/appContext";
+import ProveedorDashboard from "./pages/ProveedorDashboard";
+import LoginProveedor from "./component/LoginProveedor";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -35,6 +37,8 @@ const Layout = () => {
                         <Route element={<UserPage />} path="/users" />
                         <Route element={<ProveedorPage />} path="/proveedores" />
                         <Route element={<TarifaPage />} path="/tarifas" />
+                        <Route element={<ProveedorDashboard />} path="/proveedor/dashboard" />
+                        <Route element={<LoginProveedor />} path="/login"  />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
