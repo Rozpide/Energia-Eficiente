@@ -13,6 +13,7 @@ import injectContext from "./store/appContext";
 import ProveedorList from "./component/ProveedorList";
 import TarifaElectricaList from "./component/TarifaElectricaList";
 import ProveedorDashboard from "./pages/ProveedorDashboard";
+import DashboardForm from "./component/DashboardForm";
 import LoginProveedor from "./component/LoginProveedor";
 
 import { Navbar } from "./component/navbar";
@@ -36,13 +37,14 @@ const Layout = () => {
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         {/* Nuevas rutas */}
+                        <Route element={<DashboardForm />} path="/"  />
                         <Route element={<TarifaPage />} path="/tarifas" />
                         <Route element={<ProveedorList />} path="/proveedores" />
                         <Route element={<TarifaElectricaList />} path="/tarifas-electricas" />
                         <Route element={<UserPage />} path="/users" />
                         <Route element={<ProveedorPage />} path="/proveedores" />
                         <Route element={<TarifaPage />} path="/tarifas/:proveedorId" />
-                        <Route element={<ProveedorDashboard />} path="/proveedor/dashboard" />
+                        <Route element={<ProveedorDashboard />} path="/proveedor/dashboard/" />
                         <Route element={<LoginProveedor />} path="/login"  />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

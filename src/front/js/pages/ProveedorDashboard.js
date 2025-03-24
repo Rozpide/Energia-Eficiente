@@ -8,7 +8,7 @@ const ProveedorDashboard = () => {
 
   const cargarTarifas = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/proveedores/${proveedorId}/tarifas`, {
+      const response = await fetch(`${process.env.BACKEND_URL}/api/proveedores/${proveedorId}/tarifas`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
