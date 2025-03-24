@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import  ProveedorForm  from "./ProveedorForm";
 
 const ProveedorList = () => {
   const [proveedores, setProveedores] = useState([]);
@@ -59,19 +60,27 @@ const ProveedorList = () => {
           },
         }
       );
-
+  
       if (!response.ok) {
-        throw new Error("Error al cargar tarifas.");
+        const errorData = await response.json();
+        throw new Error(
+          `Error al cargar tarifas: ${response.status} ${response.statusText}. ${errorData.message || "Detalles no disponibles"}`
+        );
       }
-
+  
       const data = await response.json();
+      if (!Array.isArray(data)) {
+        throw new Error("La respuesta del servidor no tiene el formato esperado.");
+      }
+  
       console.log("Tarifas del proveedor:", data);
-      setTarifas(data)
+      setTarifas(data); // Guarda las tarifas en el estado
     } catch (err) {
       console.error("Error al cargar tarifas del proveedor:", err);
-      alert("No se pudieron cargar las tarifas. Intenta nuevamente.");
+      alert(`No se pudieron cargar las tarifas. Detalles: ${err.message}`);
     }
   };
+  
 
   const autenticarProveedor = async (email, password) => {
     try {
@@ -202,6 +211,12 @@ const ProveedorList = () => {
   }, []);
   return (
     <div>
+      
+      <ProveedorForm
+        form={form}
+        setForm={setForm}
+        añadirProveedor={añadirProveedor}
+      />
       <h2>Lista de Proveedores</h2>
       {/* Listado de proveedores */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>

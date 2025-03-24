@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Router } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
@@ -10,6 +10,8 @@ import UserPage from "./pages/UserPage"; // Página de usuarios
 import ProveedorPage from "./pages/ProveedorPage"; // Página de proveedores
 import TarifaPage from "./pages/TarifaPage"; // Página de tarifas
 import injectContext from "./store/appContext";
+import ProveedorList from "./component/ProveedorList";
+import TarifaElectricaList from "./component/TarifaElectricaList";
 import ProveedorDashboard from "./pages/ProveedorDashboard";
 import LoginProveedor from "./component/LoginProveedor";
 
@@ -34,6 +36,9 @@ const Layout = () => {
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         {/* Nuevas rutas */}
+                        <Route element={<TarifaPage />} path="/tarifas" />
+                        <Route element={<ProveedorList />} path="/proveedores" />
+                        <Route element={<TarifaElectricaList />} path="/tarifas" />
                         <Route element={<UserPage />} path="/users" />
                         <Route element={<ProveedorPage />} path="/proveedores" />
                         <Route element={<TarifaPage />} path="/tarifas" />

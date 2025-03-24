@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+/*import React, { useState, useEffect } from "react";
 
 const TarifaElectricaList = ({ proveedorId, password }) => {
     const [tarifas, setTarifas] = useState([]);
@@ -152,7 +152,7 @@ const TarifaElectricaList = ({ proveedorId, password }) => {
             <h2>Lista de Tarifas Eléctricas</h2>
             {error && <p style={{ color: "red" }}>{error}</p>}
 
-            {/* Formulario de creación */}
+            
             <form onSubmit={añadirTarifa} style={{ marginBottom: "2rem", textAlign: "center" }}>
                 <h3>Añadir Tarifa</h3>
                 <input
@@ -226,11 +226,190 @@ const TarifaElectricaList = ({ proveedorId, password }) => {
                 </button>
             </form>
 
-            {/* Listado de tarifas */}
-            {/* Aquí se renderiza el contenido que me pasaste anteriormente para el listado y modal */}
+            
+            
 
         </div>
     );
 };
 
-export default TarifaElectricaList;
+export default TarifaElectricaList;*/
+/*
+import React, { useState, useEffect } from "react";
+
+const TarifaElectricaList = ({ proveedorId }) => {
+  const [tarifas, setTarifas] = useState([]);
+  const [error, setError] = useState("");
+
+  // Función para cargar las tarifas del proveedor
+  const cargarTarifas = () => {
+    fetch(`${process.env.BACKEND_URL}/api/proveedores/${proveedorId}/tarifas`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error al cargar tarifas.");
+        }
+        return response.json();
+      })
+      .then((data) => setTarifas(data))
+      .catch((error) => {
+        console.error("Error al cargar tarifas:", error);
+        setError("No se pudieron cargar las tarifas. Intenta nuevamente.");
+      });
+  };
+
+  // Llama a cargarTarifas cuando el componente se monta
+  useEffect(() => {
+    if (proveedorId) {
+      cargarTarifas();
+    }
+  }, [proveedorId]);
+
+  // Función para añadir una tarifa a favoritas
+  const añadirAFavoritas = (tarifaId) => {
+    alert(`Tarifa con ID ${tarifaId} añadida a tus favoritas.`);
+    // Aquí podrías implementar lógica adicional para enviar al backend
+  };
+
+  return (
+    <div>
+      <h2>Lista de Tarifas Eléctricas</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      
+      {tarifas.length > 0 ? (
+        tarifas.map((tarifa) => (
+          <div
+            key={tarifa.id}
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "1rem",
+              textAlign: "center",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+              marginBottom: "1rem",
+            }}
+          >
+            <p>
+              <strong>{tarifa.nombre_tarifa}</strong>: ${tarifa.precio_kw_hora} por kWh
+            </p>
+            <p>Región: {tarifa.region}</p>
+            <p>Impacto Carbón: {tarifa.carbon_impact_kgCO} kgCO</p>
+            <p>Rango Horario: {tarifa.rango_horario_bajo}</p>
+            <p>Fecha y Hora Registrada: {new Date(tarifa.registro_hora_fecha_tarifa).toLocaleString()}</p>
+            <button
+              onClick={() => añadirAFavoritas(tarifa.id)}
+              style={{
+                marginTop: "10px",
+                padding: "0.5rem 1rem",
+                backgroundColor: "orange",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Añadir a Favoritas
+            </button>
+          </div>
+        ))
+      ) : (
+        <p>No hay tarifas disponibles para este proveedor.</p>
+      )}
+    </div>
+  );
+};
+
+export default TarifaElectricaList;*/
+
+import React, { useState, useEffect } from "react"; // Importa React y los hooks necesarios
+
+const TarifaElectricaList = ({ proveedorId }) => {
+  const [tarifas, setTarifas] = useState([]); // Estado para almacenar las tarifas
+  const [error, setError] = useState(""); // Estado para manejar errores
+
+  // Línea 6-20: Función para cargar las tarifas del proveedor
+  const cargarTarifas = () => {
+    fetch(`${process.env.BACKEND_URL}/api/proveedores/${proveedorId}/tarifas`) // Línea 7: URL dinámica con proveedorId
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error al cargar tarifas: ${response.status} ${response.statusText}`); // Mejora para obtener más detalles
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Tarifas cargadas correctamente:", data); // Registro informativo
+        setTarifas(data); // Línea 12: Establece el estado con las tarifas obtenidas
+      })
+      .catch((error) => {
+        console.error("Error al cargar tarifas:", error); // Línea 14: Manejo de errores
+        setError("No se pudieron cargar las tarifas. Intenta nuevamente."); // Línea 15: Mensaje de error
+      });
+  };
+
+  // Línea 22-27: Llama a cargarTarifas al montar el componente
+  useEffect(() => {
+    if (proveedorId) {
+      cargarTarifas(); // Solo carga las tarifas si proveedorId está definido
+    }
+  }, [proveedorId]); // Línea 26: Dependencia para recargar si proveedorId cambia
+
+  // Línea 29-34: Función para añadir una tarifa a favoritas
+  const añadirAFavoritas = (tarifaId) => {
+    alert(`Tarifa con ID ${tarifaId} añadida a tus favoritas.`); // Mensaje de alerta al usuario
+    // Aquí podrías añadir lógica para enviar esta acción al backend
+    console.log(`Se ha marcado la tarifa con ID ${tarifaId} como favorita.`); // Registro informativo
+  };
+
+  // Línea 36-65: Renderización del componente
+  return (
+    <div>
+      <h2>Lista de Tarifas Eléctricas</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>} {/* Línea 37: Muestra el mensaje de error en caso de fallo */}
+      
+      {/* Renderiza las tarifas si están disponibles */}
+      {tarifas.length > 0 ? (
+        tarifas.map((tarifa) => (
+          <div
+            key={tarifa.id} // Línea 42: Asigna una clave única basada en el ID de la tarifa
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "1rem",
+              textAlign: "center",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+              marginBottom: "1rem",
+            }}
+          >
+            <p>
+              <strong>{tarifa.nombre_tarifa}</strong>: ${tarifa.precio_kw_hora} por kWh
+            </p>
+            <p>Región: {tarifa.region}</p>
+            <p>Impacto Carbón: {tarifa.carbon_impact_kgCO} kgCO</p>
+            <p>Rango Horario: {tarifa.rango_horario_bajo}</p>
+            <p>Fecha Registrada: {new Date(tarifa.registro_hora_fecha_tarifa).toLocaleString()}</p>
+            <button
+              onClick={() => añadirAFavoritas(tarifa.id)} // Línea 55: Llama a la función para marcar como favorita
+              style={{
+                marginTop: "10px",
+                padding: "0.5rem 1rem",
+                backgroundColor: "orange",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Añadir a Favoritas
+            </button>
+          </div>
+        ))
+      ) : (
+        <p>No hay tarifas disponibles para este proveedor.</p>
+      )}
+    </div>
+  );
+};
+
+export default TarifaElectricaList; // Línea 67: Exporta el componente
+
+
