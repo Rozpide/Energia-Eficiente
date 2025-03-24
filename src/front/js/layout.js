@@ -38,10 +38,10 @@ const Layout = () => {
                         {/* Nuevas rutas */}
                         <Route element={<TarifaPage />} path="/tarifas" />
                         <Route element={<ProveedorList />} path="/proveedores" />
-                        <Route element={<TarifaElectricaList />} path="/tarifas" />
+                        <Route element={<TarifaElectricaList />} path="/tarifas-electricas" />
                         <Route element={<UserPage />} path="/users" />
                         <Route element={<ProveedorPage />} path="/proveedores" />
-                        <Route element={<TarifaPage />} path="/tarifas" />
+                        <Route element={<TarifaPage />} path="/tarifas/:proveedorId" />
                         <Route element={<ProveedorDashboard />} path="/proveedor/dashboard" />
                         <Route element={<LoginProveedor />} path="/login"  />
                         <Route element={<h1>Not found!</h1>} />

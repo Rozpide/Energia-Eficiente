@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import  ProveedorForm  from "./ProveedorForm";
+import ProveedorForm from "./ProveedorForm";
 
 const ProveedorList = () => {
   const [proveedores, setProveedores] = useState([]);
@@ -16,6 +16,9 @@ const ProveedorList = () => {
   const [warningModal, setWarningModal] = useState(false); // Modal de advertencia
   const [warningMessage, setWarningMessage] = useState(""); // Mensaje de advertencia
   const [error, setError] = useState(null);
+  const manejarVerTarifas = (proveedorId) => {
+    navigate(`/tarifas/${proveedorId}`); // Redirige a la página de tarifas del proveedor
+  };
 
   // Función para cargar la lista de proveedores
   const cargarProveedores = async () => {
@@ -60,19 +63,23 @@ const ProveedorList = () => {
           },
         }
       );
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          `Error al cargar tarifas: ${response.status} ${response.statusText}. ${errorData.message || "Detalles no disponibles"}`
+          `Error al cargar tarifas: ${response.status} ${
+            response.statusText
+          }. ${errorData.message || "Detalles no disponibles"}`
         );
       }
-  
+
       const data = await response.json();
       if (!Array.isArray(data)) {
-        throw new Error("La respuesta del servidor no tiene el formato esperado.");
+        throw new Error(
+          "La respuesta del servidor no tiene el formato esperado."
+        );
       }
-  
+
       console.log("Tarifas del proveedor:", data);
       setTarifas(data); // Guarda las tarifas en el estado
     } catch (err) {
@@ -80,7 +87,6 @@ const ProveedorList = () => {
       alert(`No se pudieron cargar las tarifas. Detalles: ${err.message}`);
     }
   };
-  
 
   const autenticarProveedor = async (email, password) => {
     try {
@@ -211,7 +217,6 @@ const ProveedorList = () => {
   }, []);
   return (
     <div>
-      
       <ProveedorForm
         form={form}
         setForm={setForm}
@@ -251,13 +256,15 @@ const ProveedorList = () => {
                 Eliminar
               </button>
               <button
-                onClick={() => cargarTarifasPorProveedor(proveedor.id)}
-                style={{ padding: "0.5rem 1rem",
+                onClick={() => manejarVerTarifas(proveedor.id)}
+                style={{
+                  padding: "0.5rem 1rem",
                   backgroundColor: "aquamarine",
                   color: "black",
                   border: "none",
                   borderRadius: "5px",
-                  cursor: "pointer", }}
+                  cursor: "pointer",
+                }}
               >
                 Ver Tarifas
               </button>

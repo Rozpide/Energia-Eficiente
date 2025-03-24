@@ -321,6 +321,7 @@ const TarifaElectricaList = ({ proveedorId }) => {
 
 export default TarifaElectricaList;*/
 
+/*
 import React, { useState, useEffect } from "react"; // Importa React y los hooks necesarios
 
 const TarifaElectricaList = ({ proveedorId }) => {
@@ -364,9 +365,9 @@ const TarifaElectricaList = ({ proveedorId }) => {
   return (
     <div>
       <h2>Lista de Tarifas Eléctricas</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>} {/* Línea 37: Muestra el mensaje de error en caso de fallo */}
+      {error && <p style={{ color: "red" }}>{error}</p>} 
       
-      {/* Renderiza las tarifas si están disponibles */}
+      
       {tarifas.length > 0 ? (
         tarifas.map((tarifa) => (
           <div
@@ -411,5 +412,97 @@ const TarifaElectricaList = ({ proveedorId }) => {
 };
 
 export default TarifaElectricaList; // Línea 67: Exporta el componente
+
+*/
+/*-----------------------------NUEVO CODIGO-----------------------------*/
+
+import React, { useState, useEffect } from "react";
+
+const TarifaElectricaList = ({ proveedorId, filterFunction }) => {
+  const [tarifas, setTarifas] = useState([]); // Estado para tarifas obtenidas
+  const [error, setError] = useState(""); // Estado para manejar errores
+
+  // Función para cargar las tarifas del proveedor
+  const cargarTarifas = () => {
+    fetch(`${process.env.BACKEND_URL}/api/proveedores/${proveedorId}/tarifas`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error al cargar tarifas: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const tarifasFiltradas = filterFunction ? filterFunction(data) : data; // Aplicar filtro si existe
+        setTarifas(tarifasFiltradas); // Guardar tarifas (filtradas o completas)
+      })
+      .catch((error) => {
+        console.error("Error al cargar tarifas:", error);
+        setError("No se pudieron cargar las tarifas. Intenta nuevamente.");
+      });
+  };
+
+  // Llama a cargarTarifas al montar el componente o cuando proveedorId cambia
+  useEffect(() => {
+    if (proveedorId) {
+      cargarTarifas();
+    }
+  }, [proveedorId]);
+
+  // Función para gestionar el botón de "Comparar"
+  const compararTarifa = (tarifa) => {
+    alert(`Comparando la tarifa "${tarifa.nombre_tarifa}" con tus preferencias.`);
+    // Aquí podrías implementar lógica adicional, como enviar datos al backend o navegar a otra página
+  };
+
+  return (
+    <div>
+      <h2>Lista de Tarifas Eléctricas</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>} {/* Mostrar error si ocurre */}
+
+      {/* Renderizar tarifas si están disponibles */}
+      {tarifas.length > 0 ? (
+        tarifas.map((tarifa) => (
+          <div
+            key={tarifa.id}
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "1rem",
+              textAlign: "center",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+              marginBottom: "1rem",
+            }}
+          >
+            <p>
+              <strong>{tarifa.nombre_tarifa}</strong>: ${tarifa.precio_kw_hora} por kWh
+            </p>
+            <p>Región: {tarifa.region}</p>
+            <p>Impacto Carbón: {tarifa.carbon_impact_kgCO} kgCO</p>
+            <p>Rango Horario: {tarifa.rango_horario_bajo}</p>
+            <p>Fecha Registrada: {new Date(tarifa.registro_hora_fecha_tarifa).toLocaleString()}</p>
+            <button
+              onClick={() => compararTarifa(tarifa)} // Botón para comparar la tarifa
+              style={{
+                marginTop: "10px",
+                padding: "0.5rem 1rem",
+                backgroundColor: "#4CAF50",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Comparar Tarifa
+            </button>
+          </div>
+        ))
+      ) : (
+        <p>No hay tarifas disponibles para este proveedor.</p> 
+      )}
+    </div>
+  );
+};
+
+export default TarifaElectricaList;
 
 
