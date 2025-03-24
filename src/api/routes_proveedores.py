@@ -44,7 +44,7 @@ def obtener_proveedores():
 
 # Obtener un proveedor por su ID
 @proveedores_bp.route('/proveedores/<int:proveedor_id>', methods=['GET'])
-@jwt_required()
+#@jwt_required()
 def obtener_proveedor(proveedor_id):
     try:
         proveedor = Proveedor.query.get(proveedor_id)
@@ -77,7 +77,7 @@ def crear_proveedor():
 
 # Eliminar un proveedor
 @proveedores_bp.route('/proveedores/<int:proveedor_id>', methods=['DELETE'])
-@jwt_required()
+#@jwt_required()
 def eliminar_proveedor(proveedor_id):
     try:
         current_user_id = get_jwt_identity()
@@ -97,7 +97,7 @@ def eliminar_proveedor(proveedor_id):
 
 # Actualizar un proveedor
 @proveedores_bp.route('/proveedores/<int:proveedor_id>', methods=['PUT', 'PATCH'])
-@jwt_required()
+#@jwt_required()
 def actualizar_proveedor(proveedor_id):
     try:
         current_user_id = get_jwt_identity()

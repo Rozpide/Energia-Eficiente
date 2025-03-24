@@ -28,7 +28,7 @@ def obtener_tarifas_por_proveedor(proveedor_id):
 
 
 @tarifa_electrica_bp.route('/proveedor/tarifas', methods=['GET'])
-@jwt_required()
+#@jwt_required()
 def obtener_tarifas_privadas():
     try:
         proveedor_id = get_jwt_identity()
@@ -42,7 +42,7 @@ def obtener_tarifas_privadas():
         return jsonify({"error": f"Error al obtener tarifas privadas: {str(e)}"}), 500
 
 @tarifa_electrica_bp.route('/tarifas', methods=['POST'])
-@jwt_required()
+##@jwt_required()
 def crear_tarifa():
     try:
         proveedor_id = get_jwt_identity()
@@ -66,7 +66,7 @@ def crear_tarifa():
         return jsonify({"error": f"Error al crear tarifa: {str(e)}"}), 500
 
 @tarifa_electrica_bp.route('/tarifas/<int:tarifa_id>', methods=['PUT'])
-@jwt_required()
+#@jwt_required()
 def actualizar_tarifa(tarifa_id):
     tarifa = TarifaElectrica.query.get(tarifa_id)
     if not tarifa:
@@ -92,7 +92,7 @@ def actualizar_tarifa(tarifa_id):
         return jsonify({"error": f"Error al actualizar tarifa: {str(e)}"}), 500
 
 @tarifa_electrica_bp.route('/tarifas/<int:tarifa_id>', methods=['DELETE'])
-@jwt_required()
+#@jwt_required()
 def eliminar_tarifa(tarifa_id):
     tarifa = TarifaElectrica.query.get(tarifa_id)
     if not tarifa:

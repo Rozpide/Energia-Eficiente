@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ProveedorList = () => {
   const [proveedores, setProveedores] = useState([]);
@@ -9,6 +10,7 @@ const ProveedorList = () => {
     contacto: "email",
     website: "website",
   });
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false); // Modal para edición
   const [warningModal, setWarningModal] = useState(false); // Modal de advertencia
   const [warningMessage, setWarningMessage] = useState(""); // Mensaje de advertencia
@@ -16,13 +18,13 @@ const ProveedorList = () => {
 
   // Función para cargar la lista de proveedores
   const cargarProveedores = async () => {
-    const token = localStorage.getItem("access_token"); // Obtén el token JWT almacenado
+    //const token = localStorage.getItem("access_token"); // Obtén el token JWT almacenado
     try {
       const response = await fetch(
         `${process.env.BACKEND_URL}/api/proveedores`,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Envía el token en el encabezado Authorization
+            //Authorization: `Bearer ${token}`, // Envía el token en el encabezado Authorization
             "Content-Type": "application/json",
           },
         }
@@ -49,7 +51,7 @@ const ProveedorList = () => {
   const cargarTarifasPorProveedor = async (proveedorId) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/proveedores/${proveedorId}/tarifas`,
+        `${process.env.BACKEND_URL}/api/proveedores/${proveedorId}/tarifas`,
         {
           method: "GET",
           headers: {
@@ -64,7 +66,7 @@ const ProveedorList = () => {
 
       const data = await response.json();
       console.log("Tarifas del proveedor:", data);
-      // Aquí podrías manejar las tarifas, por ejemplo, mostrando un modal o redirigiendo a otra página
+      setTarifas(data)
     } catch (err) {
       console.error("Error al cargar tarifas del proveedor:", err);
       alert("No se pudieron cargar las tarifas. Intenta nuevamente.");
@@ -87,7 +89,7 @@ const ProveedorList = () => {
       }
 
       const data = await response.json();
-      localStorage.setItem("access_token", data.token); // Guarda el token en el almacenamiento local
+      //localStorage.setItem("access_token", data.token); // Guarda el token en el almacenamiento local
     } catch (err) {
       console.error("Error al autenticar proveedor:", err);
       alert(err.message); // Informa al usuario si falla la autenticación

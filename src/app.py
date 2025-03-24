@@ -136,7 +136,7 @@ setup_commands(app)
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(users_bp, url_prefix='/api')
 app.register_blueprint(proveedores_bp, url_prefix='/api')
-app.register_blueprint(tarifa_electrica_bp, url_prefix='/api/tarifas')
+app.register_blueprint(tarifa_electrica_bp, url_prefix='/api')
 
 # Manejo de errores personalizados
 @app.errorhandler(APIException)

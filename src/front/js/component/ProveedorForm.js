@@ -2,10 +2,10 @@ import React, { useState } from "react";
 
 const ProveedorForm = () => {
     const [form, setForm] = useState({
-        nombre_proveedor: "Enagas26",
-        contacto: "Enagas26@gmail.com",
-        website: "https://www.Enagas26.com",
-        password: "26", // Campo para contraseña
+        nombre_proveedor: "",
+        contacto: "",
+        website: "",
+        password: "", // Campo para contraseña
     });
     const [loading, setLoading] = useState(false); // Indicador de carga
     const [errorMessage, setErrorMessage] = useState(""); // Mensaje de error
