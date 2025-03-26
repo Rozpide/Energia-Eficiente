@@ -138,28 +138,40 @@ const ProveedorList = () => {
       .catch((error) => console.error("Error al añadir proveeEEdor:", error));
   };
 
-  const eliminarProveedor = (id) => {
-    fetch(`${process.env.BACKEND_URL}/api/proveedores/${id}`, {
-      method: "DELETE",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((err) => {
-            const relatedElements =
-              err.error.split(": ")[1] || "elementos relacionados";
-            throw new Error(
-              `Antes de eliminar el proveedor, debe eliminar: ${relatedElements}`
-            );
-          });
+  const eliminarProveedor = async (proveedorId) => {
+    const token = localStorage.getItem("access_token"); // Obtén el token del localStorage
+  
+    if (!token) {
+      alert("Por favor, inicia sesión antes de realizar esta acción.");
+      return;
+    }
+  
+    try {
+      const response = await fetch(
+        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/proveedores/${proveedorId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Agrega el token en el encabezado
+          },
         }
-        cargarProveedores(); // Recarga la lista después de eliminar
-      })
-      .catch((error) => {
-        console.error("Error al eliminar proveedor:", error);
-        setWarningMessage(error.message); // Mensaje dinámico para el usuario
-        setWarningModal(true); // Muestra el modal de advertencia
-      });
+      );
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "No se pudo eliminar el proveedor.");
+      }
+  
+      alert("Proveedor eliminado exitosamente.");
+      // Actualiza la lista de proveedores después de eliminar
+      cargarProveedores(); // Asumiendo que existe una función para recargar la lista
+    } catch (error) {
+      console.error("Error al eliminar proveedor:", error);
+      alert(error.message);
+    }
   };
+  
 
   const handleEditClick = (proveedor) => {
     setEditProveedorId(proveedor.id);
@@ -269,7 +281,7 @@ const ProveedorList = () => {
                 Ver Tarifas
               </button>
               <button
-                onClick={() => handleEditClick(proveedor)}
+                onClick={() => handleEditClick(proveedor.id)}
                 style={{
                   padding: "0.5rem 1rem",
                   backgroundColor: "#4CAF50",

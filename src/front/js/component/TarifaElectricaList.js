@@ -492,7 +492,7 @@ const TarifaElectricaList = ({ proveedorId, filterFunction }) => {
                 cursor: "pointer",
               }}
             >
-              Comparar Tarifa
+              ComparaAAAAAr Tarifa
             </button>
           </div>
         ))

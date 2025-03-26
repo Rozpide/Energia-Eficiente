@@ -1,67 +1,161 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import LoginProveedor from "./LoginProveedor";
 
-const LoginProveedor = () => {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState(null);
+const ProveedorDashboard = () => {
+  const { proveedorId } = useParams(); // Obtén el ID del proveedor desde la URL
+  const [tarifas, setTarifas] = useState([]);
+  const [error, setError] = useState("");
+  const [showLoginModal, setShowLoginModal] = useState(false); // Controla el modal
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm({ ...form, [name]: value });
-  };
+  const cargarTarifas = async () => {
+    const token = localStorage.getItem("access_token"); // Obtén el token
+    if (!token) {
+      setShowLoginModal(true); // Muestra el modal si no hay token
+      return;
+    }
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
     try {
       const response = await fetch(
-        `${process.env.BACKEND_URL}/api/proveedores/autenticar`,
+        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/proveedores/${proveedorId}/tarifas`,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       if (!response.ok) {
-        throw new Error("Autenticación fallida. Verifica tus credenciales.");
+        throw new Error("Error al cargar las tarifas del proveedor.");
       }
 
       const data = await response.json();
-      localStorage.setItem("access_token", data.token);
-      alert("Inicio de sesión exitoso.");
+      setTarifas(data);
     } catch (err) {
-      setError("Error al iniciar sesión. Verifica tus credenciales.");
+      console.error(err);
+      setError("No se pudieron cargar las tarifas.");
     }
   };
 
+  useEffect(() => {
+    cargarTarifas();
+  }, [proveedorId]);
+
+  const handleLoginSuccess = () => {
+    setShowLoginModal(false);
+    cargarTarifas(); // Carga las tarifas después del inicio de sesión
+  };
+
+  const añadirTarifa = () => {
+    alert("Función para añadir tarifas.");
+  };
+
+  const borrarTarifa = (id) => {
+    alert(`Función para borrar tarifa con ID: ${id}`);
+  };
+
+  const modificarTarifa = (id) => {
+    alert(`Función para modificar tarifa con ID: ${id}`);
+  };
+
   return (
-    <div>
-      <h2>Iniciar Sesión - Proveedor</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Correo Electrónico"
-          value={form.email}
-          onChange={handleChange}
-          required
-          style={{ marginRight: "10px" }}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={form.password}
-          onChange={handleChange}
-          required
-          style={{ marginRight: "10px" }}
-        />
-        <button type="submit" style={{ padding: "0.5rem 1rem" }}>
-          Iniciar Sesión
-        </button>
-      </form>
+    <div style={{ padding: "20px" }}>
+      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
+        Dashboard del Proveedor {proveedorId}
+      </h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
+      <button
+        onClick={añadirTarifa}
+        style={{
+          marginBottom: "10px",
+          padding: "0.5rem 1rem",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Añadir Tarifa
+      </button>
+      {tarifas.length > 0 ? (
+        tarifas.map((tarifa) => (
+          <div
+            key={tarifa.id}
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "1rem",
+              textAlign: "center",
+              marginBottom: "1rem",
+            }}
+          >
+            <p>
+              <strong>{tarifa.nombre_tarifa}</strong>: ${tarifa.precio_kw_hora} por kWh
+            </p>
+            <p>Región: {tarifa.region}</p>
+            <p>Impacto Carbón: {tarifa.carbon_impact_kgCO} kgCO</p>
+            <button
+              onClick={() => modificarTarifa(tarifa.id)}
+              style={{
+                marginRight: "10px",
+                padding: "0.5rem 1rem",
+                backgroundColor: "#007BFF",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Modificar
+            </button>
+            <button
+              onClick={() => borrarTarifa(tarifa.id)}
+              style={{
+                padding: "0.5rem 1rem",
+                backgroundColor: "#f44336",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Borrar
+            </button>
+          </div>
+        ))
+      ) : (
+        <p>No hay tarifas disponibles para este proveedor.</p>
+      )}
+
+      {showLoginModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "10px",
+              textAlign: "center",
+            }}
+          >
+            <LoginProveedor onSuccess={handleLoginSuccess} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default LoginProveedor;
+export default ProveedorDashboard;

@@ -5,14 +5,32 @@ const DashboardForm = () => {
   const [proveedorId, setProveedorId] = useState(""); // Estado para guardar el ID del proveedor
   const navigate = useNavigate(); // Hook para redirigir
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (proveedorId) {
-      navigate(`/dashboard/${proveedorId}`); // Redirige al Dashboard del proveedor con el ID
-    } else {
-      alert("Por favor, introduce un ID de proveedor válido.");
+    try {
+      const response = await fetch(
+        `${process.env.BACKEND_URL}/api/proveedores/autenticar`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Autenticación fallida. Verifica tus credenciales.");
+      }
+  
+      const data = await response.json();
+      localStorage.setItem("access_token", data.token); // Guarda el token en localStorage
+      setProveedorId(data.proveedorId); // Guarda el ID del proveedor en el estado
+      setIsAuthenticated(true); // Cambia el estado de autenticación
+      alert("Inicio de sesión exitoso.");
+    } catch (err) {
+      setError("Error al iniciar sesión. Verifica tus credenciales.");
     }
   };
+  
 
   return (
     <div style={{ padding: "20px", textAlign: "center" }}>

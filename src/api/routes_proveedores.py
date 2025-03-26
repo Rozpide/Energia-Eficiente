@@ -24,7 +24,8 @@ def autenticar_proveedor():
         expiration = datetime.timedelta(hours=48)  # Validez de 48 horas
         access_token = create_access_token(identity=proveedor.id, expires_delta=expiration)
 
-        return jsonify({"message": "Autenticación exitosa", "token": access_token}), 200
+        # Incluye el ID del proveedor en la respuesta
+        return jsonify({"message": "Autenticación exitosa", "token": access_token, "proveedorId": proveedor.id}), 200
     except Exception as e:
         return jsonify({"error": f"Error al autenticar proveedor: {str(e)}"}), 500
 
