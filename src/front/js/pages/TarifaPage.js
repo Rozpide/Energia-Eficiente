@@ -1,223 +1,226 @@
-/*
-
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import TarifaElectricaList from "../component/TarifaElectricaList";
 
 const TarifaPage = () => {
   const { proveedorId } = useParams(); // Obtén el ID del proveedor desde la URL
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado de autenticación
-  const [showLoginModal, setShowLoginModal] = useState(false); // Modal de inicio de sesión
-  const [authForm, setAuthForm] = useState({ email: "", password: "" }); // Formulario de autenticación
-  const [userPreferences, setUserPreferences] = useState({
-    maxPrecioKwH: "",
-    preferredRegion: "",
-    maxCarbonImpact: "",
-  });
+  const [tarifas, setTarifas] = useState([]);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({
+    nombre_tarifa: "",
+    precio_kw_hora: "",
+    region: "",
+    carbon_impact_kgCO: "",
+    rango_horario_bajo: "",
+  }); // Estado para el formulario
 
-  // Maneja cambios en el formulario de autenticación
-  const handleAuthChange = (event) => {
-    const { name, value } = event.target;
-    setAuthForm((prevAuthForm) => ({
-      ...prevAuthForm,
-      [name]: value,
-    }));
+  // Función para cargar las tarifas
+  const cargarTarifas = async () => {
+    try {
+      const response = await fetch(
+        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/proveedores/${proveedorId}/tarifas`
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al cargar las tarifas del proveedor.");
+      }
+
+      const data = await response.json();
+      setTarifas(data); // Guarda las tarifas en el estado
+    } catch (err) {
+      console.error(err);
+      setError("No se pudieron cargar las tarifas.");
+    }
   };
 
-  // Maneja cambios en el formulario de preferencias
-  const handlePreferencesChange = (event) => {
-    const { name, value } = event.target;
-    setUserPreferences((prevPreferences) => ({
-      ...prevPreferences,
-      [name]: value,
-    }));
+  // Llama a cargarTarifas al montar el componente
+  useEffect(() => {
+    cargarTarifas();
+  }, [proveedorId]);
+
+  // Manejar cambios en el formulario
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
-  // Filtra las tarifas según las preferencias del usuario
-  const filtrarTarifas = (tarifas) => {
-    return tarifas.filter(
-      (tarifa) =>
-        (userPreferences.maxPrecioKwH === "" ||
-          tarifa.precio_kw_hora <= userPreferences.maxPrecioKwH) &&
-        (userPreferences.preferredRegion === "" ||
-          tarifa.region.toLowerCase() === userPreferences.preferredRegion.toLowerCase()) &&
-        (userPreferences.maxCarbonImpact === "" ||
-          tarifa.carbon_impact_kgCO <= userPreferences.maxCarbonImpact)
-    );
-  };
-
-  const handleLogin = (event) => {
-    event.preventDefault();
-    fetch(`${process.env.BACKEND_URL}/api/login_proveedor`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(authForm),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error en la autenticación: " + response.status);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Inicio de sesión exitoso:", data);
-        setIsAuthenticated(true);
-        setShowLoginModal(false);
-        alert("Bienvenido al sistema.");
-      })
-      .catch((error) => {
-        console.error("Error al iniciar sesión:", error);
-        alert("Credenciales inválidas o problemas en el servidor.");
+  // Función para añadir una nueva tarifa
+  const handleAddTarifa = async () => {
+    try {
+      const token = localStorage.getItem("access_token"); // Obtén el token JWT
+      
+      console.log("Datos que se envían al backend:", {
+        ...form,
+        proveedor_id_fk: proveedorId,
       });
-  };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    alert("Sesión cerrada.");
+      const response = await fetch(
+        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/tarifas`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...form, proveedor_id_fk: proveedorId }), // Datos de la nueva tarifa
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al crear tarifa.");
+      }
+
+      const nuevaTarifa = await response.json();
+      setTarifas([...tarifas, nuevaTarifa]); // Añade la nueva tarifa al estado
+      setForm({
+        nombre_tarifa: "",
+        precio_kw_hora: "",
+        region: "",
+        carbon_impact_kgCO: "",
+        rango_horario_bajo: "",
+        registro_hora_fecha_tarifa: "",
+      }); // Limpia el formulario
+      alert("Tarifa añadida correctamente.");
+    } catch (err) {
+      console.error("Error al añadir tarifa:", err);
+      alert("No se pudo crear la tarifa. Intenta nuevamente.");
+    }
   };
 
   return (
     <div style={{ padding: "20px" }}>
       <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
-        Tarifas del Proveedor
+        Tarifas del Proveedor {proveedorId}
       </h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-      
-      {!isAuthenticated ? (
-        <>
-          <button
-            onClick={() => setShowLoginModal(true)}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleAddTarifa();
+        }}
+        style={{
+          marginBottom: "20px",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+        }}
+      >
+        <h3>Añadir Nueva Tarifa</h3>
+        <input
+          type="text"
+          name="nombre_tarifa"
+          placeholder="Nombre de la Tarifa"
+          value={form.nombre_tarifa}
+          onChange={handleChange}
+          required
+          style={{
+            marginBottom: "10px",
+            padding: "0.5rem",
+            width: "100%",
+          }}
+        />
+        <input
+          type="number"
+          name="precio_kw_hora"
+          placeholder="Precio por kWh"
+          value={form.precio_kw_hora}
+          onChange={handleChange}
+          required
+          style={{
+            marginBottom: "10px",
+            padding: "0.5rem",
+            width: "100%",
+          }}
+        />
+        <input
+          type="text"
+          name="region"
+          placeholder="Región"
+          value={form.region}
+          onChange={handleChange}
+          required
+          style={{
+            marginBottom: "10px",
+            padding: "0.5rem",
+            width: "100%",
+          }}
+        />
+        <input
+          type="number"
+          name="carbon_impact_kgCO"
+          placeholder="Impacto de Carbono (kgCO)"
+          value={form.carbon_impact_kgCO}
+          onChange={handleChange}
+          required
+          style={{
+            marginBottom: "10px",
+            padding: "0.5rem",
+            width: "100%",
+          }}
+        />
+        <input
+          type="text"
+          name="rango_horario_bajo"
+          placeholder="Rango Horario (opcional)"
+          value={form.rango_horario_bajo}
+          onChange={handleChange}
+          style={{
+            marginBottom: "10px",
+            padding: "0.5rem",
+            width: "100%",
+          }}
+        />
+        <input
+          type="datetime-local"
+          name="registro_hora_fecha_tarifa"
+          placeholder="Fecha y hora de registro"
+          value={form.registro_hora_fecha_tarifa}
+          onChange={handleChange}
+          required
+          style={{
+            marginBottom: "10px",
+            padding: "0.5rem",
+            width: "100%",
+          }}
+        />
+
+        <button
+          type="submit"
+          style={{
+            padding: "0.5rem 1rem",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Añadir Tarifa
+        </button>
+      </form>
+
+      {tarifas.length > 0 ? (
+        tarifas.map((tarifa) => (
+          <div
+            key={tarifa.id}
             style={{
-              padding: "0.5rem 1rem",
-              backgroundColor: "#007BFF",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "1rem",
+              textAlign: "center",
+              marginBottom: "1rem",
             }}
           >
-            Acceso Proveedores
-          </button>
-        </>
-      ) : (
-        <>
-          <button
-            onClick={handleLogout}
-            style={{
-              marginBottom: "20px",
-              padding: "0.5rem 1rem",
-              backgroundColor: "#f44336",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            Cerrar sesión
-          </button>
-
-          
-          <form
-            style={{ marginBottom: "20px", textAlign: "center" }}
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <h3>Filtrar Tarifas</h3>
-            <input
-              type="number"
-              name="maxPrecioKwH"
-              placeholder="Precio Máximo Kw/h"
-              value={userPreferences.maxPrecioKwH}
-              onChange={handlePreferencesChange}
-              style={{ marginRight: "10px", padding: "0.5rem" }}
-            />
-            <input
-              type="text"
-              name="preferredRegion"
-              placeholder="Región Preferida"
-              value={userPreferences.preferredRegion}
-              onChange={handlePreferencesChange}
-              style={{ marginRight: "10px", padding: "0.5rem" }}
-            />
-            <input
-              type="number"
-              name="maxCarbonImpact"
-              placeholder="Impacto Máximo de Carbono"
-              value={userPreferences.maxCarbonImpact}
-              onChange={handlePreferencesChange}
-              style={{ marginRight: "10px", padding: "0.5rem" }}
-            />
-          </form>
-
-          
-          <TarifaElectricaList
-            proveedorId={proveedorId}
-            filterFunction={filtrarTarifas}
-          />
-        </>
-      )}
-
-      
-      {showLoginModal && (
-        <div style={modalStyles}>
-          <div style={modalContentStyles}>
-            <h3>Iniciar sesión - Acceso Proveedores</h3>
-            <form onSubmit={handleLogin}>
-              <input
-                type="email"
-                name="email"
-                placeholder="Correo Electrónico"
-                value={authForm.email}
-                onChange={handleAuthChange}
-                required
-                style={{
-                  marginBottom: "10px",
-                  padding: "0.5rem",
-                  width: "100%",
-                }}
-              />
-              <input
-                type="password"
-                name="password"
-                placeholder="Contraseña"
-                value={authForm.password}
-                onChange={handleAuthChange}
-                required
-                style={{
-                  marginBottom: "10px",
-                  padding: "0.5rem",
-                  width: "100%",
-                }}
-              />
-              <button
-                type="submit"
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: "#4CAF50",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Iniciar sesión
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowLoginModal(false)}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: "#f44336",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Cancelar
-              </button>
-            </form>
+            <p>
+              <strong>{tarifa.nombre_tarifa}</strong>: ${tarifa.precio_kw_hora}{" "}
+              por kWh
+            </p>
+            <p>Región: {tarifa.region}</p>
+            <p>Impacto Carbón: {tarifa.carbon_impact_kgCO} kgCO</p>
           </div>
-        </div>
+        ))
+      ) : (
+        <p>No hay tarifas disponibles para este proveedor.</p>
       )}
     </div>
   );
@@ -225,30 +228,8 @@ const TarifaPage = () => {
 
 export default TarifaPage;
 
-const modalStyles = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%",
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 1000,
-};
-
-const modalContentStyles = {
-  backgroundColor: "white",
-  padding: "20px",
-  borderRadius: "8px",
-  width: "400px",
-  boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
-  textAlign: "center",
-};*/
-
 /*-------------------------------NUEVO CODIGO----------------*/
-
+/*
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -307,10 +288,11 @@ const TarifaPage = () => {
           </div>
         ))
       ) : (
-        <p>No hay tarifas disponibles para este proveedor.</p>
+        <p>No hay tarifas disponiblesDESDE TARIFA PAGE para este proveedor.</p>
       )}
     </div>
   );
 };
 
 export default TarifaPage;
+*/
