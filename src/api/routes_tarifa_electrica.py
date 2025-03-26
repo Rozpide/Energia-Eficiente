@@ -53,6 +53,7 @@ def crear_tarifa():
 
 @tarifa_electrica_bp.route('/tarifas/<int:tarifa_id>', methods=['PUT'])
 def actualizar_tarifa(tarifa_id):
+    print(f"Solicitud recibida en actualizar_tarifa para tarifa_id: {tarifa_id}")
     tarifa = TarifaElectrica.query.get(tarifa_id)
     if not tarifa:
         return jsonify({"error": "Tarifa no encontrada"}), 404
