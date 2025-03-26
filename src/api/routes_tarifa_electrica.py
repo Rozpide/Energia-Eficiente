@@ -21,7 +21,8 @@ def obtener_tarifas_por_proveedor(proveedor_id):
     try:
         tarifas = TarifaElectrica.query.filter_by(proveedor_id_fk=proveedor_id).all()
         if not tarifas:
-            return jsonify({"message": "No hay tarifas disponibles para este proveedor."}), 200
+            # Devuelve un array vacío en lugar de un mensaje
+            return jsonify([]), 200
         return jsonify([tarifa.serialize() for tarifa in tarifas]), 200
     except Exception as e:
         return jsonify({"error": f"Error al obtener tarifas: {str(e)}"}), 500
