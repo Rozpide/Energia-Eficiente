@@ -90,6 +90,37 @@ const TarifaPage = () => {
     setIsEditing(true); // Mostrar el formulario de edición
   };
 
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "¿Estás seguro de que deseas eliminar esta tarifa?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await fetch(
+        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/tarifas/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al eliminar tarifa.");
+      }
+
+      alert("Tarifa eliminada correctamente.");
+      setTarifas(tarifas.filter((tarifa) => tarifa.id !== id)); // Actualizar lista de tarifas
+    } catch (err) {
+      console.error("Error al eliminar tarifa:", err);
+      alert("No se pudo eliminar la tarifa. Intenta nuevamente.");
+    }
+  };
+
   // Función para actualizar una tarifa
   const handleUpdateTarifa = async () => {
     try {
@@ -112,7 +143,9 @@ const TarifaPage = () => {
 
       const tarifaActualizada = await response.json();
       setTarifas(
-        tarifas.map((tarifa) => (tarifa.id === tarifaActualizada.id ? tarifaActualizada : tarifa))
+        tarifas.map((tarifa) =>
+          tarifa.id === tarifaActualizada.id ? tarifaActualizada : tarifa
+        )
       ); // Actualizar la lista de tarifas
       setIsEditing(false); // Ocultar el formulario de edición
       alert("Tarifa actualizada correctamente.");
@@ -270,14 +303,28 @@ const TarifaPage = () => {
             >
               Editar
             </button>
+            <button
+              onClick={() => handleDelete(tarifa.id)} // Eliminar tarifa
+              style={{
+                marginLeft: "10px",
+                padding: "0.5rem 1rem",
+                backgroundColor: "#f44336",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Eliminar
+            </button>
           </div>
         ))
       ) : (
         <p>No hay tarifas disponibles para este proveedor.</p>
       )}
 
-            {/* Formulario de edición */}
-            {isEditing && (
+      {/* Formulario de edición */}
+      {isEditing && (
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -404,5 +451,3 @@ const TarifaPage = () => {
 };
 
 export default TarifaPage;
-
-
