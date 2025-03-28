@@ -1,23 +1,33 @@
+
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/home.css";
 
 export const Home = () => {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [formProveedor, setFormProveedor] = useState({ email: "", password: "" });
+  const [formUsuario, setFormUsuario] = useState({ email: "", password: "" });
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado de autenticación
   const [proveedorId, setProveedorId] = useState(null); // ID del proveedor autenticado
   const [error, setError] = useState(null);
+  const [role, setRole] = useState("none"); // Estado para elegir entre Proveedor y Usuario
 
   const navigate = useNavigate();
 
-  // Maneja cambios en el formulario de inicio de sesión
-  const handleChange = (event) => {
+  // Maneja cambios en el formulario del proveedor
+  const handleChangeProveedor = (event) => {
     const { name, value } = event.target;
-    setForm({ ...form, [name]: value });
+    setFormProveedor({ ...formProveedor, [name]: value });
   };
 
-  // Maneja el envío del formulario de inicio de sesión
-  const handleSubmit = async (event) => {
+  // Maneja cambios en el formulario del usuario
+  const handleChangeUsuario = (event) => {
+    const { name, value } = event.target;
+    setFormUsuario({ ...formUsuario, [name]: value });
+  };
+
+  // Maneja el envío del formulario del proveedor
+  const handleSubmitProveedor = async (event) => {
     event.preventDefault();
     try {
       const response = await fetch(
@@ -25,7 +35,7 @@ export const Home = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
+          body: JSON.stringify(formProveedor),
         }
       );
 
@@ -43,9 +53,37 @@ export const Home = () => {
     }
   };
 
+  // Maneja el envío del formulario del usuario
+  const handleSubmitUsuario = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(
+        `${process.env.BACKEND_URL}/api/users/autenticar`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formUsuario),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Autenticación fallida. Verifica tus credenciales.");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("user_token", data.token); // Guarda el token en localStorage
+      setIsAuthenticated(true); // Cambia el estado de autenticación
+      alert("Inicio de sesión exitoso.");
+      navigate("/comparar-tarifas"); // Redirige al comparador de tarifas
+    } catch (err) {
+      setError("Error al iniciar sesión. Verifica tus credenciales.");
+    }
+  };
+
   // Maneja el cierre de sesión
   const handleLogout = () => {
     localStorage.removeItem("access_token"); // Elimina el token del almacenamiento local
+    localStorage.removeItem("user_token"); // Elimina el token de usuario
     setProveedorId(null); // Resetea el ID del proveedor
     setIsAuthenticated(false); // Cambia el estado de autenticación
     alert("Sesión cerrada.");
@@ -59,23 +97,55 @@ export const Home = () => {
       alert("El ID del proveedor no está disponible o es inválido.");
     }
   };
-  
-  
 
   return (
     <div className="text-center mt-5">
       <h1>Bienvenido a la Plataforma</h1>
-      {!isAuthenticated ? (
+      {/* Selección de rol */}
+      {role === "none" && (
         <>
-          {/* Formulario de inicio de sesión */}
-          <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
+          <h3>Selecciona tu perfil para iniciar sesión</h3>
+          <button
+            onClick={() => setRole("proveedor")}
+            style={{
+              padding: "0.5rem 1rem",
+              backgroundColor: "#4CAF50",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              marginRight: "10px",
+            }}
+          >
+            Soy Proveedor
+          </button>
+          <button
+            onClick={() => setRole("usuario")}
+            style={{
+              padding: "0.5rem 1rem",
+              backgroundColor: "#007BFF",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Soy Usuario
+          </button>
+        </>
+      )}
+
+      {/* Formulario de inicio de sesión del proveedor */}
+      {role === "proveedor" && !isAuthenticated && (
+        <>
+          <form onSubmit={handleSubmitProveedor} style={{ marginBottom: "20px" }}>
             <h3>Iniciar Sesión - Proveedor</h3>
             <input
               type="email"
               name="email"
               placeholder="Correo Electrónico"
-              value={form.email}
-              onChange={handleChange}
+              value={formProveedor.email}
+              onChange={handleChangeProveedor}
               required
               style={{
                 marginRight: "10px",
@@ -87,8 +157,8 @@ export const Home = () => {
               type="password"
               name="password"
               placeholder="Contraseña"
-              value={form.password}
-              onChange={handleChange}
+              value={formProveedor.password}
+              onChange={handleChangeProveedor}
               required
               style={{
                 marginRight: "10px",
@@ -112,7 +182,59 @@ export const Home = () => {
           </form>
           {error && <p style={{ color: "red" }}>{error}</p>}
         </>
-      ) : (
+      )}
+
+      {/* Formulario de inicio de sesión del usuario */}
+      {role === "usuario" && !isAuthenticated && (
+        <>
+          <form onSubmit={handleSubmitUsuario} style={{ marginBottom: "20px" }}>
+            <h3>Iniciar Sesión - Usuario</h3>
+            <input
+              type="email"
+              name="email"
+              placeholder="Correo Electrónico"
+              value={formUsuario.email}
+              onChange={handleChangeUsuario}
+              required
+              style={{
+                marginRight: "10px",
+                padding: "0.5rem",
+                width: "300px",
+              }}
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Contraseña"
+              value={formUsuario.password}
+              onChange={handleChangeUsuario}
+              required
+              style={{
+                marginRight: "10px",
+                padding: "0.5rem",
+                width: "300px",
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                padding: "0.5rem 1rem",
+                backgroundColor: "#007BFF",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Iniciar Sesión
+            </button>
+          </form>
+          {error && <p style={{ color: "red" }}>{error}</p>}
+        </>
+      )}
+
+      {/* Comportamiento después de autenticación */}
+      {isAuthenticated && role === "proveedor" && (
         <>
           <h3>Bienvenido, proveedor</h3>
           <button
@@ -129,6 +251,11 @@ export const Home = () => {
           >
             Ver Tarifas
           </button>
+        </>
+      )}
+      {isAuthenticated && role === "usuario" && (
+        <>
+          <h3>Bienvenido, usuario</h3>
           <button
             onClick={handleLogout}
             style={{
@@ -148,4 +275,3 @@ export const Home = () => {
     </div>
   );
 };
-

@@ -15,44 +15,57 @@ import TarifaElectricaList from "./component/TarifaElectricaList";
 import ProveedorDashboard from "./pages/ProveedorDashboard";
 import DashboardForm from "./component/DashboardForm";
 import LoginProveedor from "./component/LoginProveedor";
-
+import CompararTarifas from "./component/CompararTarifas"; // Importar el componente
+//import UserLogin from "./components/UserLogin"; // Formulario de usuario
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 
 //create your first component
 const Layout = () => {
-    //the basename is used when your project is published in a subdirectory and not in the root of the domain
-    // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
-    const basename = process.env.BASENAME || "";
+  //the basename is used when your project is published in a subdirectory and not in the root of the domain
+  // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
+  const basename = process.env.BASENAME || "";
 
-    if (!process.env.BACKEND_URL || process.env.BACKEND_URL === "") return <BackendURL />;
+  if (!process.env.BACKEND_URL || process.env.BACKEND_URL === "")
+    return <BackendURL />;
 
-    return (
-        <div>
-            <BrowserRouter basename={basename}>
-                <ScrollToTop>
-                    <Navbar /> {/* Menú de navegación */}
-                    <Routes>
-                        <Route element={<Home />} path="/" />
-                        <Route element={<Demo />} path="/demo" />
-                        <Route element={<Single />} path="/single/:theid" />
-                        {/* Nuevas rutas */}
-                        <Route element={<DashboardForm />} path="/"  />
-                        <Route element={<TarifaPage />} path="/tarifas" />
-                        <Route element={<ProveedorList />} path="/proveedores" />
-                        <Route element={<TarifaElectricaList />} path="/tarifas-electricas" />
-                        <Route element={<UserPage />} path="/users" />
-                        <Route element={<ProveedorPage />} path="/proveedores" />
-                        <Route element={<TarifaPage />} path="/tarifas/:proveedorId" />
-                        <Route element={<ProveedorDashboard />} path="/proveedor/dashboard/" />
-                        <Route element={<LoginProveedor />} path="/login"  />
-                        <Route element={<h1>Not found!</h1>} />
-                    </Routes>
-                    <Footer />
-                </ScrollToTop>
-            </BrowserRouter>
-        </div>
-    );
+  return (
+    <div>
+      <BrowserRouter basename={basename}>
+        <ScrollToTop>
+          <Navbar /> {/* Menú de navegación */}
+          <Routes>
+            <Route element={<Home />} path="/" />
+            <Route element={<Demo />} path="/demo" />
+            <Route element={<Single />} path="/single/:theid" />
+            {/* Nuevas rutas */}
+            <Route element={<DashboardForm />} path="/" />
+            <Route element={<TarifaPage />} path="/tarifas" />
+            <Route element={<ProveedorList />} path="/proveedores" />
+            <Route
+              element={<TarifaElectricaList />}
+              path="/tarifas-electricas"
+            />
+            <Route element={<UserPage />} path="/users" />
+            {/* Ruta de login de usuario */}
+           {/* <Route path="/login/users" element={<UserLogin />} />*/}
+
+            {/* Ruta para comparar tarifas */}
+            <Route element={<CompararTarifas />} path="/comparar-tarifas"  />
+            <Route element={<ProveedorPage />} path="/proveedores" />
+            <Route element={<TarifaPage />} path="/tarifas/:proveedorId" />
+            <Route
+              element={<ProveedorDashboard />}
+              path="/proveedor/dashboard/"
+            />
+            <Route element={<LoginProveedor />} path="/login" />
+            <Route element={<h1>Not found!</h1>} />
+          </Routes>
+          <Footer />
+        </ScrollToTop>
+      </BrowserRouter>
+    </div>
+  );
 };
 
 export default injectContext(Layout);
