@@ -19,6 +19,7 @@ const CompararTarifas = () => {
       }
       const data = await response.json();
       setTarifas(data); // Guardar tarifas en el estado
+      console.log("Tarifas cargadas:", data);
     } catch (err) {
       setError("No se pudieron cargar las tarifas. Inténtalo más tarde.");
       console.error(err);
@@ -37,6 +38,7 @@ const CompararTarifas = () => {
 
   // Filtrar y calcular las tarifas que mejor se ajustan al usuario
   const calcularMejoresTarifas = () => {
+    console.log("Botón presionado: calculando mejores tarifas...");
     if (!form.region || !form.rango_horario || !form.max_carbon_impact) {
       alert("Por favor, completa todas las preguntas antes de continuar.");
       return;
