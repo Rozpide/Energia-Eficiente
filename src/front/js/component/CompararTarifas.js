@@ -19,7 +19,7 @@ const CompararTarifas = () => {
       }
       const data = await response.json();
       setTarifas(data); // Guardar tarifas en el estado
-      console.log("Tarifas cargadas:", data);
+      console.log("Tarifas cargadas desde el backend:", data);
     } catch (err) {
       setError("No se pudieron cargar las tarifas. Inténtalo más tarde.");
       console.error(err);
@@ -39,27 +39,65 @@ const CompararTarifas = () => {
   // Filtrar y calcular las tarifas que mejor se ajustan al usuario
   const calcularMejoresTarifas = () => {
     console.log("Botón presionado: calculando mejores tarifas...");
+    console.log("Estado del formulario:", form);
+  
     if (!form.region || !form.rango_horario || !form.max_carbon_impact) {
       alert("Por favor, completa todas las preguntas antes de continuar.");
       return;
     }
-
-    // Filtrar tarifas según las preferencias del usuario
-    const tarifasFiltradas = tarifas.filter((tarifa) => {
-      return (
-        tarifa.region.toLowerCase() === form.region.toLowerCase() &&
-        (!tarifa.rango_horario_bajo || tarifa.rango_horario_bajo.includes(form.rango_horario)) &&
-        tarifa.carbon_impact_kgCO <= parseFloat(form.max_carbon_impact)
+  
+    // Función para evaluar cuántas prioridades cumple una tarifa
+    const evaluarPrioridades = (tarifa) => {
+      let coincidencias = 0;
+      if (tarifa.region.toLowerCase() === form.region.toLowerCase()) coincidencias++;
+      if (
+        tarifa.rango_horario_bajo &&
+        tarifa.rango_horario_bajo.includes(form.rango_horario)
+      )
+        coincidencias++;
+      if (tarifa.carbon_impact_kgCO <= parseFloat(form.max_carbon_impact)) coincidencias++;
+      return coincidencias;
+    };
+  
+    // Separar tarifas por número de prioridades cumplidas
+    const tarifasConPrioridades = tarifas.map((tarifa) => ({
+      ...tarifa,
+      coincidencias: evaluarPrioridades(tarifa),
+    }));
+  
+    console.log("Tarifas evaluadas con prioridades:", tarifasConPrioridades);
+  
+    // Filtrar por 3 coincidencias
+    let tarifasFiltradas = tarifasConPrioridades.filter(
+      (tarifa) => tarifa.coincidencias === 3
+    );
+  
+    // Si no hay tarifas con 3 coincidencias, buscar con 2
+    if (tarifasFiltradas.length === 0) {
+      tarifasFiltradas = tarifasConPrioridades.filter(
+        (tarifa) => tarifa.coincidencias === 2
       );
-    });
-
-    // Ordenar las tarifas filtradas por precio (ascendente)
+    }
+  
+    // Si no hay tarifas con 2 coincidencias, buscar con 1
+    if (tarifasFiltradas.length === 0) {
+      tarifasFiltradas = tarifasConPrioridades.filter(
+        (tarifa) => tarifa.coincidencias === 1
+      );
+    }
+  
+    console.log("Tarifas seleccionadas después de flexibilizar prioridades:", tarifasFiltradas);
+  
+    // Ordenar por precio y seleccionar las 3 mejores
     const mejoresTarifas = tarifasFiltradas
       .sort((a, b) => a.precio_kw_hora - b.precio_kw_hora)
-      .slice(0, 3); // Seleccionar las 3 mejores tarifas
-
+      .slice(0, 3);
+  
+    console.log("Las 3 mejores tarifas seleccionadas:", mejoresTarifas);
+  
     setResultados(mejoresTarifas); // Guardar resultados en el estado
   };
+  
 
   return (
     <div style={{ padding: "20px" }}>
@@ -168,3 +206,4 @@ const CompararTarifas = () => {
 };
 
 export default CompararTarifas;
+
