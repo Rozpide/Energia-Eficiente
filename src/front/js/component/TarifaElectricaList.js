@@ -155,7 +155,7 @@ const TarifaElectricaList = ({ proveedorId, filterFunction }) => {
             cursor: "pointer",
           }}
         >
-          Añadir Tarifa
+          Añadir UUNNAATarifa
         </button>
       </form>
 

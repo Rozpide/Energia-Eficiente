@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -7,6 +8,8 @@ const UserList = () => {
     const [showModal, setShowModal] = useState(false); // Modal para edición
     const [warningModal, setWarningModal] = useState(false); // Modal para advertencia de relaciones
     const [warningMessage, setWarningMessage] = useState(""); // Mensaje de advertencia
+
+    const navigate = useNavigate(); // Hook para redirección
 
     // Función para cargar la lista de usuarios
     const cargarUsuarios = () => {
@@ -38,6 +41,9 @@ const UserList = () => {
                 console.log("Usuario añadido:", data);
                 cargarUsuarios();
                 setForm({ name: "", email: "", password: "" });
+
+                // Redirige al componente CompararTarifas
+                navigate("/comparar-tarifas");
             })
             .catch(error => console.error("Error al añadir usuario:", error));
     };
@@ -151,7 +157,7 @@ const UserList = () => {
                         cursor: "pointer",
                     }}
                 >
-                    Crear Usuario
+                    Crear
                 </button>
             </form>
 
@@ -226,98 +232,31 @@ const UserList = () => {
                     </div>
                 </div>
             )}
+        </div>
+    );
+};
 
-            {/* Modal para modificar usuario */}
-            {showModal && (
-                <div style={modalStyles}>
-                    <div style={modalContentStyles}>
-                        <h3>Modificar Usuario</h3>
-                        <form onSubmit={actualizarUsuario}>
-                            <input
-                                type="text"
-                                name="name"
-                                placeholder="Nombre"
-                                value={form.name}
-                                onChange={handleChange}
-                                required
-                                style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                            />
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                value={form.email}
-                                onChange={handleChange}
-                                required
-                                style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                            />
-                            <input
-                                type="password"
-                                name="password"
-                                placeholder="Contraseña"
-                                value={form.password}
-                                onChange={handleChange}
-                                required
-                                style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
-                            />
-                            <button
-                                type="submit"
-                                style={{
-                                    marginRight: "10px",
-                                    padding: "0.5rem 1rem",
-                                    backgroundColor: "#4CAF50",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Guardar Cambios
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleCancel}
-                                style={{
-                                    padding: "0.5rem 1rem",
-                                    backgroundColor: "#f44336",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Cancelar
-                            </button>
-                            </form>
-                        </div>
-                    </div>
-                )}
-            </div>
-        );
-    };
-    
-    export default UserList;
-    
-    // Estilos del modal
-    const modalStyles = {
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro transparente
-        display: "flex",
-        justifyContent: "center", // Centrado horizontal
-        alignItems: "center", // Centrado vertical
-        zIndex: 1000, // Coloca el modal por encima de otros elementos
-    };
-    
-    const modalContentStyles = {
-        backgroundColor: "white", // Fondo blanco del modal
-        padding: "20px", // Espaciado interno
-        borderRadius: "8px", // Bordes redondeados
-        width: "400px", // Ancho del modal
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)", // Sombra para resaltar el modal
-        textAlign: "center", // Centrado del texto dentro del modal
-    };
-    
+export default UserList;
+
+// Estilos del modal
+const modalStyles = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro transparente
+    display: "flex",
+    justifyContent: "center", // Centrado horizontal
+    alignItems: "center", // Centrado vertical
+    zIndex: 1000, // Coloca el modal por encima de otros elementos
+};
+
+const modalContentStyles = {
+    backgroundColor: "white", // Fondo blanco del modal
+    padding: "20px", // Espaciado interno
+    borderRadius: "8px", // Bordes redondeados
+    width: "400px", // Ancho del modal
+    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)", // Sombra para resaltar el modal
+    textAlign: "center", // Centrado del texto dentro del modal
+};

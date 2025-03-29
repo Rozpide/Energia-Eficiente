@@ -53,7 +53,7 @@ const UserForm = () => {
                     value={form.name}
                     onChange={handleChange}
                 />
-                <button type="submit">Crear Usuario</button>
+                <button type="submit">Crear</button>
             </form>
         </div>
     );

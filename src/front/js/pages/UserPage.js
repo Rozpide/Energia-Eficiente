@@ -7,7 +7,7 @@ const UserPage = () => {
     return (
         <div className="container mt-3">
             <h1>Gestión de Usuarios</h1>
-            <DashboardUsuario />
+            
             
             <UserList />
         </div>

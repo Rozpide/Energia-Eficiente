@@ -113,12 +113,13 @@ const ProveedorList = () => {
 
   const añadirProveedor = (event) => {
     event.preventDefault();
-    console.log("Datos enviados al servidOOOr:", form);
+    console.log("Datos enviados al servidor:", form);
+  
     if (!form.nombre_proveedor || !form.contacto || !form.website) {
       alert("Por favor, completa todos los campos obligatorios.");
       return;
     }
-
+  
     fetch(`${process.env.BACKEND_URL}/api/proveedores`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -131,12 +132,18 @@ const ProveedorList = () => {
         return response.json();
       })
       .then((data) => {
-        console.log("Proveedor añadidoOO:", data);
-        cargarProveedores();
+        console.log("Proveedor añadido:", data);
+  
+        // Redirigir a TarifaPage después de crear el proveedor
+        navigate(`/tarifas/${data.id}`);
+  
+        // Resetear el formulario y recargar los datos
         setForm({ nombre_proveedor: "", contacto: "", website: "" });
+        cargarProveedores();
       })
-      .catch((error) => console.error("Error al añadir proveeEEdor:", error));
+      .catch((error) => console.error("Error al añadir proveedor:", error));
   };
+  
 
   const eliminarProveedor = async (proveedorId) => {
     const token = localStorage.getItem("access_token"); // Obtén el token del localStorage
@@ -234,7 +241,7 @@ const ProveedorList = () => {
         setForm={setForm}
         añadirProveedor={añadirProveedor}
       />
-      <h2>Lista de Proveedores</h2>
+      <h2>Lista deEEE Proveedores</h2>
       {/* Listado de proveedores */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         {proveedores.map((proveedor) => (

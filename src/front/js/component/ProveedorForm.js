@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ProveedorForm = () => {
     const [form, setForm] = useState({
@@ -9,6 +10,8 @@ const ProveedorForm = () => {
     });
     const [loading, setLoading] = useState(false); // Indicador de carga
     const [errorMessage, setErrorMessage] = useState(""); // Mensaje de error
+
+    const navigate = useNavigate(); // Hook para redirección
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -43,6 +46,10 @@ const ProveedorForm = () => {
             .then((data) => {
                 console.log("Proveedor creado:", data);
                 alert("Proveedor añadido correctamente.");
+
+                // Redirige a TarifaPage utilizando el ID del proveedor creado
+                navigate(`/tarifas/${data.id}`);
+
                 // Limpia el formulario después de la creación
                 setForm({
                     nombre_proveedor: "",
@@ -130,3 +137,4 @@ const ProveedorForm = () => {
 };
 
 export default ProveedorForm;
+
