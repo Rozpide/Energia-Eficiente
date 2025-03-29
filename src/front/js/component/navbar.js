@@ -1,3 +1,4 @@
+/*
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -39,3 +40,56 @@ export const Navbar = () => {
     );
 };
 
+*/
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+export const Navbar = ({ rol, cerrarSesion }) => {
+  const navigate = useNavigate();
+
+  if (!rol) return null; // Oculta el navbar si no hay rol seleccionado
+
+  return (
+    <nav className="navbar navbar-light bg-light">
+      <div className="container">
+        <Link to="/">
+          <span className="navbar-brand mb-0 h1">Gestión Energética</span>
+        </Link>
+        <div className="ml-auto">
+          {rol === "Usuario" && (
+            <>
+              <Link to="/users">
+                <button className="btn btn-primary">ALTA Usuarios</button>
+              </Link>
+              <Link to="/tarifas" className="ml-2">
+                <button className="btn btn-success">Tarifas</button>
+              </Link>
+              <Link to="/dashboard" className="ml-2">
+                <button className="btn btn-info">Dashboard</button>
+              </Link>
+            </>
+          )}
+          {rol === "Proveedor" && (
+            <>
+              <Link to="/proveedores">
+                <button className="btn btn-secondary">ALTA Proveedor</button>
+              </Link>
+              <Link to="/tarifas" className="ml-2">
+                <button className="btn btn-success">Tarifas</button>
+              </Link>
+              <Link to="/proveedor/dashboard" className="ml-2">
+                <button className="btn btn-info">Dashboard Proveedor</button>
+              </Link>
+            </>
+          )}
+          <button
+            className="btn btn-danger ml-2"
+            onClick={cerrarSesion}
+          >
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </nav>
+  );
+};

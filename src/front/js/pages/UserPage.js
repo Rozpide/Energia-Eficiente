@@ -1,12 +1,14 @@
 import React from "react";
 import UserList from "../component/UserList";
-import UserForm from "../component/UserForm";
+import DashboardUsuario from "../component/DashboardUsuario";
+
 
 const UserPage = () => {
     return (
         <div className="container mt-3">
             <h1>Gestión de Usuarios</h1>
-            <UserForm />
+            <DashboardUsuario />
+            
             <UserList />
         </div>
     );
