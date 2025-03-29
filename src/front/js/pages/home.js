@@ -100,7 +100,7 @@ export const Home = () => {
 
   return (
     <div className="text-center mt-5">
-      <h1>Bienvenido a la Plataforma</h1>
+      <h1>Si ya estas registrado</h1>
       
       {role === "none" && (
         <>
