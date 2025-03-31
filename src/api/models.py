@@ -65,12 +65,13 @@ class TarifaElectrica(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     proveedor_id_fk = db.Column(db.Integer, db.ForeignKey('proveedor.id'), nullable=False)
-    registro_hora_fecha_tarifa = db.Column(db.DateTime, nullable=False)
+    registro_hora_fecha_tarifa = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     precio_kw_hora = db.Column(db.Float, nullable=False)
     region = db.Column(db.String(50), nullable=False)
     carbon_impact_kgCO = db.Column(db.Float, nullable=False)
     nombre_tarifa = db.Column(db.String(100), nullable=False)
     rango_horario_bajo = db.Column(db.String(50), nullable=True)
+    zonas_geograficas = db.Column(db.Text, nullable=True)  # Nueva columna para zonas geográficas
 
     # Relación con recomendaciones
     recomendaciones = db.relationship('Recomendacion', backref='tarifa_electrica', lazy=True)
@@ -87,8 +88,10 @@ class TarifaElectrica(db.Model):
             "region": self.region,
             "carbon_impact_kgCO": self.carbon_impact_kgCO,
             "nombre_tarifa": self.nombre_tarifa,
-            "rango_horario_bajo": self.rango_horario_bajo
+            "rango_horario_bajo": self.rango_horario_bajo,
+            "zonas_geograficas": self.zonas_geograficas  # Serializa las zonas como JSON
         }
+
 
 # Tabla: Recomendaciones
 class Recomendacion(db.Model):

@@ -1,6 +1,8 @@
 
 from flask import Blueprint, jsonify, request
 from api.models import db, TarifaElectrica
+import json
+from datetime import datetime
 
 # Creamos el blueprint
 tarifa_electrica_bp = Blueprint('tarifa_electrica_bp', __name__)
@@ -30,27 +32,45 @@ def obtener_tarifas_por_proveedor(proveedor_id):
 @tarifa_electrica_bp.route('/tarifas', methods=['POST'])
 def crear_tarifa():
     try:
+        # Recibir datos de la solicitud
         data = request.get_json()
-        
-        print("Datos recibidos del frontend:", data)
 
+        # Validar los datos obligatorios
+        required_fields = ['proveedor_id_fk', 'precio_kw_hora', 'region', 'carbon_impact_kgCO', 'nombre_tarifa']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({"message": f"El campo {field} es obligatorio."}), 400
+
+        # Procesar zonas geográficas
+        zonas_geograficas = data.get('zonas_geograficas')
+        if zonas_geograficas:
+            try:
+                zonas_geograficas = json.dumps(json.loads(zonas_geograficas))  # Validar y serializar como JSON
+            except ValueError:
+                return jsonify({"message": "El formato de zonas_geograficas no es válido"}), 400
+
+        # Crear nueva tarifa eléctrica
         nueva_tarifa = TarifaElectrica(
             proveedor_id_fk=data['proveedor_id_fk'],
-            registro_hora_fecha_tarifa=data['registro_hora_fecha_tarifa'],
-            precio_kw_hora=data['precio_kw_hora'],
+            registro_hora_fecha_tarifa=datetime.utcnow(),
+            precio_kw_hora=float(data['precio_kw_hora']),
             region=data['region'],
-            carbon_impact_kgCO=data['carbon_impact_kgCO'],
+            carbon_impact_kgCO=float(data['carbon_impact_kgCO']),
             nombre_tarifa=data['nombre_tarifa'],
-            rango_horario_bajo=data.get('rango_horario_bajo')
+            rango_horario_bajo=data.get('rango_horario_bajo'),
+            zonas_geograficas=zonas_geograficas
         )
+
+        # Guardar en la base de datos
         db.session.add(nueva_tarifa)
         db.session.commit()
         return jsonify(nueva_tarifa.serialize()), 201
-    except KeyError as e:
-        return jsonify({"error": f"Falta un campo obligatorio: {str(e)}"}), 400
-    except Exception as e:
-        return jsonify({"error": f"Error al crear tarifa: {str(e)}"}), 500
 
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error interno del servidor: {e}")
+        return jsonify({"message": "Error interno del servidor", "details": str(e)}), 500
+    
 @tarifa_electrica_bp.route('/tarifas/<int:tarifa_id>', methods=['PUT'])
 def actualizar_tarifa(tarifa_id):
     print(f"Solicitud recibida en actualizar_tarifa para tarifa_id: {tarifa_id}")

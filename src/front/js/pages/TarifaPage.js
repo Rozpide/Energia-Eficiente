@@ -1,3 +1,5 @@
+/*
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -162,7 +164,7 @@ const TarifaPage = () => {
       </h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Formulario para añadir una nueva tarifa */}
+      
       {!isEditing && (
         <form
           onSubmit={(e) => {
@@ -271,7 +273,7 @@ const TarifaPage = () => {
         </form>
       )}
 
-      {/* Lista de tarifas */}
+      
       {tarifas.length > 0 ? (
         tarifas.map((tarifa) => (
           <div
@@ -323,7 +325,7 @@ const TarifaPage = () => {
         <p>No hay tarifas disponibles para este proveedor.</p>
       )}
 
-      {/* Formulario de edición */}
+      
       {isEditing && (
         <form
           onSubmit={(e) => {
@@ -451,3 +453,198 @@ const TarifaPage = () => {
 };
 
 export default TarifaPage;
+*/
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
+const TarifaPage = () => {
+  const { proveedorId } = useParams(); // ID del proveedor desde la URL
+  const [tarifas, setTarifas] = useState([]); // Estado para tarifas
+  const [markers, setMarkers] = useState([]); // Estado para manejar marcadores
+
+  const [error, setError] = useState(""); // Manejo de errores
+  const [form, setForm] = useState({
+    id: null,
+    nombre_tarifa: "",
+    precio_kw_hora: "",
+    region: "",
+    carbon_impact_kgCO: "",
+    rango_horario_bajo: "",
+    registro_hora_fecha_tarifa: "",
+    zonas_geograficas: [], // Lista de marcadores
+  }); // Estado del formulario
+  const [map, setMap] = useState(null); // Referencia al mapa
+
+  // Cargar el script de Google Maps manualmente
+  useEffect(() => {
+    const loadGoogleMapsScript = () => {
+      const existingScript = document.getElementById("googleMaps");
+      if (!existingScript) {
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCLXcGgycpOj9hAkolG71_60wbqFwy1c8Q&libraries=marker&v=weekly`;
+        script.id = "googleMaps";
+        script.async = true;
+        document.body.appendChild(script);
+        script.onload = () => {
+          initMap(); // Inicializar el mapa después de cargar el script
+        };
+      } else {
+        initMap(); // Si el script ya está cargado, inicializa el mapa
+      }
+    };
+
+    const initMap = () => {
+      const mapInstance = new window.google.maps.Map(document.getElementById("map"), {
+        center: { lat: 40.416775, lng: -3.703790 }, // Madrid, España
+        zoom: 6,
+      });
+
+      mapInstance.addListener("click", (event) => {
+        const newMarker = {
+          lat: event.latLng.lat(),
+          lng: event.latLng.lng(),
+        };
+
+        // Usa google.maps.Marker para añadir el marcador al mapa
+        new window.google.maps.Marker({
+          position: newMarker,
+          map: mapInstance,
+        });
+
+        setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
+        setForm((prevForm) => ({
+          ...prevForm,
+          zonas_geograficas: [...prevForm.zonas_geograficas, newMarker],
+        }));
+      });
+
+      setMap(mapInstance);
+    };
+
+    loadGoogleMapsScript(); // Cargar el script de Google Maps
+  }, []);
+
+  // Función para manejar cambios en el formulario
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  // Función para enviar la tarifa con las zonas geográficas
+  const handleAddTarifa = async () => {
+    console.log("Datos enviados al servidor:", form);
+    try {
+      const token = localStorage.getItem("access_token"); // Obtener token JWT
+      const response = await fetch(`https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/tarifas`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...form, proveedor_id_fk: proveedorId, zonas_geograficas: JSON.stringify(form.zonas_geograficas) }),
+      });
+
+      if (!response.ok) throw new Error("Error al añadir la tarifa.");
+      alert("Tarifa añadida correctamente.");
+      setForm({
+        id: null,
+        nombre_tarifa: "",
+        precio_kw_hora: "",
+        region: "",
+        carbon_impact_kgCO: "",
+        rango_horario_bajo: "",
+        registro_hora_fecha_tarifa: "",
+        zonas_geograficas: [],
+      });
+    } catch (err) {
+      console.error("Error al añadir tarifa:", err);
+      alert("No se pudo crear la tarifa. Intenta nuevamente.");
+    }
+  };
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
+        Tarifas del Proveedor {proveedorId}
+      </h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleAddTarifa();
+        }}
+        style={{
+          marginBottom: "20px",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+        }}
+      >
+        <h3>Añadir Nueva Tarifa</h3>
+        <input
+          type="text"
+          name="nombre_tarifa"
+          placeholder="Nombre de la Tarifa"
+          value={form.nombre_tarifa}
+          onChange={handleChange}
+          required
+          style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
+        />
+        <input
+          type="number"
+          name="precio_kw_hora"
+          placeholder="Precio por kWh"
+          value={form.precio_kw_hora}
+          onChange={handleChange}
+          required
+          style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
+        />
+        <input
+          type="text"
+          name="region"
+          placeholder="Región"
+          value={form.region}
+          onChange={handleChange}
+          required
+          style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
+        />
+        <input
+          type="number"
+          name="carbon_impact_kgCO"
+          placeholder="Impacto de Carbono (kgCO)"
+          value={form.carbon_impact_kgCO}
+          onChange={handleChange}
+          required
+          style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
+        />
+        <input
+          type="text"
+          name="rango_horario_bajo"
+          placeholder="Rango Horario (opcional)"
+          value={form.rango_horario_bajo}
+          onChange={handleChange}
+          style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
+        />
+        <div id="map" style={{ width: "100%", height: "400px", marginTop: "20px" }}></div>
+        <p style={{ marginTop: "10px" }}>
+          Haz clic en el mapa para añadir marcadores que definan la zona de servicio.
+        </p>
+        <button
+          type="submit"
+          style={{
+            padding: "0.5rem 1rem",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            borderRadius: "5px",
+            border: "none",
+          }}
+        >
+          Añadir Tarifa
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default TarifaPage;
+
