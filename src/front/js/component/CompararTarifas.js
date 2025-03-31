@@ -40,12 +40,12 @@ const CompararTarifas = () => {
   const calcularMejoresTarifas = () => {
     console.log("Botón presionado: calculando mejores tarifas...");
     console.log("Estado del formulario:", form);
-  
+
     if (!form.region || !form.rango_horario || !form.max_carbon_impact) {
       alert("Por favor, completa todas las preguntas antes de continuar.");
       return;
     }
-  
+
     // Función para evaluar cuántas prioridades cumple una tarifa
     const evaluarPrioridades = (tarifa) => {
       let coincidencias = 0;
@@ -58,46 +58,81 @@ const CompararTarifas = () => {
       if (tarifa.carbon_impact_kgCO <= parseFloat(form.max_carbon_impact)) coincidencias++;
       return coincidencias;
     };
-  
+
     // Separar tarifas por número de prioridades cumplidas
     const tarifasConPrioridades = tarifas.map((tarifa) => ({
       ...tarifa,
       coincidencias: evaluarPrioridades(tarifa),
     }));
-  
+
     console.log("Tarifas evaluadas con prioridades:", tarifasConPrioridades);
-  
+
     // Filtrar por 3 coincidencias
     let tarifasFiltradas = tarifasConPrioridades.filter(
       (tarifa) => tarifa.coincidencias === 3
     );
-  
+
     // Si no hay tarifas con 3 coincidencias, buscar con 2
     if (tarifasFiltradas.length === 0) {
       tarifasFiltradas = tarifasConPrioridades.filter(
         (tarifa) => tarifa.coincidencias === 2
       );
     }
-  
+
     // Si no hay tarifas con 2 coincidencias, buscar con 1
     if (tarifasFiltradas.length === 0) {
       tarifasFiltradas = tarifasConPrioridades.filter(
         (tarifa) => tarifa.coincidencias === 1
       );
     }
-  
+
     console.log("Tarifas seleccionadas después de flexibilizar prioridades:", tarifasFiltradas);
-  
+
     // Ordenar por precio y seleccionar las 3 mejores
     const mejoresTarifas = tarifasFiltradas
       .sort((a, b) => a.precio_kw_hora - b.precio_kw_hora)
       .slice(0, 3);
-  
+
     console.log("Las 3 mejores tarifas seleccionadas:", mejoresTarifas);
-  
+
     setResultados(mejoresTarifas); // Guardar resultados en el estado
   };
-  
+
+  // Mostrar mapa con los proveedores filtrados
+  useEffect(() => {
+    if (resultados.length > 0) {
+      const map = new window.google.maps.Map(document.getElementById("map"), {
+        center: { lat: 40.416775, lng: -3.70379 }, // Coordenadas iniciales (Madrid)
+        zoom: 12,
+      });
+
+      const bounds = new window.google.maps.LatLngBounds();
+
+      resultados.forEach((tarifa) => {
+        if (tarifa.latitude && tarifa.longitude) {
+          const marker = new window.google.maps.Marker({
+            position: { lat: tarifa.latitude, lng: tarifa.longitude },
+            map,
+            title: tarifa.nombre_tarifa,
+          });
+
+          bounds.extend(new window.google.maps.LatLng(tarifa.latitude, tarifa.longitude));
+
+          const infoWindow = new window.google.maps.InfoWindow({
+            content: `<div><h3>${tarifa.nombre_tarifa}</h3><p>Región: ${tarifa.region}</p><p>Precio: $${tarifa.precio_kw_hora}</p></div>`,
+          });
+
+          marker.addListener("click", () => {
+            infoWindow.open(map, marker);
+          });
+        }
+      });
+
+      if (resultados.length > 0) {
+        map.fitBounds(bounds);
+      }
+    }
+  }, [resultados]);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -196,6 +231,8 @@ const CompararTarifas = () => {
         </div>
       )}
 
+      <div id="map" style={{ width: "100%", height: "500px", marginTop: "20px" }}></div>
+
       {/* Mensaje si no hay resultados */}
       {resultados.length === 0 && <p>No se encontraron tarifas que coincidan con tus preferencias.</p>}
 
@@ -206,4 +243,5 @@ const CompararTarifas = () => {
 };
 
 export default CompararTarifas;
+
 
