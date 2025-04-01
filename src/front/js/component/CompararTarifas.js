@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 
 const CompararTarifas = () => {
-  const [tarifas, setTarifas] = useState([]); // Tarifas cargadas desde el backend
-  const [error, setError] = useState(null); // Manejo de errores
+  const [tarifas, setTarifas] = useState([]);
+  const [error, setError] = useState(null);
   const [form, setForm] = useState({
     region: "",
     rango_horario: "",
     max_carbon_impact: "",
-  }); // Respuestas del usuario
-  const [resultados, setResultados] = useState([]); // Tarifas filtradas
+  });
+  const [resultados, setResultados] = useState([]);
+  const [map, setMap] = useState(null);
+  const [markers, setMarkers] = useState([]);
 
-  // Cargar todas las tarifas desde el backend al montar el componente
+  // Cargar todas las tarifas desde el backend
   const cargarTarifas = async () => {
     try {
       const response = await fetch(`${process.env.BACKEND_URL}/api/tarifas`);
@@ -18,8 +20,7 @@ const CompararTarifas = () => {
         throw new Error("Error al cargar las tarifas.");
       }
       const data = await response.json();
-      setTarifas(data); // Guardar tarifas en el estado
-      console.log("Tarifas cargadas desde el backend:", data);
+      setTarifas(data);
     } catch (err) {
       setError("No se pudieron cargar las tarifas. Inténtalo más tarde.");
       console.error(err);
@@ -27,29 +28,77 @@ const CompararTarifas = () => {
   };
 
   useEffect(() => {
-    cargarTarifas(); // Ejecutar la carga de tarifas al iniciar el componente
+    cargarTarifas();
   }, []);
 
-  // Manejar cambios en los campos del formulario
+  // Cargar el script de Google Maps y inicializar el mapa
+  useEffect(() => {
+    const loadGoogleMapsScript = () => {
+      const existingScript = document.getElementById("googleMaps");
+      if (!existingScript) {
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCLXcGgycpOj9hAkolG71_60wbqFwy1c8Q`; // Reemplaza TU_CLAVE_API
+        script.id = "googleMaps";
+        script.async = true;
+        document.body.appendChild(script);
+        script.onload = () => initMap();
+      } else {
+        initMap();
+      }
+    };
+
+    const initMap = () => {
+      if (window.google && window.google.maps && !map) {
+        const mapInstance = new window.google.maps.Map(document.getElementById("map"), {
+          center: { lat: 40.416775, lng: -3.70379 }, // Madrid, España
+          zoom: 6,
+        });
+        setMap(mapInstance);
+
+        const initialMarkers = tarifas.map((tarifa) => {
+          if (tarifa.latitude && tarifa.longitude) {
+            const marker = new window.google.maps.Marker({
+              position: { lat: tarifa.latitude, lng: tarifa.longitude },
+              map: mapInstance,
+              title: tarifa.nombre_tarifa,
+            });
+
+            const infoWindow = new window.google.maps.InfoWindow({
+              content: `<div><h3>${tarifa.nombre_tarifa}</h3><p>Región: ${tarifa.region}</p><p>Precio: $${tarifa.precio_kw_hora}</p></div>`,
+            });
+
+            marker.addListener("click", () => {
+              infoWindow.open(mapInstance, marker);
+            });
+
+            return marker;
+          }
+          return null;
+        });
+
+        setMarkers(initialMarkers);
+      }
+    };
+
+    loadGoogleMapsScript();
+  }, [tarifas]);
+
+  // Manejar cambios en el formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  // Filtrar y calcular las tarifas que mejor se ajustan al usuario
+  // Filtrar y calcular las tarifas
   const calcularMejoresTarifas = () => {
-    console.log("Botón presionado: calculando mejores tarifas...");
-    console.log("Estado del formulario:", form);
-
     if (!form.region || !form.rango_horario || !form.max_carbon_impact) {
       alert("Por favor, completa todas las preguntas antes de continuar.");
       return;
     }
 
-    // Función para evaluar cuántas prioridades cumple una tarifa
     const evaluarPrioridades = (tarifa) => {
       let coincidencias = 0;
-      if (tarifa.region.toLowerCase() === form.region.toLowerCase()) coincidencias++;
+      if (tarifa.region?.toLowerCase() === form.region.toLowerCase()) coincidencias++;
       if (
         tarifa.rango_horario_bajo &&
         tarifa.rango_horario_bajo.includes(form.rango_horario)
@@ -59,64 +108,43 @@ const CompararTarifas = () => {
       return coincidencias;
     };
 
-    // Separar tarifas por número de prioridades cumplidas
     const tarifasConPrioridades = tarifas.map((tarifa) => ({
       ...tarifa,
       coincidencias: evaluarPrioridades(tarifa),
     }));
 
-    console.log("Tarifas evaluadas con prioridades:", tarifasConPrioridades);
-
-    // Filtrar por 3 coincidencias
     let tarifasFiltradas = tarifasConPrioridades.filter(
       (tarifa) => tarifa.coincidencias === 3
     );
 
-    // Si no hay tarifas con 3 coincidencias, buscar con 2
     if (tarifasFiltradas.length === 0) {
       tarifasFiltradas = tarifasConPrioridades.filter(
         (tarifa) => tarifa.coincidencias === 2
       );
     }
 
-    // Si no hay tarifas con 2 coincidencias, buscar con 1
     if (tarifasFiltradas.length === 0) {
       tarifasFiltradas = tarifasConPrioridades.filter(
         (tarifa) => tarifa.coincidencias === 1
       );
     }
 
-    console.log("Tarifas seleccionadas después de flexibilizar prioridades:", tarifasFiltradas);
-
-    // Ordenar por precio y seleccionar las 3 mejores
     const mejoresTarifas = tarifasFiltradas
       .sort((a, b) => a.precio_kw_hora - b.precio_kw_hora)
       .slice(0, 3);
 
-    console.log("Las 3 mejores tarifas seleccionadas:", mejoresTarifas);
+    setResultados(mejoresTarifas);
 
-    setResultados(mejoresTarifas); // Guardar resultados en el estado
-  };
-
-  // Mostrar mapa con los proveedores filtrados
-  useEffect(() => {
-    if (resultados.length > 0) {
-      const map = new window.google.maps.Map(document.getElementById("map"), {
-        center: { lat: 40.416775, lng: -3.70379 }, // Coordenadas iniciales (Madrid)
-        zoom: 12,
-      });
-
-      const bounds = new window.google.maps.LatLngBounds();
-
-      resultados.forEach((tarifa) => {
+    // Actualizar marcadores en el mapa
+    if (map) {
+      markers.forEach((marker) => marker.setMap(null));
+      const filteredMarkers = mejoresTarifas.map((tarifa) => {
         if (tarifa.latitude && tarifa.longitude) {
           const marker = new window.google.maps.Marker({
             position: { lat: tarifa.latitude, lng: tarifa.longitude },
-            map,
+            map: map,
             title: tarifa.nombre_tarifa,
           });
-
-          bounds.extend(new window.google.maps.LatLng(tarifa.latitude, tarifa.longitude));
 
           const infoWindow = new window.google.maps.InfoWindow({
             content: `<div><h3>${tarifa.nombre_tarifa}</h3><p>Región: ${tarifa.region}</p><p>Precio: $${tarifa.precio_kw_hora}</p></div>`,
@@ -125,20 +153,20 @@ const CompararTarifas = () => {
           marker.addListener("click", () => {
             infoWindow.open(map, marker);
           });
+
+          return marker;
         }
+        return null;
       });
 
-      if (resultados.length > 0) {
-        map.fitBounds(bounds);
-      }
+      setMarkers(filteredMarkers);
     }
-  }, [resultados]);
+  };
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>Comparar Tarifas</h1>
 
-      {/* Formulario de preguntas */}
       <form style={{ marginBottom: "20px" }}>
         <h3>Responde las siguientes preguntas:</h3>
         <label>
@@ -150,11 +178,7 @@ const CompararTarifas = () => {
             value={form.region}
             onChange={handleChange}
             required
-            style={{
-              marginBottom: "10px",
-              padding: "0.5rem",
-              width: "100%",
-            }}
+            style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
           />
         </label>
         <label>
@@ -166,11 +190,7 @@ const CompararTarifas = () => {
             value={form.rango_horario}
             onChange={handleChange}
             required
-            style={{
-              marginBottom: "10px",
-              padding: "0.5rem",
-              width: "100%",
-            }}
+            style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
           />
         </label>
         <label>
@@ -182,11 +202,7 @@ const CompararTarifas = () => {
             value={form.max_carbon_impact}
             onChange={handleChange}
             required
-            style={{
-              marginBottom: "10px",
-              padding: "0.5rem",
-              width: "100%",
-            }}
+            style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
           />
         </label>
         <button
@@ -206,7 +222,6 @@ const CompararTarifas = () => {
         </button>
       </form>
 
-      {/* Resultados */}
       {resultados.length > 0 && (
         <div>
           <h3>Las tarifas más adecuadas para ti:</h3>
@@ -221,7 +236,7 @@ const CompararTarifas = () => {
               }}
             >
               <p>
-                <strong>{tarifa.nombre_tarifa}</strong>: ${tarifa.precio_kw_hora} por kWh
+                <strong>{tarifa.nombre_tarifa}                </strong>: ${tarifa.precio_kw_hora} por kWh
               </p>
               <p>Región: {tarifa.region}</p>
               <p>Impacto Carbono: {tarifa.carbon_impact_kgCO} kgCO</p>
@@ -233,11 +248,17 @@ const CompararTarifas = () => {
 
       <div id="map" style={{ width: "100%", height: "500px", marginTop: "20px" }}></div>
 
-      {/* Mensaje si no hay resultados */}
-      {resultados.length === 0 && <p>No se encontraron tarifas que coincidan con tus preferencias.</p>}
+      {resultados.length === 0 && (
+        <p style={{ marginTop: "10px", color: "#888" }}>
+          No se encontraron tarifas que coincidan con tus preferencias.
+        </p>
+      )}
 
-      {/* Mostrar errores de carga */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && (
+        <p style={{ color: "red", marginTop: "20px" }}>
+          {error}
+        </p>
+      )}
     </div>
   );
 };

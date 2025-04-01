@@ -589,8 +589,22 @@ const TarifaPage = () => {
   };
   // Función para abrir el formulario de edición con los valores actuales de una tarifa
   const handleEdit = (tarifa) => {
-    setForm({ ...tarifa }); // Cargar datos de la tarifa seleccionada en el formulario
-    setIsEditing(true); // Mostrar el formulario de edición
+    setForm({
+      ...tarifa,
+      zonas_geograficas: JSON.parse(tarifa.zonas_geograficas),
+    });
+    setMarkers(JSON.parse(tarifa.zonas_geograficas));
+    setIsEditing(true);
+
+    map && markers.forEach((marker) => marker.setMap(null));
+    const newMarkers = JSON.parse(tarifa.zonas_geograficas).map((location) => {
+      const marker = new window.google.maps.Marker({
+        position: { lat: location.lat, lng: location.lng },
+        map: map,
+      });
+      return marker;
+    });
+    setMarkers(newMarkers);
   };
 
   const handleDelete = async (id) => {
