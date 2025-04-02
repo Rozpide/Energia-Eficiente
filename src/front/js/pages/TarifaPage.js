@@ -475,7 +475,7 @@ const TarifaPage = () => {
   const [map, setMap] = useState(null); // Referencia al mapa
   const [isEditing, setIsEditing] = useState(false); // Estado para edición
 
-  // Función para cargar el script de Google Maps
+  // Cargar el script de Google Maps y inicializar el mapa
   useEffect(() => {
     const loadGoogleMapsScript = () => {
       const existingScript = document.getElementById("googleMaps");
@@ -484,50 +484,79 @@ const TarifaPage = () => {
         script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCLXcGgycpOj9hAkolG71_60wbqFwy1c8Q&libraries=marker&v=weekly`;
         script.id = "googleMaps";
         script.async = true;
+        script.defer = true; // Mejora del rendimiento
         document.body.appendChild(script);
-        script.onload = () => {
-          initMap(); // Inicializar el mapa después de cargar el script
-        };
+        script.onload = () => initMap();
       } else {
-        initMap(); // Si el script ya está cargado, inicializa el mapa
+        initMap();
       }
     };
 
     const initMap = () => {
-      const mapInstance = new window.google.maps.Map(
-        document.getElementById("map"),
-        {
-          center: { lat: 40.416775, lng: -3.70379 }, // Madrid, España
+      if (window.google && window.google.maps) {
+        // Crear el mapa centrado en Madrid
+        const mapInstance = new window.google.maps.Map(document.getElementById("map"), {
+          center: { lat: 40.416775, lng: -3.70379 }, // Madrid
           zoom: 6,
-        }
-      );
-
-      mapInstance.addListener("click", (event) => {
-        const newMarker = {
-          lat: event.latLng.lat(),
-          lng: event.latLng.lng(),
-        };
-
-        new window.google.maps.Marker({
-          position: newMarker,
-          map: mapInstance,
         });
-
-        setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
-        setForm((prevForm) => ({
-          ...prevForm,
-          zonas_geograficas: [...prevForm.zonas_geograficas, newMarker],
-        }));
-      });
-
-      setMap(mapInstance);
+    
+        setMap(mapInstance);
+    
+        // Limpiar marcadores existentes
+        markers.forEach((marker) => marker.setMap(null));
+    
+        // Añadir marcadores para todas las tarifas
+        const newMarkers = tarifas.flatMap((tarifa) => {
+          const zonas = tarifa.zonas_geograficas ? JSON.parse(tarifa.zonas_geograficas) : [];
+    
+          if (zonas.length > 0) {
+            // Crear marcadores para cada ubicación en zonas_geograficas
+            return zonas.map((zona) => {
+              const marker = new window.google.maps.Marker({
+                position: { lat: zona.lat, lng: zona.lng },
+                map: mapInstance,
+                title: tarifa.nombre_tarifa,
+              });
+    
+              const infoWindow = new window.google.maps.InfoWindow({
+                content: `<div><h3>${tarifa.nombre_tarifa}</h3>
+                          <p>Región: ${tarifa.region || "No especificada"}</p>
+                          <p>Precio: $${tarifa.precio_kw_hora || "N/A"}</p></div>`,
+              });
+    
+              marker.addListener("click", () => infoWindow.open(mapInstance, marker));
+              return marker;
+            });
+          } else {
+            // Si no tiene zonas_geograficas, usar valores predeterminados (Madrid)
+            const marker = new window.google.maps.Marker({
+              position: { lat: 40.416775, lng: -3.70379 }, // Coordenadas de Madrid
+              map: mapInstance,
+              title: tarifa.nombre_tarifa,
+            });
+    
+            const infoWindow = new window.google.maps.InfoWindow({
+              content: `<div><h3>${tarifa.nombre_tarifa}</h3>
+                        <p>Región: ${tarifa.region || "No especificada"}</p>
+                        <p>Precio: $${tarifa.precio_kw_hora || "N/A"}</p></div>`,
+            });
+    
+            marker.addListener("click", () => infoWindow.open(mapInstance, marker));
+            return marker;
+          }
+        });
+    
+        // Guardar los nuevos marcadores en el estado
+        setMarkers(newMarkers);
+      }
     };
+    
 
-    loadGoogleMapsScript(); // Cargar el script de Google Maps
-    cargarTarifas(); // Cargar las tarifas inicialmente
+    loadGoogleMapsScript(); // Cargar el script y configurar el mapa
+    cargarTarifas(); // Cargar las tarifas desde el backend
   }, [proveedorId]);
 
-  // Función para cargar las tarifas desde el backend
+  // Cargar tarifas desde el backend
   const cargarTarifas = async () => {
     try {
       const response = await fetch(
@@ -535,22 +564,21 @@ const TarifaPage = () => {
       );
       if (!response.ok) throw new Error("Error al cargar las tarifas.");
       const data = await response.json();
-      setTarifas(data); // Actualizar estado con las tarifas recibidas
+      setTarifas(data); // Actualizar tarifas en el estado
     } catch (err) {
       console.error("Error al cargar tarifas:", err);
       setError("No se pudieron cargar las tarifas del proveedor.");
     }
   };
 
-  // Función para manejar cambios en el formulario
+  // Manejar cambios en el formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  // Función para añadir una nueva tarifa
+  // Añadir nueva tarifa
   const handleAddTarifa = async () => {
-    console.log("Datos enviados al servidor:", form);
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
@@ -564,14 +592,14 @@ const TarifaPage = () => {
           body: JSON.stringify({
             ...form,
             proveedor_id_fk: proveedorId,
-            zonas_geograficas: JSON.stringify(form.zonas_geograficas), // Serializar zonas
+            zonas_geograficas: JSON.stringify(form.zonas_geograficas),
           }),
         }
       );
 
       if (!response.ok) throw new Error("Error al añadir la tarifa.");
       alert("Tarifa añadida correctamente.");
-      cargarTarifas(); // Cargar tarifas actualizadas
+      cargarTarifas(); // Actualizar tarifas
       setForm({
         id: null,
         nombre_tarifa: "",
@@ -587,7 +615,8 @@ const TarifaPage = () => {
       alert("No se pudo crear la tarifa. Intenta nuevamente.");
     }
   };
-  // Función para abrir el formulario de edición con los valores actuales de una tarifa
+
+  // Manejar edición de tarifas
   const handleEdit = (tarifa) => {
     setForm({
       ...tarifa,
@@ -596,15 +625,17 @@ const TarifaPage = () => {
     setMarkers(JSON.parse(tarifa.zonas_geograficas));
     setIsEditing(true);
 
-    map && markers.forEach((marker) => marker.setMap(null));
-    const newMarkers = JSON.parse(tarifa.zonas_geograficas).map((location) => {
-      const marker = new window.google.maps.Marker({
-        position: { lat: location.lat, lng: location.lng },
-        map: map,
+    if (map) {
+      markers.forEach((marker) => marker && marker.setMap(null));
+      const newMarkers = JSON.parse(tarifa.zonas_geograficas).map((location) => {
+        const marker = new window.google.maps.Marker({
+          position: { lat: location.lat, lng: location.lng },
+          map: map,
+        });
+        return marker;
       });
-      return marker;
-    });
-    setMarkers(newMarkers);
+      setMarkers(newMarkers);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -626,49 +657,12 @@ const TarifaPage = () => {
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Error al eliminar tarifa.");
-      }
-
+      if (!response.ok) throw new Error("Error al eliminar tarifa.");
       alert("Tarifa eliminada correctamente.");
-      setTarifas(tarifas.filter((tarifa) => tarifa.id !== id)); // Actualizar lista de tarifas
+      setTarifas(tarifas.filter((tarifa) => tarifa.id !== id)); // Actualizar tarifas
     } catch (err) {
       console.error("Error al eliminar tarifa:", err);
       alert("No se pudo eliminar la tarifa. Intenta nuevamente.");
-    }
-  };
-
-  // Función para actualizar una tarifa
-  const handleUpdateTarifa = async () => {
-    try {
-      const token = localStorage.getItem("access_token");
-      const response = await fetch(
-        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/tarifas/${form.id}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(form), // Enviar los datos de la tarifa actualizada
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Error al actualizar tarifa.");
-      }
-
-      const tarifaActualizada = await response.json();
-      setTarifas(
-        tarifas.map((tarifa) =>
-          tarifa.id === tarifaActualizada.id ? tarifaActualizada : tarifa
-        )
-      ); // Actualizar la lista de tarifas
-      setIsEditing(false); // Ocultar el formulario de edición
-      alert("Tarifa actualizada correctamente.");
-    } catch (err) {
-      console.error("Error al actualizar tarifa:", err);
-      alert("No se pudo actualizar la tarifa. Intenta nuevamente.");
     }
   };
 
@@ -692,7 +686,7 @@ const TarifaPage = () => {
             borderRadius: "8px",
           }}
         >
-          <h3>Añadir Nueva Tarifa</h3>
+          <h3>Añadir Nueva22 Tarifa</h3>
           <input
             type="text"
             name="nombre_tarifa"
@@ -775,7 +769,7 @@ const TarifaPage = () => {
       )}
 
       <div style={{ marginTop: "20px" }}>
-        <h3>Tarifas del Proveedor</h3>
+        <h3>Tarifas1 del Proveedor</h3>
         {tarifas.length > 0 ? (
           tarifas.map((tarifa) => (
             <div

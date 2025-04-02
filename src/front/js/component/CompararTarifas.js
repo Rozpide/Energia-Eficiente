@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 
 const CompararTarifas = () => {
-  const [tarifas, setTarifas] = useState([]);
-  const [error, setError] = useState(null);
+  const [tarifas, setTarifas] = useState([]); // Tarifas cargadas desde el backend
+  const [error, setError] = useState(null); // Manejo de errores
   const [form, setForm] = useState({
     region: "",
     rango_horario: "",
     max_carbon_impact: "",
   });
-  const [resultados, setResultados] = useState([]);
-  const [map, setMap] = useState(null);
-  const [markers, setMarkers] = useState([]);
+  const [resultados, setResultados] = useState([]); // Tarifas filtradas
+  const [map, setMap] = useState(null); // Referencia al mapa
+  const [markers, setMarkers] = useState([]); // Lista de marcadores en el mapa
 
   // Cargar todas las tarifas desde el backend
   const cargarTarifas = async () => {
@@ -20,6 +20,8 @@ const CompararTarifas = () => {
         throw new Error("Error al cargar las tarifas.");
       }
       const data = await response.json();
+      console.log("Datos de tarifas recibidos:", data);
+
       setTarifas(data);
     } catch (err) {
       setError("No se pudieron cargar las tarifas. Inténtalo más tarde.");
@@ -28,16 +30,16 @@ const CompararTarifas = () => {
   };
 
   useEffect(() => {
-    cargarTarifas();
+    cargarTarifas(); // Ejecutar la carga de tarifas al montar el componente
   }, []);
 
-  // Cargar el script de Google Maps y inicializar el mapa
+  // Inicializar el mapa y mostrar todos los marcadores
   useEffect(() => {
     const loadGoogleMapsScript = () => {
       const existingScript = document.getElementById("googleMaps");
       if (!existingScript) {
         const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCLXcGgycpOj9hAkolG71_60wbqFwy1c8Q`; // Reemplaza TU_CLAVE_API
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCLXcGgycpOj9hAkolG71_60wbqFwy1c8Q`; // Reemplaza con tu clave API
         script.id = "googleMaps";
         script.async = true;
         document.body.appendChild(script);
@@ -48,39 +50,48 @@ const CompararTarifas = () => {
     };
 
     const initMap = () => {
-      if (window.google && window.google.maps && !map) {
+      if (window.google && window.google.maps) {
         const mapInstance = new window.google.maps.Map(document.getElementById("map"), {
           center: { lat: 40.416775, lng: -3.70379 }, // Madrid, España
           zoom: 6,
         });
         setMap(mapInstance);
 
-        const initialMarkers = tarifas.map((tarifa) => {
-          if (tarifa.latitude && tarifa.longitude) {
-            const marker = new window.google.maps.Marker({
-              position: { lat: tarifa.latitude, lng: tarifa.longitude },
-              map: mapInstance,
-              title: tarifa.nombre_tarifa,
-            });
+        const bounds = new window.google.maps.LatLngBounds(); // Crear límites dinámicos
 
-            const infoWindow = new window.google.maps.InfoWindow({
-              content: `<div><h3>${tarifa.nombre_tarifa}</h3><p>Región: ${tarifa.region}</p><p>Precio: $${tarifa.precio_kw_hora}</p></div>`,
-            });
+        const allMarkers = tarifas.map((tarifa) => {
+          const latitude = tarifa.latitude || 40.416775; // Usar Madrid si no tiene latitud
+          const longitude = tarifa.longitude || -3.70379; // Usar Madrid si no tiene longitud
 
-            marker.addListener("click", () => {
-              infoWindow.open(mapInstance, marker);
-            });
+          const marker = new window.google.maps.Marker({
+            position: { lat: latitude, lng: longitude },
+            map: mapInstance,
+            title: tarifa.nombre_tarifa,
+          });
 
-            return marker;
-          }
-          return null;
+          bounds.extend(new window.google.maps.LatLng(latitude, longitude)); // Extender los límites
+
+          const infoWindow = new window.google.maps.InfoWindow({
+            content: `<div><h3>${tarifa.nombre_tarifa}</h3>
+                      <p>Región: ${tarifa.region || "No especificada"}</p>
+                      <p>Precio: $${tarifa.precio_kw_hora || "N/A"}</p></div>`,
+          });
+
+          marker.addListener("click", () => {
+            infoWindow.open(mapInstance, marker);
+          });
+
+          return marker;
         });
 
-        setMarkers(initialMarkers);
+        mapInstance.fitBounds(bounds); // Ajustar el mapa para mostrar todos los marcadores
+        setMarkers(allMarkers); // Guardar marcadores en el estado
+      } else {
+        console.error("Google Maps no está disponible. Verifica la carga del script.");
       }
     };
 
-    loadGoogleMapsScript();
+    loadGoogleMapsScript(); // Cargar el script de Google Maps
   }, [tarifas]);
 
   // Manejar cambios en el formulario
@@ -99,11 +110,7 @@ const CompararTarifas = () => {
     const evaluarPrioridades = (tarifa) => {
       let coincidencias = 0;
       if (tarifa.region?.toLowerCase() === form.region.toLowerCase()) coincidencias++;
-      if (
-        tarifa.rango_horario_bajo &&
-        tarifa.rango_horario_bajo.includes(form.rango_horario)
-      )
-        coincidencias++;
+      if (tarifa.rango_horario_bajo?.includes(form.rango_horario)) coincidencias++;
       if (tarifa.carbon_impact_kgCO <= parseFloat(form.max_carbon_impact)) coincidencias++;
       return coincidencias;
     };
@@ -137,31 +144,37 @@ const CompararTarifas = () => {
 
     // Actualizar marcadores en el mapa
     if (map) {
-      markers.forEach((marker) => marker.setMap(null));
+      markers.forEach((marker) => marker.setMap(null)); // Limpiar marcadores previos
+
       const filteredMarkers = mejoresTarifas.map((tarifa) => {
-        if (tarifa.latitude && tarifa.longitude) {
-          const marker = new window.google.maps.Marker({
-            position: { lat: tarifa.latitude, lng: tarifa.longitude },
-            map: map,
-            title: tarifa.nombre_tarifa,
-          });
+        const latitude = tarifa.latitude || 40.416775;
+        const longitude = tarifa.longitude || -3.70379;
 
-          const infoWindow = new window.google.maps.InfoWindow({
-            content: `<div><h3>${tarifa.nombre_tarifa}</h3><p>Región: ${tarifa.region}</p><p>Precio: $${tarifa.precio_kw_hora}</p></div>`,
-          });
+        const marker = new window.google.maps.Marker({
+          position: { lat: latitude, lng: longitude },
+          map: map,
+          title: tarifa.nombre_tarifa,
+        });
 
-          marker.addListener("click", () => {
-            infoWindow.open(map, marker);
-          });
+        const infoWindow = new window.google.maps.InfoWindow({
+          content: `<div><h3>${tarifa.nombre_tarifa}</h3>
+                    <p>Región: ${tarifa.region || "No especificada"}</p>
+                    <p>Precio: $${tarifa.precio_kw_hora || "N/A"}</p></div>`,
+        });
 
-          return marker;
-        }
-        return null;
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker);
+        });
+
+        return marker;
       });
 
       setMarkers(filteredMarkers);
     }
   };
+
+
+
 
   return (
     <div style={{ padding: "20px" }}>
@@ -202,7 +215,11 @@ const CompararTarifas = () => {
             value={form.max_carbon_impact}
             onChange={handleChange}
             required
-            style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
+            style={{
+              marginBottom: "10px",
+              padding: "0.5rem",
+              width: "100%",
+            }}
           />
         </label>
         <button
@@ -236,10 +253,9 @@ const CompararTarifas = () => {
               }}
             >
               <p>
-                <strong>{tarifa.nombre_tarifa}                </strong>: ${tarifa.precio_kw_hora} por kWh
+                <strong>{tarifa.nombre_tarifa}</strong>: ${tarifa.precio_kw_hora} por kWh
               </p>
               <p>Región: {tarifa.region}</p>
-              <p>Impacto Carbono: {tarifa.carbon_impact_kgCO} kgCO</p>
               <p>Rango Horario: {tarifa.rango_horario_bajo || "No especificado"}</p>
             </div>
           ))}
@@ -264,5 +280,4 @@ const CompararTarifas = () => {
 };
 
 export default CompararTarifas;
-
 
