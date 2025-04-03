@@ -498,15 +498,15 @@ const TarifaPage = () => {
           console.error("El contenedor del mapa (#map) no está disponible.");
           return;
         }
-    
+
         const mapInstance = new window.google.maps.Map(mapDiv, {
           center: { lat: 40.416775, lng: -3.70379 }, // Madrid, España
           zoom: 6,
         });
         setMap(mapInstance);
-    
+
         const bounds = new window.google.maps.LatLngBounds();
-    
+
         try {
           const response = await fetch(
             `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/proveedores/${proveedorId}/tarifas`
@@ -514,43 +514,50 @@ const TarifaPage = () => {
           if (!response.ok) throw new Error("Error al cargar las tarifas.");
           const data = await response.json();
           setTarifas(data);
-    
+
           const allMarkers = data.map((tarifa) => {
             const coordenadas =
               tarifa.latitude !== null && tarifa.longitude !== null
                 ? { lat: tarifa.latitude, lng: tarifa.longitude }
                 : JSON.parse(tarifa.zonas_geograficas || "[]")[0] || null;
-    
+
             if (coordenadas) {
               const marker = new window.google.maps.Marker({
                 position: coordenadas,
                 map: mapInstance,
                 title: tarifa.nombre_tarifa || "Tarifa sin nombre",
               });
-    
+
               bounds.extend(coordenadas);
-    
+
               const infoWindow = new window.google.maps.InfoWindow({
-                content: `<div><h3>${tarifa.nombre_tarifa || "Tarifa sin nombre"}</h3>
+                content: `<div><h3>${
+                  tarifa.nombre_tarifa || "Tarifa sin nombre"
+                }</h3>
                           <p>Región: ${tarifa.region || "No especificada"}</p>
-                          <p>Precio: $${tarifa.precio_kw_hora || "N/A"}</p></div>`,
+                          <p>Precio: $${
+                            tarifa.precio_kw_hora || "N/A"
+                          }</p></div>`,
               });
-    
+
               marker.addListener("click", () => {
                 infoWindow.open(mapInstance, marker);
               });
-    
+
               return marker;
             }
             return null;
           });
-    
+
           mapInstance.fitBounds(bounds);
           setMapMarkers(allMarkers.filter((marker) => marker !== null)); // Filtrar marcadores nulos
-    
+
           // *** Habilitar evento de clic en el mapa ***
           mapInstance.addListener("click", (event) => {
-            const newMarker = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+            const newMarker = {
+              lat: event.latLng.lat(),
+              lng: event.latLng.lng(),
+            };
             setForm((prevForm) => ({
               ...prevForm,
               zonas_geograficas: [...prevForm.zonas_geograficas, newMarker], // Actualizar zonas_geograficas
@@ -566,11 +573,11 @@ const TarifaPage = () => {
           setError("No se pudieron cargar las tarifas del proveedor.");
         }
       } else {
-        console.error("Google Maps no está disponible. Verifica la carga del script.");
+        console.error(
+          "Google Maps no está disponible. Verifica la carga del script."
+        );
       }
     };
-    
-    
 
     loadGoogleMapsScript();
   }, [proveedorId]);
@@ -660,7 +667,10 @@ const TarifaPage = () => {
 
   const handleUpdateTarifa = async () => {
     try {
-      console.log("Datos enviados a la AAAPIIII para actualizar la tarifa:", form); 
+      console.log(
+        "Datos enviados a la AAAPIIII para actualizar la tarifa:",
+        form
+      );
       const token = localStorage.getItem("access_token");
       const response = await fetch(
         `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/tarifas/${form.id}`,
@@ -683,12 +693,12 @@ const TarifaPage = () => {
       );
       setIsEditing(false);
       alert("Tarifa actualizada correctamente.");
+      initMap(); // Recargar el mapa para mostrar los cambios
     } catch (err) {
       console.error("Error al actualizar tarifa:", err);
       alert("No se pudo actualizar la tarifa.");
     }
   };
-
 
   return (
     <div style={{ padding: "20px" }}>
@@ -696,7 +706,6 @@ const TarifaPage = () => {
         Tarifas del Proveedor {proveedorId}
       </h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      
 
       {!isEditing && (
         <form
