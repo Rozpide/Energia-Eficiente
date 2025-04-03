@@ -96,20 +96,28 @@ def actualizar_tarifa(tarifa_id):
         # Actualizar latitud y longitud a partir de zonas_geograficas si están disponibles
         zonas_geograficas = data.get('zonas_geograficas')
         if zonas_geograficas:
-            try:
-                zonas_geograficas = json.loads(zonas_geograficas)
-                if len(zonas_geograficas) > 0:
-                    tarifa.latitude = zonas_geograficas[0].get('lat')  # Actualizar latitud
-                    tarifa.longitude = zonas_geograficas[0].get('lng')  # Actualizar longitud
+            if isinstance(zonas_geograficas, list):  # Si ya es una lista, serializar directamente
                 tarifa.zonas_geograficas = json.dumps(zonas_geograficas)
-            except ValueError:
-                return jsonify({"message": "El formato de zonas_geograficas no es válido"}), 400
+                if len(zonas_geograficas) > 0:  # Actualizar latitud y longitud
+                    tarifa.latitude = zonas_geograficas[0].get('lat')
+                    tarifa.longitude = zonas_geograficas[0].get('lng')
+            elif isinstance(zonas_geograficas, str):  # Si es una cadena JSON, cargarla y procesarla
+                try:
+                    zonas_geograficas = json.loads(zonas_geograficas)
+                    tarifa.zonas_geograficas = json.dumps(zonas_geograficas)
+                    if len(zonas_geograficas) > 0:
+                        tarifa.latitude = zonas_geograficas[0].get('lat')
+                        tarifa.longitude = zonas_geograficas[0].get('lng')
+                except ValueError:
+                    return jsonify({"message": "El formato de zonas_geograficas no es válido"}), 400
 
         db.session.commit()
         return jsonify(tarifa.serialize()), 200
     except KeyError as e:
+        print(f"Error: Falta un campo obligatorio: {e}")
         return jsonify({"error": f"Falta un campo obligatorio: {str(e)}"}), 400
     except Exception as e:
+        print(f"Error interno del servidor: {e}")
         db.session.rollback()
         return jsonify({"error": f"Error al actualizar tarifa: {str(e)}"}), 500
 

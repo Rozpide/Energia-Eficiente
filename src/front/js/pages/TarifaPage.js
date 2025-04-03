@@ -660,6 +660,7 @@ const TarifaPage = () => {
 
   const handleUpdateTarifa = async () => {
     try {
+      console.log("Datos enviados a la AAAPIIII para actualizar la tarifa:", form); 
       const token = localStorage.getItem("access_token");
       const response = await fetch(
         `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/tarifas/${form.id}`,
