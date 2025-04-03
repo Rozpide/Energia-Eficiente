@@ -56,42 +56,44 @@ const CompararTarifas = () => {
           zoom: 6,
         });
         setMap(mapInstance);
-
+    
         const bounds = new window.google.maps.LatLngBounds(); // Crear límites dinámicos
-
+    
         const allMarkers = tarifas.map((tarifa) => {
-          const latitude = tarifa.latitude || 40.416775; // Usar Madrid si no tiene latitud
-          const longitude = tarifa.longitude || -3.70379; // Usar Madrid si no tiene longitud
-
+          // Si no tiene latitud o longitud, usar coordenadas predeterminadas
+          const latitude = tarifa.latitude ?? 40.416775;
+          const longitude = tarifa.longitude ?? -3.70379;
+    
           const marker = new window.google.maps.Marker({
             position: { lat: latitude, lng: longitude },
             map: mapInstance,
-            title: tarifa.nombre_tarifa,
+            title: tarifa.nombre_tarifa || "Tarifa sin nombre",
           });
-
-          bounds.extend(new window.google.maps.LatLng(latitude, longitude)); // Extender los límites
-
+    
+          bounds.extend(new window.google.maps.LatLng(latitude, longitude)); // Ajustar los límites para incluir este marcador
+    
           const infoWindow = new window.google.maps.InfoWindow({
-            content: `<div><h3>${tarifa.nombre_tarifa}</h3>
+            content: `<div><h3>${tarifa.nombre_tarifa || "Tarifa sin nombre"}</h3>
                       <p>Región: ${tarifa.region || "No especificada"}</p>
                       <p>Precio: $${tarifa.precio_kw_hora || "N/A"}</p></div>`,
           });
-
+    
           marker.addListener("click", () => {
             infoWindow.open(mapInstance, marker);
           });
-
+    
           return marker;
         });
-
-        mapInstance.fitBounds(bounds); // Ajustar el mapa para mostrar todos los marcadores
-        setMarkers(allMarkers); // Guardar marcadores en el estado
+    
+        mapInstance.fitBounds(bounds); // Ajustar el mapa para que todos los marcadores sean visibles
+        setMarkers(allMarkers); // Guardar los marcadores en el estado
       } else {
         console.error("Google Maps no está disponible. Verifica la carga del script.");
       }
     };
-
+    
     loadGoogleMapsScript(); // Cargar el script de Google Maps
+    // Cargar el script de Google Maps
   }, [tarifas]);
 
   // Manejar cambios en el formulario

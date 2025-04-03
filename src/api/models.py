@@ -60,6 +60,7 @@ class Proveedor(db.Model):
 
 
 # Tabla: Tarifas Eléctricas
+# Tabla: Tarifas Eléctricas
 class TarifaElectrica(db.Model):
     __tablename__ = 'tarifa_electrica'
 
@@ -71,7 +72,9 @@ class TarifaElectrica(db.Model):
     carbon_impact_kgCO = db.Column(db.Float, nullable=False)
     nombre_tarifa = db.Column(db.String(100), nullable=False)
     rango_horario_bajo = db.Column(db.String(50), nullable=True)
-    zonas_geograficas = db.Column(db.Text, nullable=True)  # Nueva columna para zonas geográficas
+    zonas_geograficas = db.Column(db.Text, nullable=True)  # Zonas geográficas
+    latitude = db.Column(db.Float, nullable=True)  # Nueva columna para latitud
+    longitude = db.Column(db.Float, nullable=True)  # Nueva columna para longitud
 
     # Relación con recomendaciones
     recomendaciones = db.relationship('Recomendacion', backref='tarifa_electrica', lazy=True)
@@ -89,8 +92,11 @@ class TarifaElectrica(db.Model):
             "carbon_impact_kgCO": self.carbon_impact_kgCO,
             "nombre_tarifa": self.nombre_tarifa,
             "rango_horario_bajo": self.rango_horario_bajo,
-            "zonas_geograficas": self.zonas_geograficas  # Serializa las zonas como JSON
+            "zonas_geograficas": self.zonas_geograficas,
+            "latitude": self.latitude,  # Serializar latitud
+            "longitude": self.longitude  # Serializar longitud
         }
+
 
 
 # Tabla: Recomendaciones
