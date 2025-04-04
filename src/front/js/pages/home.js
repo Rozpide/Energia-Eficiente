@@ -106,32 +106,18 @@ export const Home = () => {
         <>
           <h3>Selecciona tu perfil para iniciar sesión</h3>
           <button
-            onClick={() => setRole("proveedor")}
-            style={{
-              padding: "0.5rem 1rem",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              marginRight: "10px",
-            }}
-          >
-            Soy Proveedor
-          </button>
-          <button
             onClick={() => setRole("usuario")}
-            style={{
-              padding: "0.5rem 1rem",
-              backgroundColor: "#007BFF",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
+            className="button-usuario"
           >
             Soy Usuario
           </button>
+          <button
+            onClick={() => setRole("proveedor")}
+            className="button-proveedor"
+          >
+            Soy Proveedor
+          </button>
+          
         </>
       )}
 
@@ -168,6 +154,7 @@ export const Home = () => {
             />
             <button
               type="submit"
+              className="button-proveedor"
               style={{
                 padding: "0.5rem 1rem",
                 backgroundColor: "#007BFF",
@@ -217,6 +204,7 @@ export const Home = () => {
             />
             <button
               type="submit"
+              className="button-proveedor"
               style={{
                 padding: "0.5rem 1rem",
                 backgroundColor: "#007BFF",

@@ -6,24 +6,100 @@
     on that page only (the ones not reused in other pages).
 */
 body {
-    background-image: url('https://res.cloudinary.com/dkr4psqzw/image/upload/v1743714180/samples/people/bicycle.jpg');
-    background-size: cover; /* La imagen ocupará todo el espacio */
-    background-repeat: no-repeat; /* Evitar que la imagen se repita */
-    background-attachment: fixed; /* La imagen permanecerá fija al hacer scroll */
-    background-position: center; /* Centrar la imagen en el viewport */
+  background-image: url("https://res.cloudinary.com/dkr4psqzw/image/upload/v1743714180/samples/people/bicycle.jpg");
+  background-size: cover; /* La imagen ocupará todo el espacio */
+  background-repeat: no-repeat; /* Evitar que la imagen se repita */
+  background-attachment: fixed; /* La imagen permanecerá fija al hacer scroll */
+  background-position: center; /* Centrar la imagen en el viewport */
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: white;
+  text-align: center;
+  font-size: 3em;
+  margin-top: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-family: "Arial", sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.8);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+/* Botón Usuario */
+.button-usuario {
+  padding: 0.5rem 1rem;
+  background-color: #4CAF50; /* Verde */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: transform 0.2s ease; /* Efecto de zoom al soltar */
+}
+
+.button-usuario:active {
+  transform: scale(1.1); /* Zoom al presionar */
+  box-shadow: 0 0 20px 10px rgba(0, 255, 0, 0.8), 0 0 40px 20px rgba(0, 0, 255, 0.6);
+  animation: usuarioExplosion 0.5s forwards;
+}
+
+/* Botón Proveedor */
+.button-proveedor {
+  padding: 0.5rem 1rem;
+  background-color: #FF0000; /* Rojo */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.button-proveedor:active {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px 10px rgba(255, 0, 0, 0.8), 0 0 40px 20px rgba(255, 255, 0, 0.6);
+  animation: proveedorExplosion 0.5s forwards;
+}
+
+/* Animaciones para los fogonazos */
+@keyframes usuarioExplosion {
+  0% {
+    box-shadow: 0 0 20px 10px rgba(0, 255, 0, 0.8), 0 0 40px 20px rgba(0, 0, 255, 0.6);
   }
-h1 {
-    color: white;
-    text-align: center;
-    font-size: 3em;
-    margin-top: 20px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    font-family: 'Arial', sans-serif;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-decoration: underline;
-    text-decoration-color: rgba(255, 255, 255, 0.8);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 4px;}
-  
+  50% {
+    box-shadow: 0 0 30px 15px rgba(0, 200, 0, 0.6), 0 0 60px 30px rgba(0, 0, 200, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 255, 0, 0), 0 0 0 0 rgba(0, 0, 255, 0);
+  }
+}
+
+@keyframes proveedorExplosion {
+  0% {
+    box-shadow: 0 0 20px 10px rgba(255, 0, 0, 0.8), 0 0 40px 20px rgba(255, 255, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 30px 15px rgba(200, 0, 0, 0.6), 0 0 60px 30px rgba(200, 200, 0, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0), 0 0 0 0 rgba(255, 255, 0, 0);
+  }
+}
+.logo-container {
+  position: absolute; /* Fija el contenedor */
+  top: 0; /* Posiciona en la parte superior */
+  left: 0; /* Posiciona en la parte izquierda */
+  padding: 10px; /* Espaciado opcional */
+}
+
+.logo {
+  width: 50px; /* Ajusta el tamaño del logo */
+  height: auto; /* Mantén las proporciones */
+}
+

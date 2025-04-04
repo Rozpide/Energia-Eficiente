@@ -180,7 +180,7 @@ const CompararTarifas = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Comparar Tarifas</h1>
+      <h1>Para Comparar Tarifas</h1>
 
       <form style={{ marginBottom: "20px" }}>
         <h3>Responde las siguientes preguntas:</h3>

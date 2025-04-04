@@ -128,6 +128,9 @@ const Layout = () => {
             {/* Opciones iniciales si no hay rol */}
             {!rol && (
               <div className="text-center">
+                <div className="logo-container">
+                  <img src="../src/front/img/rigo-baby.jpg" alt="Logo EE" class="logo" />
+                </div>
                 <h1>Bienvenido a la Plataforma de Gestión Energética</h1>
                 <p>Selecciona tu rol para continuar:</p>
                 <button

@@ -64,8 +64,8 @@ export const Navbar = ({ rol, cerrarSesion }) => {
               <Link to="/tarifas" className="ml-2">
                 <button className="btn btn-success">Tarifas</button>
               </Link>
-              <Link to="/dashboard" className="ml-2">
-                <button className="btn btn-info">Dashboard</button>
+              <Link to="/comparar-tarifas" className="ml-2">
+                <button className="btn btn-info">Comparar Tarifas</button>
               </Link>
             </>
           )}

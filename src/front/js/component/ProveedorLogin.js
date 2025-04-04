@@ -27,7 +27,7 @@ const ProveedorLogin = ({ onLogin }) => {
 
     return (
         <div style={{ margin: "20px 0" }}>
-            <h3>Iniciar sesión - Proveedores</h3>
+            <h3>Inicia sesión - Proveedores</h3>
             {error && <p style={{ color: "red" }}>{error}</p>}
             <input
                 type="text"
