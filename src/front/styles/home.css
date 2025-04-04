@@ -12,4 +12,18 @@ body {
     background-attachment: fixed; /* La imagen permanecerá fija al hacer scroll */
     background-position: center; /* Centrar la imagen en el viewport */
   }
+h1 {
+    color: white;
+    text-align: center;
+    font-size: 3em;
+    margin-top: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.8);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;}
   

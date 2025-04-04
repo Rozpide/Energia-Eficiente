@@ -459,6 +459,7 @@ import { useParams } from "react-router-dom";
 
 const TarifaPage = () => {
   const { proveedorId } = useParams(); // ID del proveedor desde la URL
+   
   const [tarifas, setTarifas] = useState([]); // Estado para tarifas
   const [mapMarkers, setMapMarkers] = useState([]); // Estado para manejar marcadores en el mapa
   const [error, setError] = useState(""); // Manejo de errores
