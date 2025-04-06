@@ -703,9 +703,7 @@ const TarifaPage = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
-        Tarifas del Proveedor {nombre_proveedor}
-      </h1>
+      
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {!isEditing && (
@@ -804,7 +802,7 @@ const TarifaPage = () => {
       )}
 
       <div style={{ marginTop: "20px" }}>
-        <h3>Tarifas1 del Proveedor</h3>
+        <h3>Tarifas del Proveedor</h3>
         {tarifas.length > 0 ? (
           tarifas.map((tarifa) => (
             <div
