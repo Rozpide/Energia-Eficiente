@@ -104,19 +104,28 @@ export const Home = () => {
       
       {role === "none" && (
         <>
-          <h1>Si ya estas registrado</h1>
-          <h3>Selecciona tu perfil para iniciar sesión</h3>
+          <h1>registrado</h1>
+          <h3> inicia sesión</h3>
           <button
+            style={{backgroundColor: "#ff9999", color: "white",bordercolor: "black", border: "2px", borderRadius: "20px", cursor: "pointer"}}
             onClick={() => setRole("usuario")}
             className="button-usuario"
           >
-            Soy Usuario
+            Cliente
           </button>
           <button
             onClick={() => setRole("proveedor")}
             className="button-proveedor"
+            style={{
+              marginLeft: "10px",
+              backgroundColor: "#ff9999",
+              color: "white",
+              border: "none",
+              borderRadius: "20px",
+              cursor: "pointer",
+            }}
           >
-            Soy Proveedor
+            Proveedor
           </button>
           
         </>
@@ -158,14 +167,14 @@ export const Home = () => {
               className="button-proveedor"
               style={{
                 padding: "0.5rem 1rem",
-                backgroundColor: "#007BFF",
+                backgroundColor: "#ff9999",
                 color: "white",
                 border: "none",
-                borderRadius: "5px",
+                borderRadius: "20px",
                 cursor: "pointer",
               }}
             >
-              Iniciar Sesión
+              Inicia Sesión
             </button>
           </form>
           {error && <p style={{ color: "red" }}>{error}</p>}
@@ -176,7 +185,7 @@ export const Home = () => {
       {role === "usuario" && !isAuthenticated && (
         <>
           <form onSubmit={handleSubmitUsuario} style={{ marginBottom: "20px" }}>
-            <h3>Iniciar Sesión - Usuario</h3>
+            <h3>Iniciar Sesión - Cliente</h3>
             <input
               type="email"
               name="email"
@@ -208,14 +217,14 @@ export const Home = () => {
               className="button-proveedor"
               style={{
                 padding: "0.5rem 1rem",
-                backgroundColor: "#007BFF",
+                backgroundColor: "#ff9999",
                 color: "white",
                 border: "none",
-                borderRadius: "5px",
+                borderRadius: "20px",
                 cursor: "pointer",
               }}
             >
-              Iniciar Sesión
+              Inicia Sesión
             </button>
           </form>
           {error && <p style={{ color: "red" }}>{error}</p>}
@@ -230,8 +239,8 @@ export const Home = () => {
             onClick={() => manejarVerTarifas(proveedorId)}
             style={{
               padding: "0.5rem 1rem",
-              backgroundColor: "grey",
-              color: "black",
+              backgroundColor: "#ff9999",
+              color: "white",
               border: "none",
               borderRadius: "30px",
               cursor: "pointer",
@@ -244,13 +253,13 @@ export const Home = () => {
       )}
       {isAuthenticated && role === "usuario" && (
         <>
-          <h3>Bienvenido, usuario</h3>
+          <h3>Bienvenido cliente</h3>
           <button
             onClick={handleLogout}
             style={{
               marginTop: "20px",
               padding: "0.5rem 1rem",
-              backgroundColor: "#f44336",
+              backgroundColor: "#ff9999",
               color: "white",
               border: "none",
               borderRadius: "5px",

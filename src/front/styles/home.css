@@ -129,7 +129,7 @@ h6 {
 }
 
 .deslizar {
-  animation-duration: 10s;
+  animation-duration: 20s;
   animation-name: slidein;
   animation-iteration-count: 5;
 }
@@ -141,11 +141,78 @@ h6 {
   }
 
   to {
-    margin-left: 0%;
+    margin-left: -100%;
     width: 100%;
   }
 }
 p {
+  color: white;
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-family: "Arial", sans-serif;
+}
+/* Etiquetas span: de izquierda a derecha */
+span {
+  animation-duration: 10s;
+  animation-name: slidein-left-to-right;
+  animation-iteration-count: infinite; /* Movimiento continuo */
+}
+
+@keyframes slidein-left-to-right {
+  from {
+    margin-left: -100%; /* Comienza desde fuera de la izquierda */
+    width: 300%; /* Tamaño inicial grande */
+  }
+
+  to {
+    margin-left: 300%; /* Termina en la posición normal */
+    width: 100%; /* Tamaño final ajustado */
+  }
+}
+.bg-rosado {
+  background-color: #dfc0c0; /* Rosado claro */
+}
+/* Botón con borde rosa oscuro y efecto 3D */
+button {
+  padding: 10px 20px;
+  background-color: #ff9999; /* Rosa claro */
+  color: white;
+  border: 3px solid #cc3366; /* Borde rosa oscuro */
+  border-radius: 5px; /* Bordes ligeramente redondeados */
+  box-shadow: inset 2px 2px 5px rgba(255, 255, 255, 0.7), 4px 4px 10px rgba(0, 0, 0, 0.3); /* Efecto 3D */
+  cursor: pointer;
+  position: relative; /* Necesario para la animación */
+  overflow: hidden; /* Oculta el brillo fuera del botón */
+}
+
+/* Animación de brillo de izquierda a derecha */
+button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%; /* Comienza fuera del botón */
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+  animation: brillo 5s 1 linear; /* Movimiento continuo */
+}
+
+@keyframes brillo {
+  0% {
+    left: -100%; /* Brillo fuera del botón */
+  }
+  100% {
+    left: 100%; /* Brillo se mueve hacia la derecha */
+  }
+}
+
+/* Efecto al presionar el botón */
+button:active {
+  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.2), 2px 2px 5px rgba(255, 255, 255, 0.5); /* Intensifica el 3D */
+}
+label {
   color: white;
   text-align: center;
   font-size: 1.5em;
