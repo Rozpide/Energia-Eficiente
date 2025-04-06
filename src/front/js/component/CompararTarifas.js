@@ -221,7 +221,7 @@ const CompararTarifas = () => {
               marginBottom: "10px",
               padding: "0.5rem",
               width: "100%",
-              color: "white"
+              color: "red",
             }}
           />
         </label>

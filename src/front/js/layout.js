@@ -141,18 +141,18 @@ const Layout = () => {
                   </Link>
                 </div>
                 <h1>Plataforma de Gestión Energética</h1>
-                <p className="deslizar">Selecciona tu rol para continuar:</p>
+                <p className="deslizar">Selecciona tu rol, cliente o proveedor para continuar:</p>
                 <button
-                  className="btn btn-primary mx-2"
+                  
                   onClick={() => seleccionarRol("Usuario")}
                 >
-                  Darme de alta como Usuario
+                  Alta Cliente
                 </button>
                 <button
-                  className="btn btn-secondary mx-2"
+                  
                   onClick={() => seleccionarRol("Proveedor")}
                 >
-                  Darme de alta como Proveedor
+                  Alta Proveedor
                 </button>
               </div>
             )}

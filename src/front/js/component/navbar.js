@@ -24,7 +24,7 @@ export const Navbar = ({ rol, cerrarSesion }) => {
         </Link>
 
         <Link to="/">
-          <span className="navbar-brand mb-0 h1">Gestión Energética </span>
+          <span className="navbar-brand mb-0 h1">Para empezar : </span>
         </Link>
         <div className="ml-auto">
           {rol === "Usuario" && (
