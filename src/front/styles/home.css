@@ -220,3 +220,20 @@ label {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   font-family: "Arial", sans-serif;
 }
+/* Logo en el navbar */
+.logo-navbar {
+  max-width: 70px; /* Tamaño máximo del logo */
+  border-radius: 30%; /* Bordes redondeados */
+  margin-bottom: 0; /* Alineación con el texto */
+}
+
+/* Asegura que los elementos estén alineados en línea */
+.navbar .container {
+  display: flex;
+  
+}
+
+/* Asegura el espacio entre el logo y el texto */
+.ms-3 {
+  margin-left: 1rem; /* Margen izquierdo */
+}

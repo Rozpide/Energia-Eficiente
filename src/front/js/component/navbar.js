@@ -1,6 +1,6 @@
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "/src/front/img/logo_energia_eficiente.png"; // Importar la imagen del logo
 
 export const Navbar = ({ rol, cerrarSesion }) => {
   const navigate = useNavigate();
@@ -9,9 +9,22 @@ export const Navbar = ({ rol, cerrarSesion }) => {
 
   return (
     <nav className="navbar navbar-light bg-rosado">
-      <div className="container">
+      <div className="container d-flex ">
+        <Link to="/" className="me-3">
+          <img
+            src={logo}
+            alt="Logo"
+            className="img-fluid logo-navbar"
+            style={{
+              maxWidth: "70px",
+              marginBottom: "20px",
+              borderRadius: "30%",
+            }}
+          />
+        </Link>
+
         <Link to="/">
-          <span className="navbar-brand mb-0 h1">Gestión Energética    </span>
+          <span className="navbar-brand mb-0 h1">Gestión Energética </span>
         </Link>
         <div className="ml-auto">
           {rol === "Usuario" && (
@@ -40,10 +53,7 @@ export const Navbar = ({ rol, cerrarSesion }) => {
               </Link>
             </>
           )}
-          <button
-            className="btn btn-danger ml-2"
-            onClick={cerrarSesion}
-          >
+          <button className="btn btn-danger ml-2" onClick={cerrarSesion}>
             Cerrar Sesión
           </button>
         </div>

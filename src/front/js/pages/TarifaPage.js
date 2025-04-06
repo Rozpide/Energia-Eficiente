@@ -719,7 +719,7 @@ const TarifaPage = () => {
             borderRadius: "8px",
           }}
         >
-          <h3>Añadir Nueva22 Tarifa</h3>
+          <h3> Nueva Tarifa</h3>
           <input
             type="text"
             name="nombre_tarifa"
