@@ -76,10 +76,11 @@ import React, { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
-
+import logo from "/src/front/img/logo_energia_eficiente.png"; // Importar la imagen del logo
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
+import {Link} from "react-router-dom";
 import UserPage from "./pages/UserPage"; // Página de usuarios
 import ProveedorPage from "./pages/ProveedorPage"; // Página de proveedores
 import TarifaPage from "./pages/TarifaPage"; // Página de tarifas
@@ -129,10 +130,18 @@ const Layout = () => {
             {!rol && (
               <div className="text-center">
                 <div className="logo-container">
-                  <img src="../src/front/img/rigo-baby.jpg" alt="Logo EE" class="logo" />
+                  {/* Logo */}
+                  <Link to="/">
+                    <img
+                      src={logo}
+                      alt="Logo"
+                      className="img-fluid"
+                      style={{ maxWidth: "70px", marginBottom: "20px", borderRadius: "30%" }}
+                    />
+                  </Link>
                 </div>
-                <h1>Bienvenido a la Plataforma de Gestión Energética</h1>
-                <p>Selecciona tu rol para continuar:</p>
+                <h1>Plataforma de Gestión Energética</h1>
+                <p className="deslizar">Selecciona tu rol para continuar:</p>
                 <button
                   className="btn btn-primary mx-2"
                   onClick={() => seleccionarRol("Usuario")}
