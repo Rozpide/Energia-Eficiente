@@ -6,11 +6,13 @@
     on that page only (the ones not reused in other pages).
 */
 body {
-  background-image: url("https://res.cloudinary.com/dkr4psqzw/image/upload/v1743714180/samples/people/bicycle.jpg");
+  background-image: linear-gradient(to right, transparent, rgb(199, 159, 154)),url("https://res.cloudinary.com/dkr4psqzw/image/upload/v1743714180/samples/people/bicycle.jpg");
   background-size: cover; /* La imagen ocupará todo el espacio */
   background-repeat: no-repeat; /* Evitar que la imagen se repita */
   background-attachment: fixed; /* La imagen permanecerá fija al hacer scroll */
   background-position: center; /* Centrar la imagen en el viewport */
+ 
+    
 }
 h1,
 h2,
@@ -143,4 +145,11 @@ h6 {
     width: 100%;
   }
 }
-
+p {
+  color: white;
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-family: "Arial", sans-serif;
+}

@@ -193,7 +193,7 @@ const CompararTarifas = () => {
             value={form.region}
             onChange={handleChange}
             required
-            style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
+            style={{ marginBottom: "10px", padding: "0.5rem", width: "100%", color: "white" }}
           />
         </label>
         <label>
@@ -205,7 +205,7 @@ const CompararTarifas = () => {
             value={form.rango_horario}
             onChange={handleChange}
             required
-            style={{ marginBottom: "10px", padding: "0.5rem", width: "100%" }}
+            style={{ marginBottom: "10px", padding: "0.5rem", width: "100%", color: "white" }}
           />
         </label>
         <label>
@@ -221,6 +221,7 @@ const CompararTarifas = () => {
               marginBottom: "10px",
               padding: "0.5rem",
               width: "100%",
+              color: "white"
             }}
           />
         </label>
