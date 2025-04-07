@@ -8,8 +8,8 @@ export const Navbar = ({ rol, cerrarSesion }) => {
   if (!rol) return null; // Oculta el navbar si no hay rol seleccionado
 
   return (
-    <nav className="navbar navbar-light bg-rosado">
-      <div className="container d-flex ">
+    <nav className="navbar navbar-light bg-rosado d-flex">
+      <div className="container d-flex align-items-start ms-1" style={{ height: "60px",marginBottom: "5px", marginTop: "0px", padding: "0px" }}>
         <Link to="/" className="me-3">
           <img
             src={logo}
@@ -17,7 +17,7 @@ export const Navbar = ({ rol, cerrarSesion }) => {
             className="img-fluid logo-navbar"
             style={{
               maxWidth: "70px",
-              marginBottom: "20px",
+              marginBottom: "10px",
               borderRadius: "30%",
             }}
           />
