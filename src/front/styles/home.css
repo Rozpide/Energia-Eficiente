@@ -163,16 +163,16 @@ span {
 @keyframes slidein-left-to-right {
   from {
     margin-left: -100%; /* Comienza desde fuera de la izquierda */
-    width: 300%; /* Tamaño inicial grande */
+    width: 400%; /* Tamaño inicial grande */
   }
 
   to {
-    margin-left: 300%; /* Termina en la posición normal */
+    margin-left: 350%; /* Termina en la posición normal */
     width: 100%; /* Tamaño final ajustado */
   }
 }
 .bg-rosado {
-  background-color: #dfc0c0; /* Rosado claro */
+  background-color: transparent; /* Rosado claro */
 }
 /* Botón con borde rosa oscuro y efecto 3D */
 button {
