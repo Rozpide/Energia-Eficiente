@@ -114,7 +114,7 @@ const UserList = () => {
 
     return (
         <div>
-            <h2>Lista de Usuarios</h2>
+            
 
             {/* Formulario de creación de usuario */}
             <form onSubmit={añadirUsuario} style={{ marginBottom: "2rem", textAlign: "center" }}>
@@ -161,6 +161,7 @@ const UserList = () => {
                 </button>
             </form>
 
+            <h2>Listado de Usuarios</h2>
             {/* Listado de usuarios */}
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 {users.map(user => (
