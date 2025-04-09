@@ -162,12 +162,12 @@ span {
 
 @keyframes slidein-left-to-right {
   from {
-    margin-left: -100%; /* Comienza desde fuera de la izquierda */
-    width: 400%; /* Tamaño inicial grande */
+    margin-left: 0%; /* Comienza desde fuera de la izquierda */
+    width: 100%; /* Tamaño inicial grande */
   }
 
   to {
-    margin-left: 350%; /* Termina en la posición normal */
+    margin-left: 400%; /* Termina en la posición normal */
     width: 100%; /* Tamaño final ajustado */
   }
 }
