@@ -47,15 +47,35 @@ const Layout = () => {
   return (
     <div>
       <BrowserRouter basename={basename}>
-         
         <ScrollToTop>
           {/* Barra de navegación dinámica dependiendo del rol */}
           <Navbar rol={rol} cerrarSesion={cerrarSesion} />
+          <div
+            style={{
+              padding: "20px",
+              margin: "20px 0",
+              backgroundColor: "rgba(240, 244, 247, 0.3)",
+              borderRadius: "10px",
+              textAlign: "center",
+              fontSize: "16px",
+              color: "#333",
+            }}
+          >
+            <h4 style={{ marginBottom: "10px" }}>
+              🎵 Energía con impacto social
+            </h4>
+            <p>
+              Con cada clic en una tarifa, no solo ahorras en energía, también
+              apoyas la música libre de derechos y das visibilidad a artistas
+              independientes.
+            </p>
+            <p>
+              🌍 Cada cambio de tarifa contribuye a un futuro más sostenible. 💚
+            </p>
+          </div>
+
           <MusicPlayer />
           <div className="container mt-4">
-            
-            
-
             {/* Opciones iniciales si no hay un rol seleccionado */}
             {!rol && (
               <div className="text-center">
@@ -116,12 +136,18 @@ const Layout = () => {
               <Route element={<DashboardForm />} path="/" />
               <Route element={<TarifaPage />} path="/tarifas" />
               <Route element={<ProveedorList />} path="/proveedores" />
-              <Route element={<TarifaElectricaList />} path="/tarifas-electricas" />
+              <Route
+                element={<TarifaElectricaList />}
+                path="/tarifas-electricas"
+              />
               <Route element={<UserPage />} path="/users" />
               <Route element={<CompararTarifas />} path="/comparar-tarifas" />
               <Route element={<ProveedorPage />} path="/proveedores" />
               <Route element={<TarifaPage />} path="/tarifas/:proveedorId" />
-              <Route element={<ProveedorDashboard />} path="/proveedor/dashboard/" />
+              <Route
+                element={<ProveedorDashboard />}
+                path="/proveedor/dashboard/"
+              />
               <Route element={<LoginProveedor />} path="/login" />
               <Route element={<h1>404 - Página no encontrada</h1>} path="*" />
             </Routes>
