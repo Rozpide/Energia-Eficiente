@@ -14,6 +14,9 @@ const MusicPlayer = () => {
   const [artistSuggestions, setArtistSuggestions] = useState([]); // Sugerencias de artistas
   const [genre, setGenre] = useState(""); // Género musical
   const [topRated, setTopRated] = useState([]); // Lista de canciones más valoradas
+  const [isVisible, setIsVisible] = useState(true); // Controla la visibilidad del reproductor
+  
+
 
   const [genreSuggestions] = useState(getGenres()); // Lista estática de géneros
   const [error, setError] = useState(null); // Manejar errores
@@ -92,156 +95,184 @@ const MusicPlayer = () => {
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
       <h3>Reproductor de Música</h3>
-      <p style={{ fontSize: "14px", color: "#555", marginBottom: "20px" }}>
-        <strong>¡Dale voz a los artistas independientes!</strong> Toda la música
-        disponible en esta plataforma es ofrecida a través de{" "}
-        <a
-          href="https://www.jamendo.com/"
-          target="_blank"
-          rel="noopener noreferrer"
+      <div style={{ marginBottom: "20px" }}>
+        <button
+          onClick={() => setIsVisible(!isVisible)}
+          style={{
+            padding: "10px",
+            backgroundColor: isVisible ? "#FF0000" : "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
         >
-          Jamendo
-        </a>
-        , apoyando a artistas independientes de todo el mundo. Cada clic ayuda a
-        que sus obras sean escuchadas y valoradas.
-      </p>
-
-      {/* Mostrar errores si ocurren */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {/* Buscar por artista con autocompletado */}
-      <div style={{ marginBottom: "20px", position: "relative" }}>
-        <input
-          type="text"
-          value={artistName}
-          onChange={(e) => handleArtistInput(e.target.value)}
-          placeholder="Buscar por artista"
-          style={{
-            padding: "0.5rem",
-            width: "250px",
-            marginRight: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "5px",
-          }}
-        />
-        {artistSuggestions.length > 0 && (
-          <ul
-            style={{
-              position: "absolute",
-              top: "40px",
-              left: "0",
-              width: "250px",
-              background: "white",
-              border: "1px solid #ccc",
-              listStyleType: "none",
-              padding: "10px",
-              margin: 0,
-              zIndex: 1000,
-            }}
-          >
-            {artistSuggestions.map((artist) => (
-              <li
-                key={artist.id}
-                style={{ padding: "5px", cursor: "pointer" }}
-                onClick={() => handleSearchByArtist(artist)}
-              >
-                {artist.name}
-              </li>
-            ))}
-          </ul>
-        )}
+          {isVisible ? "Ocultar Reproductor" : "Mostrar Reproductor"}
+        </button>
       </div>
-
-      {/* Buscar por género con menú desplegable */}
-      <div style={{ marginBottom: "20px", position: "relative" }}>
-        <input
-          type="text"
-          value={genre}
-          onChange={(e) => setGenre(e.target.value)}
-          placeholder="Buscar por género (e.g., rock, pop)"
-          style={{
-            padding: "0.5rem",
-            width: "250px",
-            marginRight: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "5px",
-          }}
-        />
-        {genreSuggestions
-          .filter((g) => g.toLowerCase().includes(genre.toLowerCase()))
-          .map((suggestedGenre) => (
-            <div
-              key={suggestedGenre}
-              style={{
-                padding: "5px",
-                cursor: "pointer",
-                backgroundColor: "white",
-                border: "1px solid #ccc",
-              }}
-              onClick={() => handleSearchByGenre(suggestedGenre)}
-            >
-              {suggestedGenre}
-            </div>
-          ))}
-      </div>
-
-      {/* Reproductor de la canción actual */}
-      {currentTrack ? (
-        <div>
-          <h4>{currentTrack.name}</h4>
-          <audio controls autoPlay src={currentTrack.audio}>
-            Tu navegador no soporta el elemento de audio.
-          </audio>
-        </div>
-      ) : (
-        <p>Cargando música...</p>
+      {/* Reproductor de audio (siempre activo) */}
+      {currentTrack && (
+        <audio
+          controls
+          autoPlay
+          src={currentTrack.audio}
+          style={{ marginBottom: "20px" }}
+        >
+          Tu navegador no soporta el elemento de audio.
+        </audio>
       )}
+      {isVisible && (
+        <div>
+          <p style={{ fontSize: "14px", color: "#555", marginBottom: "20px" }}>
+            <strong>¡Dale voz a los artistas independientes!</strong> Toda la
+            música disponible en esta plataforma es ofrecida a través de{" "}
+            <a
+              href="https://www.jamendo.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Jamendo
+            </a>
+            , apoyando a artistas independientes de todo el mundo. Cada clic
+            ayuda a que sus obras sean escuchadas y valoradas.
+          </p>
 
-      {/* Lista de canciones disponibles */}
-      <ul style={{ listStyleType: "none", padding: 0 }}>
-        {tracks.map((track) => (
-          <li key={track.id} style={{ marginBottom: "10px" }}>
-            <button
-              onClick={() => setCurrentTrack(track)}
+          {/* Mostrar errores si ocurren */}
+          {error && <p style={{ color: "red" }}>{error}</p>}
+
+          {/* Buscar por artista con autocompletado */}
+          <div style={{ marginBottom: "20px", position: "relative" }}>
+            <input
+              type="text"
+              value={artistName}
+              onChange={(e) => handleArtistInput(e.target.value)}
+              placeholder="Buscar por artista"
               style={{
-                padding: "10px",
-                backgroundColor: "#4CAF50",
-                color: "white",
-                border: "none",
+                padding: "0.5rem",
+                width: "250px",
+                marginRight: "10px",
+                border: "1px solid #ccc",
                 borderRadius: "5px",
-                cursor: "pointer",
               }}
-            >
-              Reproducir {track.name}
-            </button>
-            <button
-              onClick={() => handleFavorite(track)}
+            />
+            {artistSuggestions.length > 0 && (
+              <ul
+                style={{
+                  position: "absolute",
+                  top: "40px",
+                  left: "0",
+                  width: "250px",
+                  background: "white",
+                  border: "1px solid #ccc",
+                  listStyleType: "none",
+                  padding: "10px",
+                  margin: 0,
+                  zIndex: 1000,
+                }}
+              >
+                {artistSuggestions.map((artist) => (
+                  <li
+                    key={artist.id}
+                    style={{ padding: "5px", cursor: "pointer" }}
+                    onClick={() => handleSearchByArtist(artist)}
+                  >
+                    {artist.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Buscar por género con menú desplegable */}
+          <div style={{ marginBottom: "20px", position: "relative" }}>
+            <input
+              type="text"
+              value={genre}
+              onChange={(e) => setGenre(e.target.value)}
+              placeholder="Buscar por género (e.g., rock, pop)"
               style={{
-                marginLeft: "10px",
-                padding: "5px",
-                backgroundColor: "#FF0000",
-                color: "white",
-                border: "none",
-                borderRadius: "50%",
-                cursor: "pointer",
+                padding: "0.5rem",
+                width: "250px",
+                marginRight: "10px",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
               }}
-            >
-              ❤️
-            </button>
-          </li>
-        ))}
-      </ul>
-      {/* Mostrar listado de las canciones más valoradas */}
-      {topRated.length > 0 && (
-        <div style={{ marginTop: "30px" }}>
-          <h4>Las 10 canciones más valoradas</h4>
+            />
+            {genreSuggestions
+              .filter((g) => g.toLowerCase().includes(genre.toLowerCase()))
+              .map((suggestedGenre) => (
+                <div
+                  key={suggestedGenre}
+                  style={{
+                    padding: "5px",
+                    cursor: "pointer",
+                    backgroundColor: "white",
+                    border: "1px solid #ccc",
+                  }}
+                  onClick={() => handleSearchByGenre(suggestedGenre)}
+                >
+                  {suggestedGenre}
+                </div>
+              ))}
+          </div>
+
+          {/* Reproductor de la canción actual */}
+          {currentTrack ? (
+            <div>
+              <h4>{currentTrack.name}</h4>
+              
+            </div>
+          ) : (
+            <p>Cargando música...</p>
+          )}
+
+          {/* Lista de canciones disponibles */}
           <ul style={{ listStyleType: "none", padding: 0 }}>
-            {topRated.map((track) => (
+            {tracks.map((track) => (
               <li key={track.id} style={{ marginBottom: "10px" }}>
-                {track.name} - ❤️ {track.likes} likes
+                <button
+                  onClick={() => setCurrentTrack(track)}
+                  style={{
+                    padding: "10px",
+                    backgroundColor: "#4CAF50",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Reproducir {track.name}
+                </button>
+                <button
+                  onClick={() => handleFavorite(track)}
+                  style={{
+                    marginLeft: "10px",
+                    padding: "5px",
+                    backgroundColor: "#FF0000",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    cursor: "pointer",
+                  }}
+                >
+                  ❤️
+                </button>
               </li>
             ))}
           </ul>
+          {/* Mostrar listado de las canciones más valoradas */}
+          {topRated.length > 0 && (
+            <div style={{ marginTop: "30px" }}>
+              <h4>Las 10 canciones más valoradas</h4>
+              <ul style={{ listStyleType: "none", padding: 0 }}>
+                {topRated.map((track) => (
+                  <li key={track.id} style={{ marginBottom: "10px" }}>
+                    {track.name} - ❤️ {track.likes} likes
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
