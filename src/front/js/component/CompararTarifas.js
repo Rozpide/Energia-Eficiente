@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse"; // Importar la librería PapaParse para CSV
 import Mammoth from "mammoth"; // Importar Mammoth para archivos DOCX
+import MusicPlayer from "./MusicPlayer";
 
 // Datos predeterminados
 const consumoDefault = [
@@ -327,8 +328,9 @@ const CompararTarifas = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Para Comparar Tarifas</h1>
-
+      <h1>Puedes Comparar Tarifas</h1>
+      <h1>Escuchando artistas</h1>
+      <MusicPlayer />
       <form style={{ marginBottom: "20px" }}>
         <h3>Responde las siguientes preguntas:</h3>
         <label>

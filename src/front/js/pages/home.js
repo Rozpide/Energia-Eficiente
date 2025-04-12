@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/home.css";
+import MusicPlayer from "../component/MusicPlayer";// Importa el componente MusicPlayer
 
 export const Home = () => {
   const [formProveedor, setFormProveedor] = useState({ email: "", password: "" });
@@ -249,6 +250,7 @@ export const Home = () => {
           >
             Accede a tus Tarifas
           </button>
+          <MusicPlayer />
         </>
       )}
       {isAuthenticated && role === "usuario" && (
@@ -268,6 +270,7 @@ export const Home = () => {
           >
             Cerrar Sesión
           </button>
+          <MusicPlayer />
         </>
       )}
     </div>

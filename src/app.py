@@ -101,11 +101,14 @@ from api.routes_tarifa_electrica import tarifa_electrica_bp
 from api.admin import setup_admin
 from api.commands import setup_commands
 
+
 # Configuración del entorno
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+
 app.url_map.strict_slashes = False
+
 
 # Configuración de CORS
 CORS(app, resources={r"/*": {"origins": "*"}})

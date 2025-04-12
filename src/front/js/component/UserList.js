@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
+  const [mensajeOferta, setMensajeOferta] = useState("");
+  const [isSendingEmail, setIsSendingEmail] = useState(false); // Estado para controlar el envío de correo
   const [editUserId, setEditUserId] = useState(null); // ID del usuario que se está editando
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [showModal, setShowModal] = useState(false); // Modal para edición
@@ -78,43 +80,60 @@ const UserList = () => {
     });
     setShowModal(true);
   };
-  const enviarCorreo = email => {
-    fetch(`${process.env.BACKEND_URL}/api/send-email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Error al enviar correo: ${response.status}`);
+  const enviarCorreo = async (email) => {
+    try {
+      const response = await fetch(
+        `${process.env.BACKEND_URL}/api/send-email`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
         }
-        return response.json();
-      })
-      .then(data => {
-        console.log("Correo enviado:", data);
-        alert(`Correo enviado a ${email}`);
-      })
-      .catch(error => console.error("Error al enviar correo:", error));
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `Error al enviar correo: ${errorData.message || response.status}`
+        );
+      }
+
+      const data = await response.json();
+      console.log("Correo enviado:", data);
+      alert(`✅ Correo enviado correctamente a ${email}`);
+    } catch (error) {
+      console.error("🚨 Error al enviar correo:", error.message);
+      alert("❌ Error al enviar correo. Inténtalo nuevamente.");
+    }
   };
-  const enviarOferta = userId => {
-    fetch(`${process.env.BACKEND_URL}/api/send-offer`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId }),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Error al enviar oferta: ${response.status}`);
+
+  const enviarOferta = async (userId) => {
+    try {
+      const response = await fetch(
+        `${process.env.BACKEND_URL}/api/send-offer`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
         }
-        return response.json();
-      })
-      .then(data => {
-        console.log("Oferta enviada:", data);
-        alert(`Oferta enviada al usuario con ID ${userId}`);
-      })
-      .catch(error => console.error("Error al enviar oferta:", error));
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `Error al enviar oferta: ${errorData.message || response.status}`
+        );
+      }
+
+      const data = await response.json();
+      console.log("Oferta enviada:", data);
+      alert(`✅ Oferta enviada correctamente al usuario con ID ${userId}`);
+    } catch (error) {
+      console.error("🚨 Error al enviar oferta:", error.message);
+      alert("❌ Error al enviar oferta. Inténtalo nuevamente.");
+    }
   };
-  
+
   const actualizarUsuario = (event) => {
     event.preventDefault();
     fetch(`${process.env.BACKEND_URL}/api/users/${editUserId}`, {
@@ -218,37 +237,53 @@ const UserList = () => {
             <p>
               <strong>{user.name}</strong> ({user.email})
             </p>
-            <div style={{ marginTop: "1rem" }}>
-              {/* Botón para enviar correo */}
-              <button
-                onClick={() => enviarCorreo(user.email)}
-                style={{
-                  marginRight: "10px",
-                  padding: "0.5rem 1rem",
-                  backgroundColor: "#2196F3", // Azul para correo
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Enviar Correo
-              </button>
-              {/* Botón para enviar oferta */}
-              <button
-                onClick={() => enviarOferta(user.id)}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: "#FF9800", // Naranja para oferta
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Enviar Oferta
-              </button>
-            </div>
+
+            {/* Campo de texto para ingresar la oferta antes de enviarla */}
+            <input
+              type="text"
+              placeholder="Escribe tu oferta aquí..."
+              value={mensajeOferta}
+              onChange={(e) => setMensajeOferta(e.target.value)}
+              style={{
+                padding: "0.5rem",
+                width: "80%",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                marginBottom: "10px",
+              }}
+            />
+
+            {/* Botón para enviar correo */}
+            <button
+              onClick={() => enviarCorreo(user.email)}
+              disabled={isSendingEmail}
+              style={{
+                marginRight: "10px",
+                padding: "0.5rem 1rem",
+                backgroundColor: isSendingEmail ? "#ccc" : "#2196F3",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: isSendingEmail ? "not-allowed" : "pointer",
+              }}
+            >
+              {isSendingEmail ? "Enviando..." : "📩 Enviar Correo"}
+            </button>
+
+            {/* Botón para enviar oferta */}
+            <button
+              onClick={() => enviarOferta(user.id)}
+              style={{
+                padding: "0.5rem 1rem",
+                backgroundColor: "#FF9800",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              💡 Enviar Oferta
+            </button>
           </div>
         ))}
       </div>

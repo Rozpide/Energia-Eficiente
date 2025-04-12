@@ -104,9 +104,10 @@ const MusicPlayer = () => {
     }
   };
   const handleFavorite = async (track) => {
+    
     const updatedTrack = { 
       name: track.name || "Desconocido",
-      likes: Math.min(parseInt(track.likes || 0, 10) + 1, 99999999) // Limita el valor a 9999
+      likes: Math.min(parseInt(track.likes || 0, 10) + 1, 9999) // Limita el valor a 9999
     };
   
     

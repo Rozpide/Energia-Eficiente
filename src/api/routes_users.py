@@ -1,88 +1,11 @@
 
-"""
+
 
 from flask import Blueprint, request, jsonify
 from api.models import db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-import datetime
 
-users_bp = Blueprint('users_bp', __name__)
-
-@users_bp.route('/users', methods=['GET'])
-def obtener_usuarios():
-    
-    usuarios = User.query.all()
-    return jsonify([usuario.serialize() for usuario in usuarios]), 200
-
-
-@users_bp.route('/users/<int:user_id>', methods=['GET'])
-def obtener_usuario(user_id):
-    
-    
-    usuario = User.query.get(user_id)
-    if usuario is None:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-    return jsonify(usuario.serialize()), 200
-
-
-@users_bp.route('/users', methods=['POST'])
-def crear_usuario():
-    
-    
-    data = request.get_json()
-    if not data.get('email') or not data.get('password'):
-        return jsonify({"error": "Faltan datos obligatorios (email, password)"}), 400
-
-    nuevo_usuario = User(
-        email=data['email'],
-        password=data['password'],
-        is_active=data.get('is_active', True),  # Por defecto activo
-        name=data.get('name')
-    )
-    db.session.add(nuevo_usuario)
-    db.session.commit()
-    return jsonify(nuevo_usuario.serialize()), 201
-
-
-@users_bp.route('/users/<int:user_id>', methods=['PATCH','PUT'])
-def actualizar_usuario(user_id):
-    
-    
-    usuario = User.query.get(user_id)
-    if usuario is None:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    data = request.get_json()
-    if "email" in data:
-        usuario.email = data["email"]
-    if "password" in data:
-        usuario.password = data["password"]
-    if "is_active" in data:
-        usuario.is_active = data["is_active"]
-    if "name" in data:
-        usuario.name = data["name"]
-
-    db.session.commit()
-    return jsonify(usuario.serialize()), 200
-
-
-
-@users_bp.route('/users/<int:user_id>', methods=['DELETE'])
-def eliminar_usuario(user_id):
-    
-    usuario = User.query.get(user_id)
-    if usuario is None:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    db.session.delete(usuario)
-    db.session.commit()
-    return jsonify({"message": "Usuario eliminado exitosamente"}), 200
-"""
-from flask import Blueprint, request, jsonify
-from api.models import db, User
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import datetime
 
 users_bp = Blueprint('users_bp', __name__)
@@ -201,3 +124,9 @@ def actualizar_usuario(user_id):
         return jsonify(usuario.serialize()), 200
     except Exception as e:
         return jsonify({"error": f"Error al actualizar usuario: {str(e)}"}), 500
+
+
+
+
+
+

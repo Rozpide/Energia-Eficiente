@@ -74,7 +74,7 @@ const Layout = () => {
             </p>
           </div>
 
-          <MusicPlayer />
+          
           <div className="container mt-4">
             {/* Opciones iniciales si no hay un rol seleccionado */}
             {!rol && (

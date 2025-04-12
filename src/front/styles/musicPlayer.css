@@ -1,0 +1,33 @@
+@keyframes equalizer {
+    0% { transform: scaleY(1); }
+    25% { transform: scaleY(1.5); }
+    50% { transform: scaleY(0.8); }
+    75% { transform: scaleY(1.2); }
+    100% { transform: scaleY(1); }
+  }
+  
+  .ecualizador {
+    display: flex;
+    gap: 3px;
+  }
+  
+  .ecualizador div {
+    width: 5px;
+    height: 20px;
+    background-color: #00ff00;
+    animation: equalizer 0.5s infinite ease-in-out alternate;
+  }
+  
+  .button-reproducir {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #00ff00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+  }
+  
