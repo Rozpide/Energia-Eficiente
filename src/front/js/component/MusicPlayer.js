@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { supabase } from "../../../config/supabaseConfig";
+ // Importar el cliente de Supabase
 import {
   getTracks,
   getTracksByArtist,
@@ -15,6 +17,8 @@ const MusicPlayer = () => {
   const [genre, setGenre] = useState(""); // Género musical
   const [topRated, setTopRated] = useState([]); // Lista de canciones más valoradas
   const [isVisible, setIsVisible] = useState(true); // Controla la visibilidad del reproductor
+  // Lista de canciones más valoradas desde Supabase
+
   const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false); // Controla el desplegable de géneros
   const filteredTracks = tracks.filter((track) => track.genre === genre); // Filtra las canciones según el género seleccionado
 
@@ -22,18 +26,45 @@ const MusicPlayer = () => {
   const [error, setError] = useState(null); // Manejar errores
 
   useEffect(() => {
-    // Cargar canciones populares al inicio
+    // Función para cargar canciones populares
     const fetchTracks = async () => {
-      const tracksData = await getTracks();
-      if (tracksData) {
-        setTracks(tracksData);
-        setCurrentTrack(tracksData[0]); // Reproducir la primera canción por defecto
-      } else {
-        setError("No se pudieron cargar las canciones.");
+      try {
+        const tracksData = await getTracks();
+        if (tracksData) {
+          setTracks(tracksData);
+          setCurrentTrack(tracksData[0]); // Reproducir la primera canción por defecto
+        } else {
+          setError("No se pudieron cargar las canciones.");
+        }
+      } catch (error) {
+        console.error("Error al cargar canciones populares:", error);
       }
     };
+  
+    // Función para cargar el ranking desde Supabase
+    const fetchRanking = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("topRatedTracks")
+          .select("*")
+          .order("likes", { ascending: false })
+          .limit(20);
+  
+        if (!error) {
+          setTopRated(data);
+        } else {
+          console.error("Error al cargar el ranking:", error);
+        }
+      } catch (error) {
+        console.error("Error general en la carga del ranking:", error);
+      }
+    };
+  
+    // Ejecutar ambas funciones en paralelo
     fetchTracks();
+    fetchRanking();
   }, []);
+  
 
   // Actualizar sugerencias de artistas
   const handleArtistInput = async (value) => {
@@ -72,25 +103,41 @@ const MusicPlayer = () => {
       setError(`No se encontraron canciones del género "${selectedGenre}".`);
     }
   };
-  const handleFavorite = (track) => {
-    // Incrementar el número de "likes"
-    const updatedTrack = { ...track, likes: (track.likes || 0) + 1 };
-
-    // Actualizar el listado de canciones más valoradas
-    setTopRated((prevTopRated) => {
-      // Añadir la canción o actualizarla si ya existe
-      const existingTrack = prevTopRated.find((t) => t.id === track.id);
-      if (existingTrack) {
-        return prevTopRated
-          .map((t) => (t.id === track.id ? updatedTrack : t))
-          .sort((a, b) => b.likes - a.likes);
+  const handleFavorite = async (track) => {
+    const updatedTrack = { 
+      name: track.name || "Desconocido",
+      likes: Math.min(parseInt(track.likes || 0, 10) + 1, 99999999) // Limita el valor a 9999
+    };
+  
+    
+  
+    try {
+      // Guardar en Supabase
+      const { error } = await supabase
+        .from("topRatedTracks")
+        .upsert([{ id: track.id, name: track.name, likes: updatedTrack.likes }]);
+  
+      if (!error) {
+        // Si la actualización es correcta, recuperar el ranking actualizado desde Supabase
+        const { data, fetchError } = await supabase
+          .from("topRatedTracks")
+          .select("*")
+          .order("likes", { ascending: false })
+          .limit(20);
+  
+        if (!fetchError) {
+          setTopRated(data);
+        } else {
+          console.error("Error al recuperar el ranking actualizado:", fetchError);
+        }
       } else {
-        return [...prevTopRated, updatedTrack]
-          .sort((a, b) => b.likes - a.likes)
-          .slice(0, 10); // Limitar a las 10 canciones más valoradas
+        console.error("Error al actualizar el ranking en Supabase:", error);
       }
-    });
+    } catch (error) {
+      console.error("Error general al manejar el voto:", error);
+    }
   };
+  
 
   return (
     <div
