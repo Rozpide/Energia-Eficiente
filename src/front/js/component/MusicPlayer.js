@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../../config/supabaseConfig";
- // Importar el cliente de Supabase
+// Importar el cliente de Supabase
 import {
   getTracks,
   getTracksByArtist,
@@ -40,7 +40,7 @@ const MusicPlayer = () => {
         console.error("Error al cargar canciones populares:", error);
       }
     };
-  
+
     // Función para cargar el ranking desde Supabase
     const fetchRanking = async () => {
       try {
@@ -49,7 +49,7 @@ const MusicPlayer = () => {
           .select("*")
           .order("likes", { ascending: false })
           .limit(20);
-  
+
         if (!error) {
           setTopRated(data);
         } else {
@@ -59,12 +59,11 @@ const MusicPlayer = () => {
         console.error("Error general en la carga del ranking:", error);
       }
     };
-  
+
     // Ejecutar ambas funciones en paralelo
     fetchTracks();
     fetchRanking();
   }, []);
-  
 
   // Actualizar sugerencias de artistas
   const handleArtistInput = async (value) => {
@@ -104,38 +103,51 @@ const MusicPlayer = () => {
     }
   };
   const handleFavorite = async (track) => {
+    if (!track?.id) {
+      console.error("🚨 Error: Track sin ID válido.");
+      return;
+    }
+  
+    // Validación mejorada para evitar valores 'undefined' en likes
+    const currentLikes = Number(track.likes) || 0;
     
-    const updatedTrack = { 
+    console.log(`🔍 Canción: ${track.name} (ID: ${track.id}) → Likes actuales: ${currentLikes}`);
+    
+    const updatedLikes = Math.min(currentLikes + 1, 9999999); // Máximo permitido
+  
+    console.log(`🛠 Nuevo número de likes que se enviará: ${updatedLikes}`);
+  
+    const updatedTrack = {
+      id: track.id,
       name: track.name || "Desconocido",
-      likes: Math.min(parseInt(track.likes || 0, 10) + 1, 9999) // Limita el valor a 9999
+      likes: updatedLikes,
     };
   
-    
-  
     try {
-      // Guardar en Supabase
+      // Guardar en Supabase con validación de error
       const { error } = await supabase
         .from("topRatedTracks")
-        .upsert([{ id: track.id, name: track.name, likes: updatedTrack.likes }]);
+        .upsert([updatedTrack]);
   
-      if (!error) {
-        // Si la actualización es correcta, recuperar el ranking actualizado desde Supabase
-        const { data, fetchError } = await supabase
-          .from("topRatedTracks")
-          .select("*")
-          .order("likes", { ascending: false })
-          .limit(20);
-  
-        if (!fetchError) {
-          setTopRated(data);
-        } else {
-          console.error("Error al recuperar el ranking actualizado:", fetchError);
-        }
-      } else {
-        console.error("Error al actualizar el ranking en Supabase:", error);
+      if (error) {
+        throw new Error(`Error al actualizar el ranking en Supabase: ${error.message}`);
       }
+  
+      // Obtener ranking actualizado con validación de datos
+      const { data, fetchError } = await supabase
+        .from("topRatedTracks")
+        .select("id, name, likes")
+        .order("likes", { ascending: false })
+        .limit(30);
+  
+      if (fetchError) {
+        throw new Error(`Error al recuperar el ranking actualizado: ${fetchError.message}`);
+      }
+  
+      setTopRated(data);
+      console.log("✅ Ranking actualizado correctamente.");
     } catch (error) {
-      console.error("Error general al manejar el voto:", error);
+      console.error("🚨 Error al manejar el voto:", error.message);
     }
   };
   
@@ -356,7 +368,7 @@ const MusicPlayer = () => {
             {/* Mostrar listado de las canciones más valoradas */}
             {topRated.length > 0 && (
               <div style={{ marginTop: "30px" }}>
-                <h4>Las 10 canciones más valoradas</h4>
+                <h4>Las 15 canciones más valoradas</h4>
                 <ul style={{ listStyleType: "none", padding: 0 }}>
                   {topRated.map((track) => (
                     <li key={track.id} style={{ marginBottom: "10px" }}>

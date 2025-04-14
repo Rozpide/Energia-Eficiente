@@ -91,7 +91,7 @@ from flask import Flask, jsonify, send_from_directory
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from flask_swagger import swagger
+from flask_mail import Mail
 from api.utils import APIException, generate_sitemap
 from api.models import db
 from api.routes import api
@@ -101,29 +101,36 @@ from api.routes_tarifa_electrica import tarifa_electrica_bp
 from api.admin import setup_admin
 from api.commands import setup_commands
 
-
 # Configuración del entorno
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
-
 app.url_map.strict_slashes = False
 
+# Configuración de CORS con control de acceso
+CORS(app, resources={r"/api/*": {"origins": os.getenv("ALLOWED_ORIGINS", "*")}})
 
-# Configuración de CORS
-CORS(app, resources={r"/*": {"origins": "*"}})
+# Configuración de Flask-Mail usando variables de entorno
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')  # Valor por defecto
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True') == 'True'
+app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL', 'False') == 'True'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', app.config['MAIL_USERNAME'])  # Evita error si no se define
+mail = Mail(app)
 
-# Configuración de JWT
-app.config["JWT_SECRET_KEY"] = "your_secret_key"
+# Configuración de JWT con clave segura desde .env
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "change_this_key")
 app.config["JWT_TOKEN_LOCATION"] = ["headers"]
 jwt = JWTManager(app)
 
 # Configuración de la base de datos
 db_url = os.getenv("DATABASE_URL")
-if db_url is not None:
+if db_url:
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace("postgres://", "postgresql://")
 else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///temp.db"  # Evita fallo en caso de no haber base de datos definida
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db, compare_type=True)
@@ -162,6 +169,4 @@ def serve_any_other_file(path):
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
-    app.run(host='0.0.0.0', port=PORT, debug=True)
-
-    
+    app.run(host='0.0.0.0', port=PORT, debug=ENV == "development")
