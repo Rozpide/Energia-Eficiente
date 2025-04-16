@@ -1,12 +1,13 @@
-
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/home.css";
-import MusicPlayer from "../component/MusicPlayer";// Importa el componente MusicPlayer
+import MusicPlayer from "../component/MusicPlayer"; // Importa el componente MusicPlayer
 
 export const Home = () => {
-  const [formProveedor, setFormProveedor] = useState({ email: "", password: "" });
+  const [formProveedor, setFormProveedor] = useState({
+    email: "",
+    password: "",
+  });
   const [formUsuario, setFormUsuario] = useState({ email: "", password: "" });
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado de autenticación
   const [proveedorId, setProveedorId] = useState(null); // ID del proveedor autenticado
@@ -98,17 +99,72 @@ export const Home = () => {
       alert("El ID del proveedor no está disponible o es inválido.");
     }
   };
+  const getEnergyAdvice = async (userId) => {
+    try {
+        const response = await fetch("http://localhost:3001/api/energy-advice", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error en la API: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // ✅ Verificación para evitar estructuras anidadas incorrectas
+        if (typeof data.advice === "object" && data.advice.advice) {
+            console.warn("⚠️ Se detectó un posible anidamiento de `advice`. Ajustando...");
+            return data.advice.advice;  // ✅ Extrae la respuesta correcta
+        }
+
+        return data.advice; // ✅ Retorno limpio y correcto
+
+    } catch (error) {
+        console.error("🚨 Error en getEnergyAdvice:", error.message);
+        return "No se pudo obtener la recomendación.";  // ✅ Retorno seguro en caso de error
+    }
+};
+
+  const handleGetAdvice = async () => {
+    const response = await getEnergyAdvice(1);
+    const advice = response.advice; // ✅ Extrae el contenido correcto
+    console.log("Recomendación energética:", advice);
+  };
 
   return (
     <div className="text-center mt-5">
-      
-      
+      <button
+        onClick={handleGetAdvice}
+        style={{
+          marginTop: "20px",
+          padding: "0.5rem 1rem",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          border: "none",
+          borderRadius: "10px",
+          cursor: "pointer",
+        }}
+      >
+        Obtener Recomendación Energética
+      </button>
+
       {role === "none" && (
         <>
           <h1>registrado</h1>
           <h3> inicia sesión</h3>
           <button
-            style={{backgroundColor: "#ff9999", color: "white",bordercolor: "black", border: "2px", borderRadius: "20px", cursor: "pointer"}}
+            style={{
+              backgroundColor: "#ff9999",
+              color: "white",
+              bordercolor: "black",
+              border: "2px",
+              borderRadius: "20px",
+              cursor: "pointer",
+            }}
             onClick={() => setRole("usuario")}
             className="button-usuario"
           >
@@ -128,14 +184,15 @@ export const Home = () => {
           >
             Proveedor
           </button>
-          
         </>
       )}
 
-      
       {role === "proveedor" && !isAuthenticated && (
         <>
-          <form onSubmit={handleSubmitProveedor} style={{ marginBottom: "20px" }}>
+          <form
+            onSubmit={handleSubmitProveedor}
+            style={{ marginBottom: "20px" }}
+          >
             <h3>Iniciar Sesión - Proveedor</h3>
             <input
               type="email"
@@ -182,7 +239,6 @@ export const Home = () => {
         </>
       )}
 
-      
       {role === "usuario" && !isAuthenticated && (
         <>
           <form onSubmit={handleSubmitUsuario} style={{ marginBottom: "20px" }}>
@@ -232,7 +288,6 @@ export const Home = () => {
         </>
       )}
 
-      
       {isAuthenticated && role === "proveedor" && (
         <>
           <h3>Bienvenido, proveedor</h3>

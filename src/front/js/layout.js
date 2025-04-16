@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import MusicPlayer from "./component/MusicPlayer";
+
 
 import ScrollToTop from "./component/scrollToTop"; // Para volver arriba al navegar
 import { BackendURL } from "./component/backendURL";

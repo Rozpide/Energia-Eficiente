@@ -181,3 +181,28 @@ class SolicitudCambio(db.Model):
             "fecha_creacion": self.fecha_creacion,
             "comentario": self.comentario
         }
+# Tabla: Consumo Energético
+class UserConsumption(db.Model):
+    __tablename__ = 'user_consumption'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id_fk = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    consumption = db.Column(db.Float, nullable=False)
+    peak_hours = db.Column(db.Boolean, nullable=False, default=False)
+    recommended_action = db.Column(db.String(255), nullable=True)
+
+    usuario = db.relationship('User', backref=db.backref('consumo', lazy=True))
+
+    def __repr__(self):
+        return f'<UserConsumption {self.id} - {self.date}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id_fk": self.user_id_fk,
+            "date": self.date,
+            "consumption": self.consumption,
+            "peak_hours": self.peak_hours,
+            "recommended_action": self.recommended_action
+        }

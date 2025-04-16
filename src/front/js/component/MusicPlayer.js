@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "../../../config/supabaseConfig";
-// Importar el cliente de Supabase
+import { supabase } from "/src/config/supabaseConfig"; // Importar el cliente de Supabase
+ // Importar el cliente de Supabase
+
 import {
   getTracks,
   getTracksByArtist,
@@ -107,50 +108,61 @@ const MusicPlayer = () => {
       console.error("🚨 Error: Track sin ID válido.");
       return;
     }
-  
-    // Validación mejorada para evitar valores 'undefined' en likes
+
     const currentLikes = Number(track.likes) || 0;
-    
-    console.log(`🔍 Canción: ${track.name} (ID: ${track.id}) → Likes actuales: ${currentLikes}`);
-    
     const updatedLikes = Math.min(currentLikes + 1, 9999999); // Máximo permitido
-  
+
+    console.log(
+      `🔍 Canción: ${track.name} (ID: ${track.id}) → Likes actuales: ${currentLikes}`
+    );
     console.log(`🛠 Nuevo número de likes que se enviará: ${updatedLikes}`);
-  
+
     const updatedTrack = {
       id: track.id,
       name: track.name || "Desconocido",
       likes: updatedLikes,
     };
-  
+
     try {
-      // Guardar en Supabase con validación de error
+      // Guardar en Supabase
       const { error } = await supabase
         .from("topRatedTracks")
         .upsert([updatedTrack]);
-  
+
       if (error) {
-        throw new Error(`Error al actualizar el ranking en Supabase: ${error.message}`);
+        throw new Error(
+          `Error al actualizar el ranking en Supabase: ${error.message}`
+        );
       }
-  
-      // Obtener ranking actualizado con validación de datos
-      const { data, fetchError } = await supabase
+
+      console.log("🛠 Respuesta de Supabase:", updatedTrack);
+
+      // 🛠 ACTUALIZAR EL ESTADO DIRECTAMENTE CON LOS NUEVOS DATOS
+      setTopRated((prevTracks) =>
+        prevTracks.map((t) =>
+          t.id === track.id ? { ...t, likes: updatedLikes } : t
+        )
+      );
+
+      // ⚡ Refrescar la data desde Supabase para garantizar que la UI se actualice
+      const { data: rankingData, fetchError } = await supabase
         .from("topRatedTracks")
         .select("id, name, likes")
         .order("likes", { ascending: false })
-        .limit(30);
-  
+        .limit(20);
+
       if (fetchError) {
-        throw new Error(`Error al recuperar el ranking actualizado: ${fetchError.message}`);
+        throw new Error(
+          `Error al recuperar el ranking actualizado: ${fetchError.message}`
+        );
       }
-  
-      setTopRated(data);
+
+      setTopRated(rankingData);
       console.log("✅ Ranking actualizado correctamente.");
     } catch (error) {
       console.error("🚨 Error al manejar el voto:", error.message);
     }
   };
-  
 
   return (
     <div
