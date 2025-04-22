@@ -1,3 +1,5 @@
+
+
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse"; // Importar la librería PapaParse para CSV
 import Mammoth from "mammoth"; // Importar Mammoth para archivos DOCX
@@ -5,10 +7,10 @@ import MusicPlayer from "./MusicPlayer";
 
 // Datos predeterminados
 const consumoDefault = [
-  { mes: 'enero', consumo_kWh: 150 },
-  { mes: 'febrero', consumo_kWh: 130 },
-  { mes: 'marzo', consumo_kWh: 140 },
-  { mes: 'abril', consumo_kWh: 150 },
+  { mes: "enero", consumo_kWh: 150 },
+  { mes: "febrero", consumo_kWh: 130 },
+  { mes: "marzo", consumo_kWh: 140 },
+  { mes: "abril", consumo_kWh: 150 },
   // Puedes añadir más datos si los necesitas
 ];
 
@@ -25,7 +27,7 @@ const CompararTarifas = () => {
   const [resultados, setResultados] = useState([]); // Tarifas filtradas
   const [map, setMap] = useState(null); // Referencia al mapa
   const [markers, setMarkers] = useState([]); // Lista de marcadores en el mapa
-  
+
   // Cargar todas las tarifas desde el backend
   const cargarTarifas = async () => {
     try {
@@ -126,9 +128,9 @@ const CompararTarifas = () => {
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-  
+
     const fileExtension = file.name.split(".").pop().toLowerCase();
-  
+
     if (fileExtension === "csv") {
       Papa.parse(file, {
         header: true,
@@ -139,8 +141,11 @@ const CompararTarifas = () => {
           }));
           setConsumoMensual(consumoMensualCargado); // Actualiza el estado global
           console.log("Datos de consumo cargados:", consumoMensualCargado);
-  
-          const mejoresTarifas = calcularCostosPorTarifa(consumoMensualCargado, tarifas);
+
+          const mejoresTarifas = calcularCostosPorTarifa(
+            consumoMensualCargado,
+            tarifas
+          );
           setResultados(mejoresTarifas); // Actualiza los resultados para mostrarlos en la UI
         },
       });
@@ -148,15 +153,21 @@ const CompararTarifas = () => {
       const reader = new FileReader();
       reader.onload = async (e) => {
         const arrayBuffer = e.target.result;
-  
+
         try {
           const { value: text } = await Mammoth.extractRawText({ arrayBuffer });
-  
+
           const consumoMensualCargado = procesarTextoWord(text);
           setConsumoMensual(consumoMensualCargado); // Actualiza el estado global
-          console.log("Datos procesados desde archivo Word:", consumoMensualCargado);
-  
-          const mejoresTarifas = calcularCostosPorTarifa(consumoMensualCargado, tarifas);
+          console.log(
+            "Datos procesados desde archivo Word:",
+            consumoMensualCargado
+          );
+
+          const mejoresTarifas = calcularCostosPorTarifa(
+            consumoMensualCargado,
+            tarifas
+          );
           setResultados(mejoresTarifas); // Actualiza los resultados para mostrarlos en la UI
         } catch (err) {
           console.error("Error al procesar el archivo Word:", err);
@@ -164,10 +175,11 @@ const CompararTarifas = () => {
       };
       reader.readAsArrayBuffer(file);
     } else {
-      alert("Tipo de archivo no soportado. Por favor, sube un archivo .csv o .docx.");
+      alert(
+        "Tipo de archivo no soportado. Por favor, sube un archivo .csv o .docx."
+      );
     }
   };
-  
 
   const analizarConsumo = (consumoMensual) => {
     if (consumoMensual.length === 0) return;
@@ -245,86 +257,133 @@ const CompararTarifas = () => {
       alert("Por favor, completa todas las preguntas antes de continuar.");
       return;
     }
-  
+
     // Usar datos predeterminados si no hay consumo cargado
     const consumoDefault = [
-      { mes: 'enero', consumo_kWh: 150 },
-      { mes: 'febrero', consumo_kWh: 130 },
-      { mes: 'marzo', consumo_kWh: 140 },
-      { mes: 'abril', consumo_kWh: 150 },
+      { mes: "enero", consumo_kWh: 150 },
+      { mes: "febrero", consumo_kWh: 130 },
+      { mes: "marzo", consumo_kWh: 140 },
+      { mes: "abril", consumo_kWh: 150 },
       // Puedes añadir más datos...
     ];
-    const consumoParaCalculo = consumoMensual.length > 0 ? consumoMensual : consumoDefault;
-  
+    const consumoParaCalculo =
+      consumoMensual.length > 0 ? consumoMensual : consumoDefault;
+
     // Calcular el total y promedio de consumo
-    const consumoTotal = consumoParaCalculo.reduce((acc, mes) => acc + mes.consumo_kWh, 0);
+    const consumoTotal = consumoParaCalculo.reduce(
+      (acc, mes) => acc + mes.consumo_kWh,
+      0
+    );
     const consumoPromedio = consumoTotal / consumoParaCalculo.length;
-  
+
     const evaluarPrioridades = (tarifa) => {
       let coincidencias = 0;
-      if (tarifa.region?.toLowerCase() === form.region.toLowerCase()) coincidencias++;
-      if (tarifa.rango_horario_bajo?.includes(form.rango_horario)) coincidencias++;
-      if (tarifa.carbon_impact_kgCO <= parseFloat(form.max_carbon_impact)) coincidencias++;
+      if (tarifa.region?.toLowerCase() === form.region.toLowerCase())
+        coincidencias++;
+      if (tarifa.rango_horario_bajo?.includes(form.rango_horario))
+        coincidencias++;
+      if (tarifa.carbon_impact_kgCO <= parseFloat(form.max_carbon_impact))
+        coincidencias++;
       return coincidencias;
     };
-  
+
     // Evaluar tarifas y calcular costos estimados
     const tarifasConPrioridades = tarifas.map((tarifa) => ({
       ...tarifa,
       coincidencias: evaluarPrioridades(tarifa),
       costoEstimado: tarifa.precio_kw_hora * consumoPromedio, // Basado en consumo
     }));
-  
+
     // Filtrar tarifas por coincidencias
-    let tarifasFiltradas = tarifasConPrioridades.filter((tarifa) => tarifa.coincidencias === 3);
-  
+    let tarifasFiltradas = tarifasConPrioridades.filter(
+      (tarifa) => tarifa.coincidencias === 3
+    );
+
     if (tarifasFiltradas.length === 0) {
-      tarifasFiltradas = tarifasConPrioridades.filter((tarifa) => tarifa.coincidencias === 2);
+      tarifasFiltradas = tarifasConPrioridades.filter(
+        (tarifa) => tarifa.coincidencias === 2
+      );
     }
-  
+
     if (tarifasFiltradas.length === 0) {
-      tarifasFiltradas = tarifasConPrioridades.filter((tarifa) => tarifa.coincidencias === 1);
+      tarifasFiltradas = tarifasConPrioridades.filter(
+        (tarifa) => tarifa.coincidencias === 1
+      );
     }
-  
+
     // Ordenar tarifas por costo estimado y mostrar las mejores
     const mejoresTarifas = tarifasFiltradas
       .sort((a, b) => a.costoEstimado - b.costoEstimado)
       .slice(0, 3);
-  
+
     setResultados(mejoresTarifas);
-  
+
     // Actualizar marcadores en el mapa
     if (map) {
       markers.forEach((marker) => marker.setMap(null)); // Limpiar marcadores previos
-  
+
       const filteredMarkers = mejoresTarifas.map((tarifa) => {
         const latitude = tarifa.latitude || 40.416775;
         const longitude = tarifa.longitude || -3.70379;
-  
+
         const marker = new window.google.maps.Marker({
           position: { lat: latitude, lng: longitude },
           map: map,
           title: tarifa.nombre_tarifa,
         });
-  
+
         const infoWindow = new window.google.maps.InfoWindow({
           content: `<div><h3>${tarifa.nombre_tarifa}</h3>
                     <p>Región: ${tarifa.region || "No especificada"}</p>
                     <p>Precio: $${tarifa.precio_kw_hora || "N/A"}</p>
-                    <p>Costo estimado: $${tarifa.costoEstimado?.toFixed(2) || "N/A"}</p></div>`,
+                    <p>Costo estimado: $${
+                      tarifa.costoEstimado?.toFixed(2) || "N/A"
+                    }</p></div>`,
         });
-  
+
         marker.addListener("click", () => {
           infoWindow.open(map, marker);
         });
-  
+
         return marker;
       });
-  
+
       setMarkers(filteredMarkers);
     }
   };
-  
+  const generarRecomendacionEnergetica = (consumoMensual) => {
+    if (consumoMensual.length === 0)
+      return "No hay datos suficientes para generar una recomendación.";
+
+    const consumoTotal = consumoMensual.reduce(
+      (acc, mes) => acc + mes.consumo_kWh,
+      0
+    );
+    const consumoPromedio = consumoTotal / consumoMensual.length;
+
+    let recomendacion =
+      "Tu consumo energético es estable. Algunas sugerencias:";
+
+    if (consumoPromedio > 200) {
+      recomendacion +=
+        "\n- Considera cambiar a electrodomésticos de alta eficiencia energética.";
+      recomendacion +=
+        "\n- Evita el uso de dispositivos de alto consumo en horarios pico.";
+    } else if (consumoPromedio < 100) {
+      recomendacion +=
+        "\n- ¡Buen trabajo! Mantén hábitos de ahorro energético.";
+    } else {
+      recomendacion +=
+        "\n- Ajusta el uso de iluminación eficiente y controla el consumo nocturno.";
+    }
+
+    return recomendacion;
+  };
+  const calcularMejoresTarifasYRecomendacion = () => {
+    calcularMejoresTarifas(); // Mantiene la lógica de tarifas
+    const recomendacion = generarRecomendacionEnergetica(consumoMensual);
+    setResultados((prevResultados) => [...prevResultados, { recomendacion }]);
+  };
 
   return (
     <div style={{ padding: "20px" }}>
@@ -418,6 +477,18 @@ const CompararTarifas = () => {
 
       {resultados.length > 0 && (
         <div>
+          <h3>Recomendación Energética:</h3>
+          <p
+            style={{
+              padding: "1rem",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              backgroundColor: "#f8f8f8",
+            }}
+          >
+            {resultados.find((r) => r.recomendacion)?.recomendacion ||
+              "No hay recomendaciones disponibles."}
+          </p>
           <h3>Las tarifas más adecuadas para ti:</h3>
           {resultados.map((tarifa) => (
             <div
@@ -465,3 +536,7 @@ const CompararTarifas = () => {
 };
 
 export default CompararTarifas;
+
+
+
+
