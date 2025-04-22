@@ -1,5 +1,5 @@
 
-
+/*
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse"; // Importar la librería PapaParse para CSV
 import Mammoth from "mammoth"; // Importar Mammoth para archivos DOCX
@@ -537,6 +537,440 @@ const CompararTarifas = () => {
 
 export default CompararTarifas;
 
+*/
 
+import React, { useEffect, useState } from "react";
+import Papa from "papaparse"; // Importar la librería PapaParse para CSV
+import Mammoth from "mammoth"; // Importar Mammoth para archivos DOCX
+import MusicPlayer from "./MusicPlayer";
 
+// Datos predeterminados
+const consumoDefault = [
+  { mes: "enero", consumo_kWh: 150 },
+  { mes: "febrero", consumo_kWh: 130 },
+  { mes: "marzo", consumo_kWh: 140 },
+  { mes: "abril", consumo_kWh: 150 },
+];
 
+const CompararTarifas = () => {
+  const [consumoMensual, setConsumoMensual] = useState([]);
+  const [tarifas, setTarifas] = useState([]);
+  const [error, setError] = useState(null);
+  const [form, setForm] = useState({
+    region: "",
+    rango_horario: "",
+    max_carbon_impact: "",
+  });
+  const [resultados, setResultados] = useState([]);
+  const [map, setMap] = useState(null);
+  const [markers, setMarkers] = useState([]);
+  const [recomendacion, setRecomendacion] = useState("");
+
+  const cargarTarifas = async () => {
+    try {
+      const response = await fetch(`${process.env.BACKEND_URL}/api/tarifas`);
+      if (!response.ok) throw new Error("Error al cargar las tarifas.");
+      const data = await response.json();
+      setTarifas(data);
+    } catch (err) {
+      setError("No se pudieron cargar las tarifas. Inténtalo más tarde.");
+    }
+  };
+
+  useEffect(() => {
+    cargarTarifas();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
+
+  const procesarTextoWord = (texto) => {
+    const lineas = texto.split("\n").filter((linea) => linea.trim() !== "");
+    return lineas.slice(1).map((linea) => {
+      const [mes, consumo_kWh] = linea.split(",");
+      return { mes: mes.trim(), consumo_kWh: parseFloat(consumo_kWh) };
+    });
+  };
+
+  const generarRecomendacionEnergetica = (consumoMensual) => {
+    if (consumoMensual.length === 0) return "No hay datos suficientes para generar una recomendación.";
+
+    const consumoTotal = consumoMensual.reduce((acc, mes) => acc + mes.consumo_kWh, 0);
+    const consumoPromedio = consumoTotal / consumoMensual.length;
+
+    let recomendacion = "Tu consumo energético es estable. Algunas sugerencias:";
+
+    if (consumoPromedio > 200) {
+      recomendacion += "\n- Considera cambiar a electrodomésticos de alta eficiencia energética.";
+      recomendacion += "\n- Evita el uso de dispositivos de alto consumo en horarios pico.";
+    } else if (consumoPromedio < 100) {
+      recomendacion += "\n- ¡Buen trabajo! Mantén hábitos de ahorro energético.";
+    } else {
+      recomendacion += "\n- Ajusta el uso de iluminación eficiente y controla el consumo nocturno.";
+    }
+
+    return recomendacion;
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+    if (fileExtension === "csv") {
+      Papa.parse(file, {
+        header: true,
+        complete: (results) => {
+          const consumoMensualCargado = results.data.map((row) => ({
+            mes: row.mes,
+            consumo_kWh: parseFloat(row.consumo_kWh),
+          }));
+          setConsumoMensual(consumoMensualCargado);
+          setRecomendacion(generarRecomendacionEnergetica(consumoMensualCargado)); // Generar recomendación automáticamente
+        },
+      });
+    } else if (fileExtension === "docx") {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const arrayBuffer = e.target.result;
+        const { value: text } = await Mammoth.extractRawText({ arrayBuffer });
+        const consumoMensualCargado = procesarTextoWord(text);
+        setConsumoMensual(consumoMensualCargado);
+        setRecomendacion(generarRecomendacionEnergetica(consumoMensualCargado)); // Generar recomendación automáticamente
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      alert("Tipo de archivo no soportado. Usa .csv o .docx.");
+    }
+  };
+
+  const calcularMejoresTarifas = () => {
+    if (!form.region || !form.rango_horario || !form.max_carbon_impact) {
+      alert("Por favor, completa todas las preguntas antes de continuar.");
+      return;
+    }
+
+    const consumoParaCalculo = consumoMensual.length > 0 ? consumoMensual : consumoDefault;
+    const consumoTotal = consumoParaCalculo.reduce((acc, mes) => acc + mes.consumo_kWh, 0);
+    const consumoPromedio = consumoTotal / consumoParaCalculo.length;
+
+    const tarifasConPrioridades = tarifas.map((tarifa) => ({
+      ...tarifa,
+      coincidencias: [
+        tarifa.region?.toLowerCase() === form.region.toLowerCase(),
+        tarifa.rango_horario_bajo?.includes(form.rango_horario),
+        tarifa.carbon_impact_kgCO <= parseFloat(form.max_carbon_impact),
+      ].filter(Boolean).length,
+      costoEstimado: tarifa.precio_kw_hora * consumoPromedio,
+    }));
+
+    let tarifasFiltradas = tarifasConPrioridades.filter((tarifa) => tarifa.coincidencias === 3);
+
+    if (tarifasFiltradas.length === 0) {
+      tarifasFiltradas = tarifasConPrioridades.filter((tarifa) => tarifa.coincidencias === 2);
+    }
+
+    if (tarifasFiltradas.length === 0) {
+      tarifasFiltradas = tarifasConPrioridades.filter((tarifa) => tarifa.coincidencias === 1);
+    }
+
+    if (tarifasFiltradas.length === 0) {
+      tarifasFiltradas = tarifasConPrioridades.sort((a, b) => a.costoEstimado - b.costoEstimado).slice(0, 3);
+    }
+
+    setResultados(tarifasFiltradas);
+
+    if (map) {
+      markers.forEach((marker) => marker.setMap(null));
+
+      const filteredMarkers = tarifasFiltradas.map((tarifa) => {
+        const latitude = tarifa.latitude || 40.416775;
+        const longitude = tarifa.longitude || -3.70379;
+
+        const marker = new window.google.maps.Marker({
+          position: { lat: latitude, lng: longitude },
+          map: map,
+          title: tarifa.nombre_tarifa,
+        });
+
+        const infoWindow = new window.google.maps.InfoWindow({
+          content: `<div><h3>${tarifa.nombre_tarifa}</h3>
+                    <p>Región: ${tarifa.region || "No especificada"}</p>
+                    <p>Precio: $${tarifa.precio_kw_hora || "N/A"}</p>
+                    <p>Costo estimado: $${
+                      tarifa.costoEstimado?.toFixed(2) || "N/A"
+                    }</p></div>`,
+        });
+
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker);
+        });
+
+        return marker;
+      });
+
+      setMarkers(filteredMarkers);
+    }
+  };
+
+  const calcularMejoresTarifasYRecomendacion = () => {
+    calcularMejoresTarifas();
+    setRecomendacion(generarRecomendacionEnergetica(consumoMensual));
+  };
+  useEffect(() => {
+    const loadGoogleMapsScript = () => {
+      const existingScript = document.getElementById("googleMaps");
+      if (!existingScript) {
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCLXcGgycpOj9hAkolG71_60wbqFwy1c8Q`; // Reemplaza con tu clave API válida
+        script.id = "googleMaps";
+        script.async = true;
+        document.body.appendChild(script);
+        script.onload = () => initMap();
+      } else {
+        initMap();
+      }
+    };
+  
+    const initMap = () => {
+      if (window.google && window.google.maps) {
+        const mapInstance = new window.google.maps.Map(
+          document.getElementById("map"),
+          {
+            center: { lat: 40.416775, lng: -3.70379 }, // Madrid, España
+            zoom: 6,
+          }
+        );
+        setMap(mapInstance);
+  
+        const bounds = new window.google.maps.LatLngBounds();
+  
+        const allMarkers = tarifas.map((tarifa) => {
+          const latitude = tarifa.latitude ?? 40.416775;
+          const longitude = tarifa.longitude ?? -3.70379;
+  
+          const marker = new window.google.maps.Marker({
+            position: { lat: latitude, lng: longitude },
+            map: mapInstance,
+            title: tarifa.nombre_tarifa || "Tarifa sin nombre",
+          });
+  
+          bounds.extend(new window.google.maps.LatLng(latitude, longitude));
+  
+          const infoWindow = new window.google.maps.InfoWindow({
+            content: `<div><h3>${tarifa.nombre_tarifa || "Tarifa sin nombre"}</h3>
+                        <p>Región: ${tarifa.region || "No especificada"}</p>
+                        <p>Precio: $${tarifa.precio_kw_hora || "N/A"}</p></div>`,
+          });
+  
+          marker.addListener("click", () => {
+            infoWindow.open(mapInstance, marker);
+          });
+  
+          return marker;
+        });
+  
+        mapInstance.fitBounds(bounds);
+        setMarkers(allMarkers); // Actualiza el estado con los nuevos marcadores
+      } else {
+        console.error("Google Maps no está disponible. Verifica la carga del script.");
+      }
+    };
+  
+    loadGoogleMapsScript();
+  }, [tarifas]);
+  
+  useEffect(() => {
+    if (map && markers.length > 0) {
+      markers.forEach((marker) => marker.setMap(null)); // Limpiar marcadores previos
+  
+      const filteredMarkers = resultados.map((tarifa) => {
+        const latitude = tarifa.latitude || 40.416775;
+        const longitude = tarifa.longitude || -3.70379;
+  
+        const marker = new window.google.maps.Marker({
+          position: { lat: latitude, lng: longitude },
+          map: map,
+          title: tarifa.nombre_tarifa,
+        });
+  
+        const infoWindow = new window.google.maps.InfoWindow({
+          content: `<div><h3>${tarifa.nombre_tarifa}</h3>
+                    <p>Región: ${tarifa.region || "No especificada"}</p>
+                    <p>Precio: $${tarifa.precio_kw_hora || "N/A"}</p>
+                    <p>Costo estimado: $${
+                      tarifa.costoEstimado?.toFixed(2) || "N/A"
+                    }</p></div>`,
+        });
+  
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker);
+        });
+  
+        return marker;
+      });
+  
+      setMarkers(filteredMarkers); // Actualiza el estado con los marcadores filtrados
+    }
+  }, [map, resultados]);
+  
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Puedes Comparar Tarifas</h1>
+      <h1>Escuchando artistas</h1>
+      <MusicPlayer />
+      <form style={{ marginBottom: "20px" }}>
+        <h3>Responde las siguientes preguntas:</h3>
+        <label>
+          Región preferida:
+          <input
+            type="text"
+            name="region"
+            placeholder="Ejemplo: Asturias"
+            value={form.region}
+            onChange={handleChange}
+            required
+            style={{
+              marginBottom: "10px",
+              padding: "0.5rem",
+              width: "100%",
+              color: "white",
+            }}
+          />
+        </label>
+        <label>
+          Rango horario de consumo:
+          <input
+            type="text"
+            name="rango_horario"
+            placeholder="Ejemplo: 23:00 - 05:00"
+            value={form.rango_horario}
+            onChange={handleChange}
+            required
+            style={{
+              marginBottom: "10px",
+              padding: "0.5rem",
+              width: "100%",
+              color: "white",
+            }}
+          />
+        </label>
+        <label>
+          Impacto ambiental máximo (kgCO):
+          <input
+            type="number"
+            name="max_carbon_impact"
+            placeholder="Ejemplo: 0.5"
+            value={form.max_carbon_impact}
+            onChange={handleChange}
+            required
+            style={{
+              marginBottom: "10px",
+              padding: "0.5rem",
+              width: "100%",
+              color: "red",
+            }}
+          />
+        </label>
+        <label>
+          Cargar datos históricos de consumo (.csv):
+          <input
+            type="file"
+            accept=".csv, .doc, .docx"
+            onChange={handleFileUpload}
+            style={{
+              marginBottom: "10px",
+              padding: "0.5rem",
+              width: "100%",
+              color: "blue",
+            }}
+          />
+        </label>
+  
+        <button
+          type="button"
+          onClick={calcularMejoresTarifasYRecomendacion}
+          style={{
+            padding: "0.5rem 1rem",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginTop: "10px",
+          }}
+        >
+          Buscar Mejores Tarifas y Generar Recomendación Energética
+        </button>
+      </form>
+  
+      {recomendacion && (
+        <div>
+          <h3>Recomendación Energética:</h3>
+          <p
+            style={{
+              padding: "1rem",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              backgroundColor: "#f8f8f8",
+            }}
+          >
+            {recomendacion}
+          </p>
+        </div>
+      )}
+  
+      {resultados.length > 0 && (
+        <div>
+          <h3>Las tarifas más adecuadas para ti:</h3>
+          {resultados.map((tarifa) => (
+            <div
+              key={tarifa.id}
+              style={{
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "1rem",
+                marginBottom: "1rem",
+              }}
+            >
+              <p>
+                <strong>{tarifa.nombre_tarifa}</strong>: $
+                {tarifa.precio_kw_hora} por kWh
+              </p>
+              <p>
+                Costo estimado mensual:{" "}
+                {tarifa.costoEstimado !== undefined
+                  ? `$${tarifa.costoEstimado.toFixed(2)}`
+                  : "N/A"}
+              </p>
+              <p>Región: {tarifa.region}</p>
+              <p>
+                Rango Horario: {tarifa.rango_horario_bajo || "No especificado"}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+  
+      <div
+        id="map"
+        style={{ width: "100%", height: "500px", marginTop: "20px" }}
+      ></div>
+  
+      {resultados.length === 0 && (
+        <p style={{ marginTop: "10px", color: "#888" }}>
+          No se encontraron tarifas que coincidan con tus preferencias.
+        </p>
+      )}
+  
+      {error && <p style={{ color: "red", marginTop: "20px" }}>{error}</p>}
+    </div>
+  );
+}
+export default CompararTarifas;  
