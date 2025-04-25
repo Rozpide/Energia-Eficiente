@@ -155,7 +155,7 @@ const ProveedorList = () => {
   
     try {
       const response = await fetch(
-        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/proveedores/${proveedorId}`,
+        `https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/${proveedorId}`,
         {
           method: "DELETE",
           headers: {

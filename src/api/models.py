@@ -6,6 +6,7 @@ db = SQLAlchemy()
 # Tabla: Usuarios
 class User(db.Model):
     __tablename__ = 'user'
+    __table_args__ = {'schema': 'public'}  # Especificamos el esquema
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -102,9 +103,10 @@ class TarifaElectrica(db.Model):
 # Tabla: Recomendaciones
 class Recomendacion(db.Model):
     __tablename__ = 'recomendacion'
+    __table_args__ = {'schema': 'public'}  # Especificar esquema
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id_fk = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id_fk = db.Column(db.Integer, db.ForeignKey('public.user.id'), nullable=False)
     rango_horario = db.Column(db.String(50), nullable=False)
     proveedor_id_fk = db.Column(db.Integer, db.ForeignKey('proveedor.id'), nullable=False)
     ahorro_estimado = db.Column(db.Float, nullable=False)
@@ -128,9 +130,10 @@ class Recomendacion(db.Model):
 # Tabla: Preferencias
 class Preferencia(db.Model):
     __tablename__ = 'preferencia'
+    __table_args__ = {'schema': 'public'}  # Asegurar que el esquema sea público
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id_fk = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id_fk = db.Column(db.Integer, db.ForeignKey('public.user.id'), nullable=False)
     proveedor_preferido_id_fk = db.Column(db.Integer, db.ForeignKey('proveedor.id'), nullable=False)
     rango_horario_fav = db.Column(db.String(50), nullable=True)  # Por ejemplo, 01:00 - 05:00
 
@@ -148,9 +151,10 @@ class Preferencia(db.Model):
         }
 class SolicitudCambio(db.Model):
     __tablename__ = 'solicitud_cambio'
+    __table_args__ = {'schema': 'public'}  # Especificar esquema
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id_fk = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Relación con Usuario
+    user_id_fk = db.Column(db.Integer, db.ForeignKey('public.user.id'), nullable=False)  # Relación con Usuario
     proveedor_actual_id_fk = db.Column(db.Integer, db.ForeignKey('proveedor.id'), nullable=False)  # Proveedor actual
     tarifa_actual_id_fk = db.Column(db.Integer, db.ForeignKey('tarifa_electrica.id'), nullable=True)  # Tarifa actual
     proveedor_nuevo_id_fk = db.Column(db.Integer, db.ForeignKey('proveedor.id'), nullable=False)  # Nuevo proveedor
@@ -184,9 +188,10 @@ class SolicitudCambio(db.Model):
 # Tabla: Consumo Energético
 class UserConsumption(db.Model):
     __tablename__ = 'user_consumption'
+    __table_args__ = {'schema': 'public'}  # Especificar el esquema explícito
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id_fk = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id_fk = db.Column(db.Integer, db.ForeignKey('public.user.id'), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     consumption = db.Column(db.Float, nullable=False)
     peak_hours = db.Column(db.Boolean, nullable=False, default=False)

@@ -55,7 +55,7 @@ const TarifaPage = () => {
 
         try {
           const response = await fetch(
-            `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/proveedores/${proveedorId}/tarifas`
+            `https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/proveedores/${proveedorId}/tarifas`
           );
           if (!response.ok) throw new Error("Error al cargar las tarifas.");
           const data = await response.json();
@@ -137,7 +137,7 @@ const TarifaPage = () => {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/tarifas`,
+        `https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/tarifas`,
         {
           method: "POST",
           headers: {
@@ -155,7 +155,7 @@ const TarifaPage = () => {
       if (!response.ok) throw new Error("Error al añadir la tarifa.");
       alert("Tarifa añadida correctamente.");
       const responseTarifas = await fetch(
-        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/proveedores/${proveedorId}/tarifas`
+        `https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/proveedores/${proveedorId}/tarifas`
       );
       const updatedTarifas = await responseTarifas.json();
       setTarifas(updatedTarifas);
@@ -192,7 +192,7 @@ const TarifaPage = () => {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/tarifas/${id}`,
+        `https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/tarifas/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -219,7 +219,7 @@ const TarifaPage = () => {
       );
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/tarifas/${form.id}`,
+        `https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/tarifas/${form.id}`,
         {
           method: "PUT",
           headers: {

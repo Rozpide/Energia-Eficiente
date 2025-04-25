@@ -15,13 +15,17 @@ users_bp = Blueprint('users_bp', __name__)
 def autenticar_usuario():
     try:
         data = request.get_json()
+        print(f'Datos recibidos: {data}')
         email = data.get('email')
         password = data.get('password')
 
         if not email or not password:
+            print(f'Error: Faltan datos. Email: {email}, Password: {password}')
             return jsonify({"error": "Correo y contraseña son obligatorios"}), 400
 
         user = User.query.filter_by(email=email).first()
+        print(f'Usuario encontrado: {user}')
+
         if not user or not check_password_hash(user.password, password):
             return jsonify({"error": "Correo o contraseña inválidos"}), 401
 
@@ -124,6 +128,17 @@ def actualizar_usuario(user_id):
         return jsonify(usuario.serialize()), 200
     except Exception as e:
         return jsonify({"error": f"Error al actualizar usuario: {str(e)}"}), 500
+
+
+# Endpoint de prueba para verificar la consulta
+@users_bp.route('/users/test_query', methods=['GET'])
+def test_query():
+    try:
+        resultado = db.session.execute('SELECT * FROM public."user" LIMIT 1').fetchall()
+        print(f'Resultado directo: {resultado}')
+        return jsonify({"message": "Consulta ejecutada", "data": [dict(row) for row in resultado]}), 200
+    except Exception as e:
+        return jsonify({"error": f"Error en la consulta directa: {str(e)}"}), 500
 
 
 

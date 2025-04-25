@@ -1,4 +1,4 @@
-/*
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/home.css";
@@ -102,7 +102,7 @@ export const Home = () => {
   };
   const getEnergyAdvice = async (userId) => {
     try {
-        const response = await fetch("https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/energy-advice", {
+        const response = await fetch("https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/energy-advice", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -336,7 +336,8 @@ export const Home = () => {
   );
 };
 export default Home;
-*/
+
+/*
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/home.css";
@@ -365,7 +366,7 @@ export const Home = () => {
   const getEnergyAdvice = async (userId) => {
     try {
       const response = await fetch(
-        "https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/energy-advice",
+        "https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/energy-advice",
         {
           method: "POST",
           headers: {
@@ -420,7 +421,7 @@ export const Home = () => {
       if (!isAuthenticated) return; // ✅ Ejecuta solo si el usuario está autenticado
       try {
         const response = await fetch(
-          `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/validate-consumption?userId=12345`
+          `https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/validate-consumption?userId=12345`
         );
         const data = await response.json();
 
@@ -502,7 +503,7 @@ export const Home = () => {
   const handleSubmitConsumption = async () => {
     try {
       const response = await fetch(
-        "https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/add-consumption",
+        "https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/add-consumption",
         {
           method: "POST",
           headers: {
@@ -558,7 +559,7 @@ export const Home = () => {
 
     try {
       const response = await fetch(
-        "https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/upload-file",
+        "https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/upload-file",
         {
           method: "POST",
           body: formData,
@@ -739,7 +740,7 @@ export const Home = () => {
   
           
   
-          {/* Formulario para cargar datos */}
+          
           <div>
             <h2>Cargar datos de consumo</h2>
             <input
@@ -755,7 +756,7 @@ export const Home = () => {
           </div>
   
           <MusicPlayer />
-          {/* Renderiza el botón "Obtener Recomendación Energética" solo después de la autenticación */}
+          
           <button
             onClick={handleGetAdvice}
             style={{
@@ -791,3 +792,4 @@ export const Home = () => {
   
 };
 export default Home;
+*/

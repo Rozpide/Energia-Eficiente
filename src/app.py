@@ -81,6 +81,15 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0
     return response
 
+@app.before_request
+def check_db_connection():
+    try:
+        db.session.execute('SELECT 1')
+        print("Conexión con la base de datos exitosa")
+    except Exception as e:
+        print(f"Error de conexión con la base de datos: {e}")
+
+
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
     app.run(host='0.0.0.0', port=PORT, debug=ENV == "development")

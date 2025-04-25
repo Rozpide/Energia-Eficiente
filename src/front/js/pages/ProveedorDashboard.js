@@ -18,7 +18,7 @@ const ProveedorDashboard = () => {
 
     try {
       const response = await fetch(
-        `https://zany-meme-9gw96rvgp45cr6w-3001.app.github.dev/api/proveedores/${proveedorId}/tarifas`,
+        `https://glorious-space-dollop-q56qvjrjqw4cvw6-3001.app.github.dev/api/proveedores/${proveedorId}/tarifas`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
